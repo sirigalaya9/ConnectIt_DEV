@@ -1,0 +1,22 @@
+<apex:component >
+   <h>Gas</h>
+   
+      <apex:pageBlock >
+                                              
+                    <apex:panelGrid columns="5" width="100%" style="text-align:center; width:200px">
+                        <apex:outputLabel value="Plot_Number" style="width:5px" />
+                        <apex:outputLabel value="Reference Number" style="width:10px" />
+                        <apex:outputLabel value="House No" style="width:10px"/>
+                        <apex:outputLabel value="Street" style="width:10px" />
+                        <apex:outputLabel value="County" style="width:10px"/>
+                        <apex:outputLabel value="Post Code" style="width:10px"/>         
+                        <apex:outputLabel value="MPRN" style="width:10px"/>
+                        <apex:outputLabel value="Service Connected Date" style="width:10px"/>
+                        <apex:outputLabel value="Meter Type" style="width:10px" />
+                    </apex:panelGrid>
+
+            
+     </apex:pageBlock>
+
+ 
+</apex:component>

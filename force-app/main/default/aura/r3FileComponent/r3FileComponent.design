@@ -1,0 +1,14 @@
+<design:component label="Files">
+    <design:attribute name="title" 
+                      label="Component Title" 
+                      description="Title of the component" 
+                      default="Files"/>
+    <design:attribute name="fileFilter" 
+                      label="File Filter Group" 
+                      description="WHERE clause for ContentDocument Query. Eg : LatestPublishedVersion.Group__c = 'Estimate'" 
+                      default=""/>
+    <design:supportedFormFactors>
+        <design:supportedFormFactor type="Large"/>
+        <design:supportedFormFactor type="Small"/>
+    </design:supportedFormFactors>
+</design:component>

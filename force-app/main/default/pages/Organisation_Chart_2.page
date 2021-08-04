@@ -1,0 +1,157 @@
+<apex:page lightningStylesheets="true" >
+
+
+ <html>
+   <head>
+   <script type="text/css">
+   
+   .myNodeClass {
+    text-align: center;
+    vertical-align: middle;
+    font-family: arial,helvetica;
+    cursor: default;
+    border: 2px solid #b5d9ea;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.5) 3px 3px 3px;
+    -moz-box-shadow: rgba(0, 0, 0, 0.5) 3px 3px 3px;
+    background-color: #b0d7ee;
+    background: -webkit-gradient(linear, left top, left bottom, from(#b0d7ff), to(#b0d7ee));
+    }
+    
+    .mySelectedNodeClass {
+    border: 2px solid #e38493;
+    background-color: red;
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffb0d7), to(#eeb0d7));
+}
+   
+   
+   </script>
+
+
+      <div class="header" style="text-align:center;">
+            <p>&nbsp;</p>
+            <apex:image value="{!URLFOR($Resource.ConnectITLogo)}" />
+      </div>
+  
+
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+
+      google.charts.load('current', {packages:["orgchart"]});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Name');
+        data.addColumn('string', 'Manager');
+        data.addColumn('string', 'ToolTip');
+
+        // For each orgchart box, provide the name, manager, and tooltip to show.
+        data.addRows([
+          [{'v':'Peter Leech', 'f':'Peter Leech<div style="color:orange; font-style:italic>Managing Director</div>'},
+           '', 'Managing Director'],
+           
+          [{'v':'Chris Lee', 'f':'Chris Lee<div style="color:orange; font-style:italic">Technical Manager</div>'},
+           'Peter Leech', 'Technical Manager'],
+           
+          [{'v':'Marcia Wilson', 'f':'Marcia Wilson<div style="color:orange; font-style:italic">Project Delivery Coordinator</div>'},
+           'Chris Lee', 'Project Delivery Coordinator'],
+           
+          [{'v':'Example 3rd Level', 'f':'Example 3rd Level<div style="color:orange; font-style:italic">Example 3</div>'},
+           'Marcia Wilson', 'Example 3'],
+           
+          [{'v':'Example 4th Level', 'f':'Example 3rd Level<div style="color:orange; font-style:italic">Example 4</div>'},
+           'Example 3rd Level', 'Example 4'],
+                      
+          [{'v':'Jane Leech', 'f':'Jane Leech<div style="color:orange; font-style:italic">HR Compliance Business Partner</div>'},
+           'Peter Leech', 'HR Compliance Business Partner'],  
+          
+          [{'v':'Hayley Warren', 'f':'Hayley Warren<div style="color:orange; font-style:italic">HR Coordinator</div>'},
+           'Jane Leech', 'HR Coordinator'], 
+           
+          [{'v':'Lee Sadler', 'f':'Lee Sadler<div style="color:orange; font-style:italic">IT Transformation Manager</div>'},
+           'Peter Leech', 'IT Transformation Manager'],
+           
+          [{'v':'Ben Leech', 'f':'Ben Leech<div style="color:orange; font-style:italic">Web Development</div>'},
+           'Lee Sadler', 'Web Development'],
+           
+          [{'v':'Laban Giles', 'f':'Laban Giles<div style="color:orange; font-style:italic">Commercial Manager</div>'},
+           'Peter Leech', 'Commercial Manager'],  
+           
+          [{'v':'Alix Lambert', 'f':'Alix Lambert<div style="color:orange; font-style:italic">Office Manager</div>'},
+           'Laban Giles', 'Office Manager'],    
+           
+          [{'v':'Sarah Evans', 'f':'Sarah Evans<div style="color:orange; font-style:italic">Commercial Administrator</div>'},
+           'Laban Giles', 'Commercial Administrator'],
+                                 
+          [{'v':'Zoe Darlison', 'f':'Zoe Darlison<div style="color:orange; font-style:italic">Asset adoption Coordinator</div>'},
+           'Laban Giles', 'Asset adoption Coordinator'],
+                     
+          [{'':'Andrew Leech', 'f':'Andrew Leech<div style="color:orange; font-style:italic">Operations Director</div>'},
+           '', 'Operations Director'],   
+           
+          [{'v':'Mark Humby', 'f':'Mark Humby<div style="color:orange; font-style:italic">Project Manager</div>'},
+           'Andrew Leech', 'Project Manager'], 
+           
+          [{'v':'Brian Baker', 'f':'Brian Baker<div style="color:orange; font-style:italic">Site Manager</div>'},
+           'Andrew Leech', 'Site Manager'], 
+           
+          [{'v':'Chris Darling', 'f':'Chris Darling<div style="color:orange; font-style:italic">Project Manager</div>'},
+           'Andrew Leech', 'Project Manager'],  
+           
+          [{'v':'Martin Vowles', 'f':'Martin Vowles<div style="color:orange; font-style:italic">Project Manager</div>'},
+           'Andrew Leech', 'Project Manager'],
+           
+          [{'v':'Jacob Williams', 'f':'Jacob Williams<div style="color:orange; font-style:italic">Planning Assistant</div>'},
+           'Martin Vowles', 'Mobile 1234'],
+           
+          [{'v':'Russell Barker', 'f':'Russell Barker<div style="color:orange; font-style:italic">Project Manager</div>'},
+           'Andrew Leech', 'Project Manager'], 
+           
+          [{'':'Sharon Leech', 'f':'Sharon Leech<div style="color:orange; font-style:italic">Company Secretary</div>'},
+           '', 'Company Secretary'],    
+                 
+          [{'v':'Karol Denham', 'f':'Karol Denham<div style="color:orange; font-style:italic">Accounts Asssitant </div>'},
+           'Sharon Leech', 'Accounts Asssitant '],      
+           
+          [{'v':'Matthew Leech', 'f':'Matthew Leech<div style="color:orange; font-style:italic">Stores Manager</div>'},
+           'Peter Leech', 'Stores Manager'],
+           
+          [{'v':'Matthew Randell', 'f':'Matthew Randell<div style="color:orange; font-style:italic">Stores</div>'},
+           'Matthew Leech', 'Stores'],
+           
+          [{'v':'Ryan Leech', 'f':'Ryan Leech<div style="color:orange; font-style:italic">Managing Estimator</div>'},
+           'Peter Leech', 'Managing Estimator'],
+           
+          [{'v':'Elliot Goater', 'f':'Elliot Goater<div style="color:orange; font-style:italic">Trainee Estimator</div>'},
+           'Ryan Leech', 'Trainee Estimator'],
+           
+          [{'v':'Matthew Davies', 'f':'Matthew Davies<div style="color:orange; font-style:italic">Business Development Manager</div>'},
+           'Ryan Leech', 'Business Development Manager'],
+           
+          [{'v':'Ajay Chadli', 'f':'Ajay Chadli<div style="color:orange; font-style:italic">Business Development Manager</div>'},
+           'Ryan Leech', 'Business Development Manager']
+                    
+        ]);
+
+        // Create the chart.
+        var chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
+
+        // Draw the chart, setting the allowHtml option to true for the tooltips.
+        chart.draw(data, {'allowHtml':true});
+      }
+      
+         </script>
+    </head>
+  <body>
+    <div id="chart_div"></div>
+    
+
+    
+  </body>
+</html>
+
+      
+</apex:page>

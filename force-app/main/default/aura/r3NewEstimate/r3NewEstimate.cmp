@@ -1,0 +1,6 @@
+<aura:component implements="lightning:actionOverride" access="global" >
+	<aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <lightning:card>
+        <lightning:flow aura:id="flowId" />
+    </lightning:card>
+</aura:component>

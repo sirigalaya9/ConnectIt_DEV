@@ -1,0 +1,1471 @@
+<template>
+    <!-- Modal/Popup Box LWC starts here -->
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+        aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+            <!-- Modal/Popup Box LWC header here -->
+            <header class="slds-modal__header">
+                <lightning-button-icon class="slds-modal__close" title="Close" icon-name="utility:close"
+                    icon-class="slds-button_icon-inverse" onclick={closeModal}></lightning-button-icon>
+                <span class="slds-assistive-text">Close</span>
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Estimation Wizard</h2>
+                <div class="slds-p-around_none slds-m-top_x-small slds-m-horizontal_none">
+                    <!--<div class="slds-p-around_small slds-text-align_left" style="padding-bottom: 5px;">Financial Details</div>-->
+                    <lightning-layout>
+                        <lightning-layout-item flexibility="auto" padding="around-small">
+                            <div class="custom-box slds-box slds-p-around_small slds-text-align_center"
+                                style="padding: 0.5rem;">
+                                <div style="font-weight: bold;">Total Material Sell</div>
+                                <div>
+                                    <lightning-formatted-number value={TotalKitSell} format-style="currency"
+                                        currency-code="EUR" currency-display-as="symbol" minimum-fraction-digits="2"
+                                        maximum-fraction-digits="2"></lightning-formatted-number>
+                                </div>
+                            </div>
+
+                        </lightning-layout-item>
+                        <lightning-layout-item flexibility="auto" padding="around-small">
+                            <div class="custom-box slds-box slds-p-around_small slds-text-align_center"
+                                style="padding: 0.5rem;">
+                                <div style="font-weight: bold;"> Total Labour Sell</div>
+                                <div>
+                                    <lightning-formatted-number value={TotalLabourSell} format-style="currency"
+                                        currency-code="EUR" currency-display-as="symbol" minimum-fraction-digits="2"
+                                        maximum-fraction-digits="2"></lightning-formatted-number>
+                                </div>
+                            </div>
+                        </lightning-layout-item>
+                        <!--<lightning-layout-item flexibility="auto" padding="around-small">
+                            <div class="custom-box slds-box slds-p-around_small slds-text-align_center"
+                                style="padding: 0.5rem;">
+                                <div style="font-weight: bold;">Total Material Sell</div>
+                                <div>
+                                    <lightning-formatted-number value={TotalMaterialSell} format-style="currency"
+                                        currency-code="EUR" currency-display-as="symbol" minimum-fraction-digits="2"
+                                        maximum-fraction-digits="2"></lightning-formatted-number>
+                                </div>
+                            </div>
+                        </lightning-layout-item>-->
+                        <lightning-layout-item flexibility="auto" padding="around-small">
+                            <div class="custom-box slds-box slds-p-around_small slds-text-align_center"
+                                style="padding: 0.5rem;">
+                                <div style="font-weight: bold;">Total Plant Sell</div>
+                                <div>
+                                    <lightning-formatted-number value={TotalPlantSell} format-style="currency"
+                                        currency-code="EUR" currency-display-as="symbol" minimum-fraction-digits="2"
+                                        maximum-fraction-digits="2"></lightning-formatted-number>
+                                </div>
+                            </div>
+                        </lightning-layout-item>
+                        <!--<lightning-layout-item flexibility="auto" padding="around-small">
+                            <div class="custom-box slds-box slds-p-around_small slds-text-align_center"
+                                style="padding: 0.5rem;">
+                                <div style="font-weight: bold;">Total Client Contribution</div>
+                                <div>
+                                    <lightning-formatted-number value={TotalClientContribution} format-style="currency"
+                                        currency-code="EUR" currency-display-as="symbol" minimum-fraction-digits="2"
+                                        maximum-fraction-digits="2"></lightning-formatted-number>
+                                </div>
+                            </div>
+                        </lightning-layout-item>-->
+                    </lightning-layout>
+                </div>
+            </header>
+            <!-- Modal/Popup Box LWC body starts here -->
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
+                <div class="Stages">
+                    <lightning-progress-indicator current-step={currentStep} type="path" variant="base">
+                        <lightning-progress-step label="Stage 1 - Customer &amp; Site Requirements" value="1">
+                        </lightning-progress-step>
+                        <lightning-progress-step label="Stage 2 - Utility, Scheme &amp; Site Details" value="2">
+                        </lightning-progress-step>
+                        <lightning-progress-step label="Stage 3 - Product &amp; Cost Review" value="3">
+                        </lightning-progress-step>
+                        <lightning-progress-step label="Stage 4 - Checklist" value="4">
+                        </lightning-progress-step>
+                        <lightning-progress-step label="Stage 5 - Payment Schedule" value="5">
+                        </lightning-progress-step>
+                        <lightning-progress-step label="Stage 6 - Estimation Generation" value="6">
+                        </lightning-progress-step>
+                        <lightning-progress-step label="Stage 7 - Send an Email" value="7">
+                        </lightning-progress-step>
+                    </lightning-progress-indicator>
+                </div>
+
+                <lightning-record-edit-form record-id={recordId} object-api-name="Opportunity"
+                    onsuccess={handleSuccessUpdateOpp}>
+                    <lightning-messages> </lightning-messages>
+                    <div class="stepOne slds-p-left_medium slds-p-top_medium">
+                        <lightning-layout>
+                            <lightning-layout-item size="6" class="">
+                                <lightning-input-field field-name="RecordTypeId" disabled="true">
+                                </lightning-input-field>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="6" class="slds-p-left_x-large">
+                                <lightning-input-field field-name="Contact_Name__c"> </lightning-input-field>
+                            </lightning-layout-item>
+                        </lightning-layout>
+
+                        <lightning-layout>
+                            <lightning-layout-item size="6">
+                                <lightning-input-field field-name="Site__c"></lightning-input-field>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="6" class="slds-p-left_x-large">
+                                <lightning-input-field field-name="Project__c"> </lightning-input-field>
+                            </lightning-layout-item>
+                        </lightning-layout>
+
+                        <lightning-layout>
+                            <lightning-layout-item size="6">
+                                <lightning-input-field field-name="CloseDate"></lightning-input-field>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="6" class="slds-p-left_x-large">
+                                <lightning-input-field field-name="Type"> </lightning-input-field>
+                            </lightning-layout-item>
+                        </lightning-layout>
+
+                        <lightning-layout>
+                            <lightning-layout-item size="6">
+                                <lightning-input-field field-name="Property_Type__c"></lightning-input-field>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="6" class="slds-p-left_x-large">
+                                <lightning-input-field field-name="Utilities__c"> </lightning-input-field>
+                            </lightning-layout-item>
+                        </lightning-layout>
+
+                    </div>
+
+                </lightning-record-edit-form>
+
+                <div class="stepTwo slds-hide">
+
+                    <lightning-accordion allow-multiple-sections-open class="example-accordion"
+                        onsectiontoggle={handleToggleSection} active-section-name='Electric'>
+                        <template for:each={schemeItems} for:item="scheme">
+                            <lightning-accordion-section name={scheme.utilityType} label={scheme.utilityType}
+                                key={scheme.utilityType}>
+
+
+                                <div class="stepTwo slds-p-left_medium">
+                                    <template if:true={scheme.isElectric}>
+
+                                        <lightning-record-edit-form object-api-name="Site_Scheme__c"
+                                            record-type-id={scheme.utilityRecordTypeId} record-id='{scheme.recordId}'
+                                            onsuccess={handleSuccessCreateScheme}>
+                                            <lightning-messages></lightning-messages>
+                                            <!--onsubmit={handleSubmitScheme} onsuccess={handleSuccessCreateScheme}-->
+
+                                            <lightning-input-field name="Estimate__c" field-name="Estimate__c"
+                                                value={recordId} class="slds-hide" data-utilitytype="all-scheme">
+                                            </lightning-input-field>
+                                            <lightning-input-field name="Site__c" field-name="Site__c" value={opp_Site}
+                                                class="slds-hide" data-utilitytype="all-scheme"></lightning-input-field>
+                                            <lightning-input-field name="Project__c" field-name="Project__c"
+                                                value={opp_Project} class="slds-hide" data-utilitytype="all-scheme">
+                                            </lightning-input-field>
+
+                                            <lightning-accordion active-section-name='Plot Types' allow-multiple-sections-open>
+                                                <lightning-accordion-section name='Plot Types' label='Plot Types'
+                                                    key={scheme.utilityType}>
+                                                    <div>
+                                                        Total Number of Plots : {eletric_totalNumberOfPlots}
+                                                    </div>
+                                                    <lightning-layout>
+
+                                                        <lightning-layout-item flexibility="auto">
+                                                            <lightning-input-field field-name="No_of_Commercial__c"
+                                                                class="electric-scheme"
+                                                                data-utilitytype="electric-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                        </lightning-layout-item>
+                                                        <lightning-layout-item flexibility="auto">
+                                                            <lightning-input-field field-name="No_of_Houses__c"
+                                                                class="electric-scheme"
+                                                                data-utilitytype="electric-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                        </lightning-layout-item>
+                                                        <lightning-layout-item flexibility="auto">
+                                                            <lightning-input-field field-name="No_of_Landlord__c"
+                                                                class="electric-scheme"
+                                                                data-utilitytype="electric-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                        </lightning-layout-item>
+
+                                                        <lightning-layout-item flexibility="auto">
+                                                            <lightning-input-field field-name="No_of_Flats__c"
+                                                                class="electric-scheme"
+                                                                data-utilitytype="electric-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                        </lightning-layout-item>
+
+                                                        <lightning-layout-item flexibility="auto">
+                                                            <lightning-input-field field-name="No_of_TBS__c"
+                                                                class="electric-scheme"
+                                                                data-utilitytype="gas-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                        </lightning-layout-item>
+                                                    </lightning-layout>
+                                                </lightning-accordion-section>
+                                            </lightning-accordion>
+
+                                            <lightning-layout multiple-rows>
+
+                                                <!--class="slds-p-left_x-large"-->
+
+                                                <!--<lightning-input-field field-name="Rule__c" data-utilitytype="electric-scheme" class="slds-hide" value={rule_eletric}>
+                                                        </lightning-input-field>
+
+                                                    <lightning-layout-item size="4" class="slds-p-left_x-large">
+                                                        <c-lookup label="Rule" onsearch={handleSearchRule} onclick={handleSearchRule}
+                                                            onselectionchange={handleSelectionRuleChange}
+                                                            placeholder='Search Rules..' scroll-after-n-items="10" data-selectedutility="Electric"
+                                                            class="electric-scheme" data-utilitytype="electric-scheme">
+                                                        </c-lookup>
+                                                    </lightning-layout-item>-->
+
+
+                                                <!--<lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Units_Type__c" required="true"
+                                                        class="electric-scheme" data-utilitytype="electric-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>-->
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Product_Family__c"
+                                                        class="electric-scheme" data-utilitytype="electric-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <!--<lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Metering_Voltage__c"
+                                                        class="electric-scheme" data-utilitytype="electric-scheme"
+                                                        required="true"></lightning-input-field>
+                                                </lightning-layout-item>-->
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Asset_Value__c"
+                                                        class="electric-scheme" data-utilitytype="electric-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Non_Contestable_Cost__c"
+                                                        class="electric-scheme" data-utilitytype="electric-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="DNO__c" class="electric-scheme"
+                                                        data-utilitytype="electric-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="IDNO__c" class="electric-scheme"
+                                                        data-utilitytype="electric-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <!--<lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="DNO_Reference__c"
+                                                        class="electric-scheme" data-utilitytype="electric-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="IDNO_Reference__c"
+                                                        class="electric-scheme" data-utilitytype="electric-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>-->
+
+                                                <lightning-layout-item size="3">
+                                                    <label class='slds-form-element__label' for={scheme.utilityType}>POC
+                                                        to Boundary (m)</label>
+                                                    <lightning-input-field id={scheme.utilityType}
+                                                        field-name="To_Boundary__c" class="electric-scheme"
+                                                        data-utilitytype="electric-scheme" variant="label-hidden">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="No_of_Joint_Bays__c"
+                                                        class="electric-scheme" data-utilitytype="electric-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="POC__c" required="true"
+                                                        class="electric-scheme" data-utilitytype="electric-scheme"
+                                                        onchange={pocTypeChange}>
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <template if:true={isHV}>
+                                                    <lightning-layout-item size="3">
+                                                        <lightning-input-field field-name="Number_of_Substations__c"
+                                                            class="electric-scheme" data-utilitytype="electric-scheme">
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+                                                </template>
+                                                <template if:true={isLV}>
+                                                    <lightning-layout-item size="3">
+                                                        <lightning-input-field field-name="Number_of_Link_Boxes__c"
+                                                            class="electric-scheme" data-utilitytype="electric-scheme">
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+                                                </template>
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Traffic_Management__c"
+                                                        class="electric-scheme" data-utilitytype="electric-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <!--<lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Substation_Enclosure_Type__c"
+                                                        class="electric-scheme" data-utilitytype="electric-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Substation_Size__c"
+                                                        class="electric-scheme" data-utilitytype="electric-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>-->
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Onsite_Excavation__c"
+                                                        class="electric-scheme" data-utilitytype="electric-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Total_Load_kVA__c"
+                                                        class="electric-scheme" data-utilitytype="electric-scheme"
+                                                        required="true">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                            </lightning-layout>
+
+                                            <template if:true={scheme.recordId}>
+                                                <lightning-button class="slds-m-top_small" variant="brand" type="submit"
+                                                    label="Update Electric Scheme"
+                                                    data-utilitytype="electric-scheme" data-selectedutility="Electric">
+                                                </lightning-button>
+                                            </template>
+                                            <template if:false={scheme.recordId}>
+                                                <lightning-button class="slds-m-top_small" variant="brand" type="submit"
+                                                    label="Create Electric Scheme"
+                                                    data-utilitytype="electric-scheme" data-selectedutility="Electric">
+                                                </lightning-button>
+                                            </template>
+
+                                            <!--onclick={handleSubmitScheme}-->
+
+                                        </lightning-record-edit-form>
+                                        <!--isElectric-->
+                                    </template>
+
+                                    <template if:true={scheme.isGas}>
+                                        <lightning-record-edit-form object-api-name="Site_Scheme__c"
+                                            record-type-id={scheme.utilityRecordTypeId} record-id={scheme.recordId}
+                                            onsuccess={handleSuccessCreateScheme}>
+                                            <lightning-messages></lightning-messages>
+                                            <!--onsubmit={handleSubmitScheme} onsuccess={handleSuccessCreateScheme}-->
+
+                                            <lightning-input-field name="Estimate__c" field-name="Estimate__c"
+                                                value={recordId} class="slds-hide" data-utilitytype="all-scheme">
+                                            </lightning-input-field>
+                                            <lightning-input-field name="Site__c" field-name="Site__c" value={opp_Site}
+                                                class="slds-hide" data-utilitytype="all-scheme"></lightning-input-field>
+                                            <lightning-input-field name="Project__c" field-name="Project__c"
+                                                value={opp_Project} class="slds-hide" data-utilitytype="all-scheme">
+                                            </lightning-input-field>
+
+                                            <lightning-accordion active-section-name='Plot Types' allow-multiple-sections-open>
+                                            <lightning-accordion-section name='Plot Types' label='Plot Types'
+                                                key={scheme.utilityType}>
+                                                <div>
+                                                    Total Number of Plots : {gas_totalNumberOfPlots}
+                                                </div>
+                                                <lightning-layout>
+
+                                                    <lightning-layout-item flexibility="auto">
+                                                        <lightning-input-field field-name="No_of_Commercial__c"
+                                                            class="gas-scheme" data-utilitytype="gas-scheme-plot"
+                                                            onchange={calculatePlots}>
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item flexibility="auto">
+                                                        <lightning-input-field field-name="No_of_Houses__c"
+                                                            class="gas-scheme" data-utilitytype="gas-scheme-plot"
+                                                            onchange={calculatePlots}>
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+
+                                                    <lightning-layout-item flexibility="auto">
+                                                        <lightning-input-field field-name="No_of_Landlord__c"
+                                                            class="gas-scheme" data-utilitytype="gas-scheme-plot"
+                                                            onchange={calculatePlots}>
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+
+                                                    <lightning-layout-item flexibility="auto">
+                                                        <lightning-input-field field-name="No_of_Flats__c"
+                                                            class="gas-scheme" data-utilitytype="gas-scheme-plot"
+                                                            onchange={calculatePlots}>
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+
+                                                </lightning-layout>
+                                            </lightning-accordion-section>
+                                            </lightning-accordion>
+
+                                            <lightning-layout multiple-rows>
+                                                <!--<lightning-layout-item size="3">
+                                                        <lightning-input-field field-name="No_of_Units__c"
+                                                            required="true">
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item size="4" class="slds-p-left_x-large">
+                                                        <lightning-input-field field-name="Units_Type__c"
+                                                            required="true">
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item size="3">
+                                                        <lightning-input-field field-name="Total_Load_kwh__c"
+                                                            required="true"> </lightning-input-field>
+                                                    </lightning-layout-item>
+                                                <lightning-layout-item size="3">
+                                                        <lightning-input-field field-name="Metering__c">
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>-->
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Product_Family__c"
+                                                        class="gas-scheme" data-utilitytype="gas-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="CSEP__c" class="gas-scheme"
+                                                        data-utilitytype="gas-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Asset_Value__c"
+                                                        class="gas-scheme" data-utilitytype="gas-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Non_Contestable_Cost__c"
+                                                        class="gas-scheme" data-utilitytype="gas-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="GT__c" class="gas-scheme"
+                                                        data-utilitytype="gas-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="IGT__c" class="gas-scheme"
+                                                        data-utilitytype="gas-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <!--<lightning-layout-item size="3">
+                                                        <lightning-input-field field-name="GT_Reference__c">
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item size="3">
+                                                        <lightning-input-field field-name="IGT_Reference__c">
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+
+                                                    <lightning-layout-item size="3">
+                                                        <lightning-input-field field-name="Number_of_Govenors__c">
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item size="3">
+                                                        <lightning-input-field field-name="Govenor_Enclosure_Type__c">
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item size="3">
+                                                        <lightning-input-field field-name="Govenor_Size__c">
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>-->
+
+
+                                                <lightning-layout-item size="3">
+                                                    <label class='slds-form-element__label'
+                                                        for={scheme.utilityType}>CSEP to
+                                                        Boundary (m)</label>
+                                                    <lightning-input-field id={scheme.utilityType}
+                                                        field-name="To_Boundary__c" class="gas-scheme"
+                                                        data-utilitytype="gas-scheme" variant="label-hidden">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="No_of_Joint_Bays__c"
+                                                        class="gas-scheme" data-utilitytype="gas-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Traffic_Management__c"
+                                                        class="gas-scheme" data-utilitytype="gas-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Onsite_Excavation__c"
+                                                        class="gas-scheme" data-utilitytype="gas-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                            </lightning-layout>
+
+
+                                            <template if:true={scheme.recordId}>
+                                                <lightning-button class="slds-m-top_small" variant="brand" type="submit"
+                                                    label="Update Gas Scheme"
+                                                    data-utilitytype="gas-scheme" data-selectedutility="Gas">
+                                                </lightning-button>
+                                            </template>
+                                            <template if:false={scheme.recordId}>
+                                                <lightning-button class="slds-m-top_small" variant="brand" type="submit"
+                                                    label="Create Gas Scheme"
+                                                    data-utilitytype="gas-scheme" data-selectedutility="Gas">
+                                                </lightning-button>
+                                            </template>
+
+                                        </lightning-record-edit-form>
+
+                                    </template>
+
+                                    <template if:true={scheme.isWater}>
+
+                                        <lightning-record-edit-form object-api-name="Site_Scheme__c"
+                                            record-type-id={scheme.utilityRecordTypeId} record-id={scheme.recordId}
+                                            onsuccess={handleSuccessCreateScheme}>
+                                            <lightning-messages></lightning-messages>
+                                            <!--onsubmit={handleSubmitScheme} onsuccess={handleSuccessCreateScheme}-->
+
+                                            <lightning-input-field name="Estimate__c" field-name="Estimate__c"
+                                                value={recordId} class="slds-hide" data-utilitytype="all-scheme">
+                                            </lightning-input-field>
+                                            <lightning-input-field name="Site__c" field-name="Site__c" value={opp_Site}
+                                                class="slds-hide" data-utilitytype="all-scheme"></lightning-input-field>
+                                            <lightning-input-field name="Project__c" field-name="Project__c"
+                                                value={opp_Project} class="slds-hide" data-utilitytype="all-scheme">
+                                            </lightning-input-field>
+
+                                            <lightning-accordion active-section-name='Plot Types' allow-multiple-sections-open>
+                                            <lightning-accordion-section name='Plot Types' label='Plot Types'
+                                                key={scheme.utilityType}>
+                                                <div>
+                                                    Total Number of Plots : {water_totalNumberOfPlots}
+                                                </div>
+                                                <lightning-layout>
+
+                                                    <lightning-layout-item flexibility="auto">
+                                                        <lightning-input-field field-name="No_of_Commercial__c"
+                                                            class="water-scheme" data-utilitytype="water-scheme-plot"
+                                                            onchange={calculatePlots}>
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item flexibility="auto">
+                                                        <lightning-input-field field-name="No_of_Houses__c"
+                                                            class="water-scheme" data-utilitytype="water-scheme-plot"
+                                                            onchange={calculatePlots}>
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+
+                                                    <lightning-layout-item flexibility="auto">
+                                                        <lightning-input-field field-name="No_of_Landlord__c"
+                                                            class="water-scheme" data-utilitytype="water-scheme-plot"
+                                                            onchange={calculatePlots}>
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+
+                                                    <lightning-layout-item flexibility="auto">
+                                                        <lightning-input-field field-name="No_of_Flats__c"
+                                                            class="water-scheme" data-utilitytype="water-scheme-plot"
+                                                            onchange={calculatePlots}>
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item flexibility="auto">
+                                                        <lightning-input-field field-name="No_of_TBS__c"
+                                                            class="water-scheme" data-utilitytype="gas-scheme-plot"
+                                                            onchange={calculatePlots}>
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+
+                                                </lightning-layout>
+                                            </lightning-accordion-section>
+                                            </lightning-accordion>
+
+                                            <lightning-layout multiple-rows>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Product_Family__c"
+                                                        class="water-scheme" data-utilitytype="water-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Water_Provider__c"
+                                                        class="water-scheme" data-utilitytype="water-scheme"
+                                                        required="true"></lightning-input-field>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Pipe_Type__c"
+                                                        class="water-scheme" data-utilitytype="water-scheme"
+                                                        required="true">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Asset_Value__c"
+                                                        class="water-scheme" data-utilitytype="water-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Non_Contestable_Cost__c"
+                                                        class="water-scheme" data-utilitytype="water-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Infrastructure_Charges__c"
+                                                        class="water-scheme" data-utilitytype="water-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <label class='slds-form-element__label'
+                                                        for={scheme.utilityType}>Source
+                                                        of Water to Boundary (m)</label>
+                                                    <lightning-input-field id={scheme.utilityType}
+                                                        field-name="To_Boundary__c" class="water-scheme"
+                                                        data-utilitytype="water-scheme" variant="label-hidden">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="No_of_Joint_Bays__c"
+                                                        class="water-scheme" data-utilitytype="water-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Traffic_Management__c"
+                                                        class="water-scheme" data-utilitytype="water-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Onsite_Excavation__c"
+                                                        class="water-scheme" data-utilitytype="water-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                            </lightning-layout>
+
+
+                                            <template if:true={scheme.recordId}>
+                                                <lightning-button class="slds-m-top_small" variant="brand" type="submit"
+                                                    label="Update Water Scheme"
+                                                    data-utilitytype="water-scheme" data-selectedutility="Water">
+                                                </lightning-button>
+                                            </template>
+                                            <template if:false={scheme.recordId}>
+                                                <lightning-button class="slds-m-top_small" variant="brand" type="submit"
+                                                    label="Create Water Scheme"
+                                                    data-utilitytype="water-scheme" data-selectedutility="Water">
+                                                </lightning-button>
+                                            </template>
+
+                                        </lightning-record-edit-form>
+                                    </template>
+
+                                    <template if:true={scheme.isCharger}>
+
+                                        <lightning-record-edit-form object-api-name="Site_Scheme__c"
+                                            record-type-id={scheme.utilityRecordTypeId} record-id='{scheme.recordId}'
+                                            onsuccess={handleSuccessCreateScheme}>
+                                            <lightning-messages></lightning-messages>
+                                            <!--onsubmit={handleSubmitScheme} onsuccess={handleSuccessCreateScheme}-->
+
+                                            <lightning-input-field name="Estimate__c" field-name="Estimate__c"
+                                                value={recordId} class="slds-hide" data-utilitytype="all-scheme">
+                                            </lightning-input-field>
+                                            <lightning-input-field name="Site__c" field-name="Site__c" value={opp_Site}
+                                                class="slds-hide" data-utilitytype="all-scheme"></lightning-input-field>
+                                            <lightning-input-field name="Project__c" field-name="Project__c"
+                                                value={opp_Project} class="slds-hide" data-utilitytype="all-scheme">
+                                            </lightning-input-field>
+
+                                            <lightning-layout multiple-rows>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Product_Family__c"
+                                                        class="charger-scheme" data-utilitytype="charger-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Asset_Value__c"
+                                                        class="charger-scheme" data-utilitytype="charger-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Non_Contestable_Cost__c"
+                                                        class="charger-scheme" data-utilitytype="charger-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="DNO__c" class="charger-scheme"
+                                                        data-utilitytype="charger-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="IDNO__c" class="charger-scheme"
+                                                        data-utilitytype="charger-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <label class='slds-form-element__label' for={scheme.utilityType}>POC
+                                                        to Boundary (m)</label>
+                                                    <lightning-input-field id={scheme.utilityType}
+                                                        field-name="To_Boundary__c" class="charger-scheme"
+                                                        data-utilitytype="charger-scheme" variant="label-hidden">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="No_of_Joint_Bays__c"
+                                                        class="charger-scheme" data-utilitytype="charger-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="POC__c" required="true"
+                                                        class="charger-scheme" data-utilitytype="charger-scheme"
+                                                        onchange={pocTypeChange}>
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <template if:true={isHV}>
+                                                    <lightning-layout-item size="3">
+                                                        <lightning-input-field field-name="Number_of_Substations__c"
+                                                            class="charger-scheme" data-utilitytype="charger-scheme">
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+                                                </template>
+                                                <template if:true={isLV}>
+                                                    <lightning-layout-item size="3">
+                                                        <lightning-input-field field-name="Number_of_Link_Boxes__c"
+                                                            class="charger-scheme" data-utilitytype="charger-scheme">
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+                                                </template>
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Traffic_Management__c"
+                                                        class="charger-scheme" data-utilitytype="charger-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Offsite_Excavation__c"
+                                                        class="charger-scheme" data-utilitytype="charger-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Onsite_Excavation__c"
+                                                        class="charger-scheme" data-utilitytype="charger-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Mains_Cable_length__c"
+                                                        class="charger-scheme" data-utilitytype="charger-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                            </lightning-layout>
+
+
+                                            <template if:true={scheme.recordId}>
+                                                <lightning-button class="slds-m-top_small" variant="brand" type="submit"
+                                                    label="Update Charger Scheme"
+                                                    data-utilitytype="charger-scheme" data-selectedutility="Charger">
+                                                </lightning-button>
+                                            </template>
+                                            <template if:false={scheme.recordId}>
+                                                <lightning-button class="slds-m-top_small" variant="brand" type="submit"
+                                                    label="Create Charger Scheme"
+                                                    data-utilitytype="charger-scheme" data-selectedutility="Charger">
+                                                </lightning-button>
+                                            </template>
+
+                                        </lightning-record-edit-form>
+                                        <!--isCharger-->
+                                    </template>
+
+                                    <template if:true={scheme.isStreetLightning}>
+
+                                        <lightning-record-edit-form object-api-name="Site_Scheme__c"
+                                            record-type-id={scheme.utilityRecordTypeId} record-id='{scheme.recordId}'
+                                            onsuccess={handleSuccessCreateScheme}>
+                                            <lightning-messages></lightning-messages>
+                                            <!--onsubmit={handleSubmitScheme} onsuccess={handleSuccessCreateScheme}-->
+
+                                            <lightning-input-field name="Estimate__c" field-name="Estimate__c"
+                                                value={recordId} class="slds-hide" data-utilitytype="all-scheme">
+                                            </lightning-input-field>
+                                            <lightning-input-field name="Site__c" field-name="Site__c" value={opp_Site}
+                                                class="slds-hide" data-utilitytype="all-scheme"></lightning-input-field>
+                                            <lightning-input-field name="Project__c" field-name="Project__c"
+                                                value={opp_Project} class="slds-hide" data-utilitytype="all-scheme">
+                                            </lightning-input-field>
+
+                                            <lightning-accordion active-section-name='Street Light Types' allow-multiple-sections-open>
+                                            <lightning-accordion-section name='Street Light Types'
+                                                label='Street Light Types' key={scheme.utilityType}>
+                                                <div>
+                                                    Total Number of Plots : {street_totalNumberOfPlots}
+                                                </div>
+                                                <lightning-layout>
+
+                                                    <lightning-layout-item flexibility="auto">
+                                                        <lightning-input-field field-name="X5m__c" class="street-scheme"
+                                                            data-utilitytype="street-scheme-plot"
+                                                            onchange={calculatePlots}>
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item flexibility="auto">
+                                                        <lightning-input-field field-name="X6m__c" class="street-scheme"
+                                                            data-utilitytype="street-scheme-plot"
+                                                            onchange={calculatePlots}>
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+                                                    <lightning-layout-item flexibility="auto">
+                                                        <lightning-input-field field-name="X6m_Hinged__c"
+                                                            class="street-scheme" data-utilitytype="street-scheme-plot"
+                                                            onchange={calculatePlots}>
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+
+                                                    <lightning-layout-item flexibility="auto">
+                                                        <lightning-input-field field-name="X8m__c" class="street-scheme"
+                                                            data-utilitytype="street-scheme-plot"
+                                                            onchange={calculatePlots}>
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+
+                                                    <lightning-layout-item flexibility="auto">
+                                                        <lightning-input-field field-name="X10m__c"
+                                                            class="street-scheme" data-utilitytype="gas-scheme-plot"
+                                                            onchange={calculatePlots}>
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+
+                                                    <lightning-layout-item flexibility="auto">
+                                                        <lightning-input-field field-name="X12m__c"
+                                                            class="street-scheme" data-utilitytype="gas-scheme-plot"
+                                                            onchange={calculatePlots}>
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+                                                </lightning-layout>
+                                            </lightning-accordion-section>
+                                            </lightning-accordion>
+
+                                            <lightning-layout multiple-rows>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Product_Family__c"
+                                                        class="street-scheme" data-utilitytype="street-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="IDNO__c" class="street-scheme"
+                                                        data-utilitytype="street-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Streetlighting_Location__c"
+                                                        class="street-scheme" data-utilitytype="street-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="No_of_Joint_Bays__c"
+                                                        class="street-scheme" data-utilitytype="street-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Column_Hole_Excavation__c"
+                                                        class="street-scheme" data-utilitytype="street-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Number_of_street_Lights__c"
+                                                        class="street-scheme" data-utilitytype="street-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field
+                                                        field-name="Number_of_Master_Control_Systems__c"
+                                                        class="street-scheme" data-utilitytype="street-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Number_of_Sub_Control_Systems__c"
+                                                        class="street-scheme" data-utilitytype="street-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Traffic_Management__c"
+                                                        class="street-scheme" data-utilitytype="street-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Offsite_Excavation__c"
+                                                        class="street-scheme" data-utilitytype="street-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Onsite_Excavation__c"
+                                                        class="street-scheme" data-utilitytype="street-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Mains_Cable_length__c"
+                                                        class="street-scheme" data-utilitytype="street-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                            </lightning-layout>
+
+                                            <template if:true={scheme.recordId}>
+                                                <lightning-button class="slds-m-top_small" variant="brand" type="submit"
+                                                    label="Update Steet Lights Scheme"
+                                                    data-utilitytype="street-scheme" data-selectedutility="Street Lights">
+                                                </lightning-button>
+                                            </template>
+                                            <template if:false={scheme.recordId}>
+                                                <lightning-button class="slds-m-top_small" variant="brand" type="submit"
+                                                    label="Create Steet Lights Scheme"
+                                                    data-utilitytype="street-scheme" data-selectedutility="Street Lights">
+                                                </lightning-button>
+                                            </template>
+
+                                        </lightning-record-edit-form>
+                                        <!--isStreetLightning-->
+                                    </template>
+                                </div>
+
+                            </lightning-accordion-section>
+                        </template>
+                    </lightning-accordion>
+
+
+                </div>
+
+                <div class="stepThree slds-hide">
+                    <div class="slds-m-top_medium slds-align_absolute-center">
+                        <lightning-button variant="brand" label="Save Products" title="Save Products"
+                            onclick={saveUtilityProducts}>
+                        </lightning-button>
+                    </div>
+                    <lightning-accordion allow-multiple-sections-open class="example-accordion"
+                        onsectiontoggle={handleToggleSection} active-section-name='Electric'>
+
+                        <template for:each={utilityItems} for:item="utilityItem">
+                            <lightning-accordion-section name={utilityItem.utilityType} label={utilityItem.utilityType}
+                                key={utilityItem.index}>
+                                <div class="slds-box slds-m-bottom_medium">
+                                    <lightning-layout>
+                                        <lightning-layout-item flexibility="auto">
+                                            <div class="slds-text-align_left">
+                                                <div>{utilityItem.noOfAvailableRules} rules are available for selection
+                                                </div>
+                                                <div>{utilityItem.noOfSeletcedRules} of {utilityItem.noOfAvailableRules}
+                                                    rules have been selected for this utility</div>
+                                                <!--<lightning-formatted-number value="12.34" format-style="currency" currency-code="USD"></lightning-formatted-number>-->
+                                            </div>
+
+                                        </lightning-layout-item>
+
+                                        <lightning-layout-item flexibility="auto">
+                                            <div class="slds-text-align_center">
+                                                <div>Total Material Sell</div>
+                                                <div>
+                                                    <lightning-formatted-number value={utilityItem.totalKitSell}
+                                                        format-style="currency" currency-code="EUR"
+                                                        currency-display-as="symbol" minimum-fraction-digits="2"
+                                                        maximum-fraction-digits="2"></lightning-formatted-number>
+                                                </div>
+                                                <!--<lightning-formatted-number value="12.34" format-style="currency" currency-code="USD"></lightning-formatted-number>-->
+                                            </div>
+
+                                        </lightning-layout-item>
+
+                                        <lightning-layout-item flexibility="auto" padding="">
+                                            <div class="slds-text-align_center">
+                                                <div>Total Labour Sell</div>
+                                                <div>
+                                                    <lightning-formatted-number value={utilityItem.totalLabourSell}
+                                                        format-style="currency" currency-code="EUR"
+                                                        currency-display-as="symbol" minimum-fraction-digits="2"
+                                                        maximum-fraction-digits="2"></lightning-formatted-number>
+                                                </div>
+                                            </div>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item flexibility="auto" padding="">
+                                            <div class="slds-text-align_center">
+                                                <div>Total Plant Sell</div>
+                                                <div>
+                                                    <lightning-formatted-number value={utilityItem.totalPlantSell}
+                                                        format-style="currency" currency-code="EUR"
+                                                        currency-display-as="symbol" minimum-fraction-digits="2"
+                                                        maximum-fraction-digits="2"></lightning-formatted-number>
+                                                </div>
+                                            </div>
+                                        </lightning-layout-item>
+                                        <!-- <lightning-layout-item flexibility="auto" padding="">
+                                            <div class="slds-text-align_center">
+                                                <div>Total Client Contribution</div>
+                                                <div>
+                                                    <lightning-formatted-number
+                                                        value={utilityItem.totalClientContribution}
+                                                        format-style="currency" currency-code="EUR"
+                                                        currency-display-as="symbol" minimum-fraction-digits="2"
+                                                        maximum-fraction-digits="2"></lightning-formatted-number>
+                                                </div>
+                                            </div>
+                                        </lightning-layout-item>-->
+                                    </lightning-layout>
+                                </div>
+                                <table
+                                    class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                                    <thead>
+                                        <tr class="slds-line-height_reset">
+                                            <th class="" scope="col">
+                                                <div class="slds-truncate" title="PRODUCT NAME">Product Name</div>
+                                            </th>
+                                            <th class="" scope="col">
+                                                <div class="slds-truncate" title="PRODUCT FAMILY">Product Family</div>
+                                            </th>
+
+                                            <th class="" scope="col">
+                                                <div class="slds-truncate" title="PRODUCT CODE">Product Code</div>
+                                            </th>
+
+                                            <th class="" scope="col">
+                                                <div class="slds-truncate" title="QUANTITY">Quantity</div>
+                                            </th>
+
+                                            <th class="" scope="col">
+                                                <div class="slds-truncate" title="IMPLEMENTOR">Implementor</div>
+                                            </th>
+
+                                            <th class="" scope="col">
+                                                <div class="slds-truncate" title="Material SELL">Material Sell</div>
+                                            </th>
+
+                                            <th class="" scope="col">
+                                                <div class="slds-truncate" title="LABOUR SELL">Labour Sell</div>
+                                            </th>
+
+                                            <!--<th class="" scope="col">
+                                                <div class="slds-truncate" title="MATERIAL SELL">Material Sell</div>
+                                            </th>
+
+                                            <th class="" scope="col">
+                                                <div class="slds-truncate" title="MATERIAL SELL">Material Cost</div>
+                                            </th>-->
+
+                                            <th class="" scope="col">
+                                                <div class="slds-truncate" title="PLANT SELL">Plant Sell</div>
+                                            </th>
+
+                                            <!--<th class="" scope="col">
+                                                <div class="slds-truncate" title="PLANT Cost">Plant Cost</div>
+                                            </th>-->
+
+                                            <th class="" scope="col">
+                                                <div class="slds-truncate" title="PRODUCT TYPE">Product Type</div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <template for:each={utilityItem.oppProducts} for:item="item">
+                                            <tr key={item.Id}>
+                                                <template if:false={item.isNew}>
+                                                    <th data-label="Product Name" scope="row">
+                                                        <lightning-layout>
+                                                            <div class="slds-m-right_small">
+                                                                <lightning-layout-item style="width: 35px;">
+                                                                    <lightning-icon icon-name="action:close"
+                                                                        size="xx-small" alternative-text="Remove"
+                                                                        title="Remove" style="cursor:pointer"
+                                                                        onclick={openDeleteProductModal}
+                                                                        data-utilitytype={utilityItem.utilityType}
+                                                                        data-parentindex={utilityItem.index}
+                                                                        data-index={item.index} data-id={item.Id}>
+                                                                    </lightning-icon>
+                                                                </lightning-layout-item>
+                                                            </div>
+                                                            <div>
+                                                                <lightning-layout-item style="line-height: 32px;"
+                                                                    class="slds-truncate">
+                                                                    <a class="slds-cell-wrap" href={item.productUrl}
+                                                                        tabindex="-1"
+                                                                        target="_blank">{item.oppLineItem.Product2Id__r.Name}</a>
+                                                                </lightning-layout-item>
+                                                            </div>
+                                                        </lightning-layout>
+                                                    </th>
+                                                </template>
+                                                <template if:true={item.isNew}>
+                                                    <th data-label="Product Name" scope="row">
+                                                        <lightning-layout>
+                                                            <template if:true={item.isRemoveable}>
+                                                                <lightning-layout-item>
+                                                                    <lightning-icon icon-name="action:close"
+                                                                        size="xx-small" alternative-text="Remove"
+                                                                        title="Remove" style="cursor:pointer"
+                                                                        onclick={removeProduct}
+                                                                        data-utilitytype={utilityItem.utilityType}
+                                                                        data-parentindex={utilityItem.index}
+                                                                        data-index={item.index}>
+                                                                    </lightning-icon>
+                                                                </lightning-layout-item>
+                                                            </template>
+                                                            <div class="slds-col lookup1">
+                                                                <template if:true={item.selection}>
+                                                                    <c-lookup data-utilitytype={utilityItem.utilityType}
+                                                                        data-parentindex={utilityItem.index}
+                                                                        data-index={item.index} errors={item.errors}
+                                                                        onsearch={handleSearch}
+                                                                        onselectionchange={handleSelectionChange}
+                                                                        placeholder={item.placeholderLabel}
+                                                                        scroll-after-n-items="10"
+                                                                        selection={item.selection}>
+                                                                    </c-lookup>
+                                                                </template>
+                                                                <template if:false={item.selection}>
+                                                                    <c-lookup data-utilitytype={utilityItem.utilityType}
+                                                                        data-parentindex={utilityItem.index}
+                                                                        data-index={item.index} errors={item.errors}
+                                                                        onsearch={handleSearch}
+                                                                        onselectionchange={handleSelectionChange}
+                                                                        placeholder={item.placeholderLabel}
+                                                                        scroll-after-n-items="10">
+                                                                    </c-lookup>
+                                                                </template>
+                                                            </div>
+                                                        </lightning-layout>
+                                                    </th>
+                                                </template>
+
+                                                <td data-label="Product Family">
+                                                    <div class="slds-truncate" title={item.Family}>
+                                                        {item.oppLineItem.Product2Id__r.Family}
+                                                    </div>
+                                                </td>
+
+                                                <td data-label="Product Code">
+                                                    <div class="slds-truncate" title={item.ProductCode}>
+                                                        {item.ProductCode}
+                                                    </div>
+                                                </td>
+
+                                                <td data-label="Quantity" class="slds-text-align_center">
+                                                    <lightning-input type="number" name="Quantity__c"
+                                                        value={item.oppLineItem.Quantity__c} min=0 step="0.1"
+                                                        variant="label-hidden" data-index={item.index}
+                                                        data-parentindex={utilityItem.index} onchange={inputChanged}
+                                                        required>
+                                                    </lightning-input>
+                                                </td>
+
+                                                <td data-label="Implementor">
+                                                    <lightning-record-edit-form object-api-name="Product2">
+                                                        <!--<lightning-layout>
+                                                            <lightning-layout-item>
+                                                                <lightning-input-field field-name="Implementor__c" data-index={item.index} data-parentindex={utilityItem.index}
+                                                                    variant="label-hidden" value={item.oppLineItem.Implementor__c} onchange={inputChanged}></lightning-input-field>
+                                                            </lightning-layout-item>
+                                                        </lightning-layout>-->
+                                                        <lightning-input-field field-name="Implementor__c"
+                                                            data-index={item.index} data-parentindex={utilityItem.index}
+                                                            variant="label-hidden"
+                                                            value={item.oppLineItem.Implementor__c}
+                                                            onchange={inputChanged}></lightning-input-field>
+                                                    </lightning-record-edit-form>
+                                                </td>
+
+
+                                                <td data-label="Kit Sell" class="slds-text-align_center">
+                                                    <lightning-input type="number" name="Kit_Sell__c"
+                                                        value={item.oppLineItem.Kit_Sell__c} min=0 step="0.01"
+                                                        variant="label-hidden" data-index={item.index}
+                                                        data-parentindex={utilityItem.index} onchange={inputChanged}
+                                                        required>
+                                                    </lightning-input>
+                                                </td>
+
+
+
+                                                <td data-label="Labour Sell" class="slds-text-align_center">
+                                                    <!--<lightning-input type="number" name="Labour_Sell__c" value={item.Labour_Sell__c} min=0 step="0.01"
+                                                        variant="label-hidden" data-index={item.index} onchange={inputChanged} required>
+                                                    </lightning-input>-->
+                                                    <lightning-input type="number" name="Labour_Sell__c"
+                                                        value={item.oppLineItem.Labour_Sell__c} min=0 step="0.01"
+                                                        variant="label-hidden" data-index={item.index}
+                                                        data-parentindex={utilityItem.index} onchange={inputChanged}>
+                                                    </lightning-input>
+                                                </td>
+
+
+                                                <!--<td data-label="Material Sell" class="">
+                                                    <div class="slds-truncate" title={item.oppLineItem.Material_Sell__c}>
+                                                        <lightning-formatted-number
+                                                            value={item.oppLineItem.Material_Sell__c}
+                                                            format-style="currency" currency-code="EUR"
+                                                            currency-display-as="symbol" minimum-fraction-digits="2"
+                                                            maximum-fraction-digits="2"></lightning-formatted-number>
+                                                    </div>
+                                                </td>
+
+                                                <td data-label="Material Cost" class="">
+                                                    <div class="slds-truncate" title={item.oppLineItem.Material_Cost__c}>
+                                                        <lightning-formatted-number
+                                                            value={item.oppLineItem.Material_Cost__c}
+                                                            format-style="currency" currency-code="EUR"
+                                                            currency-display-as="symbol" minimum-fraction-digits="2"
+                                                            maximum-fraction-digits="2"></lightning-formatted-number>
+                                                    </div>
+                                                </td>-->
+
+                                                <td data-label="Plant Sell" class="">
+                                                    <!--<div class="slds-truncate" title={item.oppLineItem.Plant_Sell__c}>
+                                                        <lightning-formatted-number value={item.oppLineItem.Plant_Sell__c}
+                                                            format-style="currency" currency-code="EUR"
+                                                            currency-display-as="symbol" minimum-fraction-digits="2"
+                                                            maximum-fraction-digits="2"></lightning-formatted-number>
+                                                    </div>-->
+                                                    <lightning-input type="number" name="Plant_Sell__c"
+                                                        value={item.oppLineItem.Plant_Sell__c} min=0 step="0.01"
+                                                        variant="label-hidden" data-index={item.index}
+                                                        data-parentindex={utilityItem.index} onchange={inputChanged}>
+                                                    </lightning-input>
+
+                                                </td>
+
+                                                <!--<td data-label="Plant Cost" class="">
+                                                    <div class="slds-truncate" title={item.oppLineItem.Plant_Cost__c}>
+                                                        <lightning-formatted-number value={item.oppLineItem.Plant_Cost__c}
+                                                            format-style="currency" currency-code="EUR"
+                                                            currency-display-as="symbol" minimum-fraction-digits="2"
+                                                            maximum-fraction-digits="2"></lightning-formatted-number>
+                                                    </div>
+                                                </td>-->
+
+                                                <td data-label="Product Type">
+                                                    <div class="slds-truncate" title={item.ProductType}>
+                                                        {item.ProductType}
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                        </template>
+                                        <tr>
+                                            <td colspan="10">
+                                                <div class="slds-text-align_left">
+                                                    <lightning-button variant="brand" label="Add New Product"
+                                                        class="slds-m-right_medium" title="Add New Product"
+                                                        onclick={addNewProduct} data-parentindex={utilityItem.index}
+                                                        data-utilitytype={utilityItem.utilityType}>
+                                                    </lightning-button>
+                                                    <lightning-button variant="brand" label="Add Rules"
+                                                        title="Add Rules" onclick={openSelectRuleModal}
+                                                        data-parentindex={utilityItem.index}
+                                                        data-utilitytype={utilityItem.utilityType}>
+
+                                                    </lightning-button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+
+
+                            </lightning-accordion-section>
+                        </template>
+                    </lightning-accordion>
+
+                </div>
+
+                <div class="stepFour slds-hide">
+                    <c-quote-checklist record-id={recordId}>
+                    </c-quote-checklist>
+                </div>
+
+                <div class="stepFive slds-hide">
+                    <c-quote-payment-schedule record-id={recordId}>
+                    </c-quote-payment-schedule>
+                </div>
+
+                <div class="stepSix slds-hide">
+                    <c-quote-p-d-f-editor onpdfready={generatePDFDoc} record-id={recordId}>
+                    </c-quote-p-d-f-editor>
+                </div>
+
+                <div class="stepSeven slds-hide">
+                    <c-quote-email-editor salutation-text={contact_name} content-document-id={contentDocumentId}
+                        content-version-id={contentVersionId} record-id={recordId} quote-id={quoteId}>
+                    </c-quote-email-editor>
+                </div>
+
+                <template if:true={showSelectRuleModal}>
+                    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                        aria-describedby="modal-content-id-3" class="slds-modal slds-fade-in-open slds-modal_small">
+                        <div class="slds-modal__container" style="width:60rem;min-width:30rem;height: 100%;">
+                            <header class="slds-modal__header">
+                                <lightning-button-icon class="slds-modal__close" title="Close" icon-name="utility:close"
+                                    icon-class="slds-button_icon-inverse" onclick={closeSelectRuleModal}>
+                                </lightning-button-icon>
+                                <h2 class="slds-text-heading_medium slds-hyphenate header-string">
+                                    Select Rules
+                                </h2>
+                            </header>
+
+                            <div class="selectRule-content slds-modal__content slds-p-around_medium slds-text-align_center"
+                                id="modal-content-id-3">
+                                <lightning-datatable key-field="Id" data={data} columns={columns}
+                                    onrowselection={handleSelectedRule} column-widths-mode='auto'>
+                                </lightning-datatable>
+                            </div>
+
+                            <footer class="slds-modal__footer modal-hidden">
+                                <lightning-button onclick={saveRule} data-parentindex={selectedRuleParentIndex}
+                                    data-id={productToDeleteId} data-index={productToDeleteIndex} variant="brand"
+                                    label="Save">
+                                </lightning-button>&nbsp;
+                                <lightning-button onclick={closeSelectRuleModal} variant="neutral" label="Cancel">
+                                </lightning-button>
+                            </footer>
+
+                        </div>
+                    </section>
+                    <div class="slds-backdrop slds-backdrop_open"></div>
+                </template>
+
+                <template if:true={showDeleteProductModal}>
+                    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                        aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_small">
+                        <div class="slds-modal__container" style="width:20rem;min-width:20rem;height: 100%;">
+                            <header class="slds-modal__header">
+                                <lightning-button-icon class="slds-modal__close" title="Close" icon-name="utility:close"
+                                    icon-class="slds-button_icon-inverse" onclick={closeDeleteProductModal}>
+                                </lightning-button-icon>
+                                <h2 class="slds-text-heading_medium slds-hyphenate header-string">
+                                    Confirm Delete
+                                </h2>
+                            </header>
+
+                            <div class="delete-content slds-modal__content slds-p-around_medium slds-text-align_center"
+                                id="modal-content-id-1">
+                                <p>Are you sure?</p>
+                            </div>
+
+                            <footer class="slds-modal__footer modal-hidden">
+                                <lightning-button onclick={deleteProduct} data-parentindex={productToDeleteParentIndex}
+                                    data-id={productToDeleteId} data-index={productToDeleteIndex} variant="destructive"
+                                    label="Delete">
+                                </lightning-button>&nbsp;
+                                <lightning-button onclick={closeDeleteProductModal} variant="neutral" label="Cancel">
+                                </lightning-button>
+                            </footer>
+
+                        </div>
+                    </section>
+                    <div class="slds-backdrop slds-backdrop_open"></div>
+                </template>
+
+                <template if:true={showSpinner}>
+                    <lightning-spinner variant="brand" size="large">
+                    </lightning-spinner>
+                </template>
+            </div>
+            <!-- Modal/Popup Box LWC footer starts here -->
+            <footer class="slds-modal__footer">
+                <!--<button class="slds-button slds-button_neutral" onclick={closeModal} title="Cancel">Cancel</button>-->
+                <!--<button class="slds-button slds-button_brand" onclick={submitDetails} title="OK">OK</button>-->
+
+                <div class="slds-p-around_small slds-grid slds-gutters_direct">
+                    <div class="slds-col slds-text-align_left">
+                        <!--<template if:false={firstPage}>-->
+                        <lightning-button icon-name="utility:chevronleft" class="slds-p-around_small" label="Previous"
+                            onclick={previous} disabled={preDisabled}></lightning-button>
+                    </div>
+                    <div class="slds-grid">
+                        <template if:true={firstPage}>
+                            <div class="slds-col">
+                                <lightning-button icon-name="utility:save" class="slds-p-around_small" variant="brand"
+                                    label="Update Opportunity" data-close="false" title="Save" onclick={save}
+                                    disabled={saveDisabled}></lightning-button>
+                            </div>
+                            <div class="slds-col">
+                                <lightning-button class="slds-p-around_small" variant="brand"
+                                    label="Update Opportunity and Close" data-close="true" title="Save and Close"
+                                    onclick={save} disabled={saveDisabled}></lightning-button>
+                            </div>
+                        </template>
+                        <template if:false={firstPage}>
+                            <div class="slds-col">
+                                <lightning-button icon-name="utility:save" class="slds-p-around_small" variant="brand"
+                                    label="Create Estimate" data-close="false" title="Create Estimate" onclick={save}
+                                    disabled={saveDisabled}></lightning-button>
+                            </div>
+                            <div class="slds-col">
+                                <lightning-button class="slds-p-around_small" variant="brand"
+                                    label="Create Estimate and Close" data-close="true"
+                                    title="Create Estimate and Close" onclick={save} disabled={saveDisabled}>
+                                </lightning-button>
+                            </div>
+                        </template>
+                        <div class="slds-col">
+                            <lightning-button class="slds-p-around_small" variant="brand" label="Close"
+                                data-close="true" title="Close" onclick={closeModal}></lightning-button>
+                        </div>
+                    </div>
+
+                    <div class="slds-col slds-text-align_right">
+                        <!--<template if:false={lastPage}>-->
+                        <lightning-button icon-name="utility:chevronright" class="slds-p-around_small" label="Next"
+                            onclick={next} disabled={nextDisabled}></lightning-button>
+
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+
+</template>

@@ -1,0 +1,562 @@
+<apex:page standardController="Opportunity" extensions="opportunityControllerExtension" showHeader="false" renderAs="pdf" contenttype="application/pdf" applyBodyTag="false">
+ <head>
+        <style type="text/css" media="print">
+            @page
+            {
+            size: 8.27in 11.69in;  <!-- A4 -->
+            margin: 0in 0in 0in 0in;
+             
+            @top-center
+            {
+            content: element(header);
+            }
+            
+            @bottom-center
+            {
+            content: element(footer);
+            }
+            
+            div.header
+            {
+            position: running(header);
+            }
+            
+            div.footer
+            {
+            position: running(footer);
+            }
+           
+           
+            }
+            
+            .pagenumber:before
+            {
+            content: counter(page);
+            }
+            
+            .pagecount:before
+            {
+            content: counter(pages);
+            }
+            
+            .my-nowrap 
+            {
+            white-space: nowrap;
+            }
+
+           .pagebreak 
+            { 
+            page-break-after: always; 
+            } 
+
+            .table
+            {
+            width: 600px; 
+            border-collapse: collapse;
+            border: 1px solid black;
+            border-width : 0.5px;
+            border-color: black;
+            }
+            
+                             
+                 
+            .table td
+            {
+            border: 1px solid black;
+            border-width : 0.5px;
+            border-color: black;
+            border-collapse: collapse;
+            }
+            
+            .table tr
+            {
+            border: 1px solid black;
+            border-width : 0.5px;
+            border-color: black;
+            border-collapse: collapse;
+            }
+
+            .tablebox 
+            { 
+            position: absolute; 
+            top: 240px; 
+            left: 45px; 
+            width: 410px; 
+            height: 280px; 
+            background-color: white; 
+            border-style: solid;
+            border-color: #000057;
+            }
+            
+            .tablebox2
+            {
+            position: absolute; 
+            top: 240px; 
+            left: 490px; 
+            width: 255px; 
+            height: 340px; 
+            background-color: white; 
+            border-style: solid;
+            border-color: #000057;
+            }
+            
+            .datatable1
+            {
+            background-color: #000057; 
+            table-layout : fixed;
+            }
+
+            .atttable
+            {
+            border-style: solid;
+            border-color: black;
+            width : 100%;
+            table-layout : fixed;
+            }
+
+            .atttable tr
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : black;
+            font-weight : normal;
+            background-color: white; 
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: black;
+            border-collapse: collapse;
+            }
+            
+            .datatable1 th
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : white;
+            font-weight : normal;
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: black;
+            border-collapse: collapse;
+            }
+
+            .datatable1 td
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : black;
+            font-weight : normal;
+            background-color: white; 
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: black;
+            border-collapse: collapse;
+            }
+
+            .datatable2
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : white;
+            font-weight : normal;
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: white;
+            border-collapse: collapse;
+            text-align: center;
+            background-color: #000057;
+            }
+            
+            .datatable2 th
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : white;
+            font-weight : normal;
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: white;
+            border-collapse: collapse;
+            text-align: center;
+            background-color: #000057;
+            }
+
+            .datatable2 tr
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : white;
+            font-weight : normal;
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: white;
+            border-collapse: collapse;
+            text-align: center;
+            background-color: #000057;
+            }
+
+            .datatable2 thead
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : white;
+            font-weight : normal;
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: white;
+            border-collapse: collapse;
+            text-align: center;
+            background-color: #000057;
+            }
+
+            .datatable2 td
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : white;
+            font-weight : normal;
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: white;
+            border-collapse: collapse;
+            text-align: center;
+            background-color: #000057;
+            }
+
+            .wide 
+            {
+            width: 450px;
+            }
+
+            .tablebox th
+            {
+            font-family: helvetica;
+            font-size: 30px;
+            color : #000057;
+            font-weight : bold;
+            }
+            
+            .tablebox th2
+            {
+            font-family: calibri;
+            font-size: 24px;
+            color : #000057;
+            font-weight : bold;
+            }
+            
+            .tablebox td
+            {
+            font-family: helvetica;
+            font-size: 25px;
+            color : #ff8c00;
+            font-weight : bold;
+            }
+           
+            .tablebox2 th
+            {
+            font-family: calibri;
+            font-size: 14px;
+            color : #000057;
+            font-weight : bold;
+            text-decoration: underline;
+            } 
+           
+            .tablebox2 td
+            {
+            font-family: calibri;
+            font-size: 13px;
+            color : #000057;
+            font-weight : bold;
+            text-align: left;            
+            }
+           
+            .leftaligned
+            {
+            margin-left: 30px;
+            margin-right: auto;
+            }
+
+            thead
+            {
+            font-family: calibri;
+            font-size: 14px;
+            font-weight : bold;
+            background-color: darkblue;
+            border-style: solid;
+            border-color: darkblue;
+            color : red;
+            }
+            
+            footer2
+            {
+            position: relative; 
+            margin-top: -180px; 
+            height: 100px; 
+            clear: both;
+            }
+                 
+            h
+            { 
+            font-family:helvetica;
+            font-size: 30px;
+            font-weight : bold;
+            color : darkblue;
+            }
+            
+            p.detail
+            {
+            font-family: calibri;
+            font-size: 16px;
+            }
+            
+            .alignright { text-align: right; }
+            .alignleft { text-align: left; }
+                        
+            .boxed {
+            border: 1px solid black ;
+            padding: 8px;
+            width: 600px;
+            font-family:helvetica;
+            font-size: 15px;
+            margin-bottom: 5px;
+            }
+            
+            p
+            {
+            }
+                                 
+            p1 
+            {
+            font-family: calibri;
+            font-size: 20px;
+            color : #ff8c00;
+            font-weight : bold;
+            }
+            
+            p2
+            {
+            color : red
+            }
+
+            span.chg
+            {
+            font-family: calibri;
+            font-size: 16px;
+            color : red;
+            text-decoration : underline;
+            }
+            
+            span.chg2
+            {
+            font-family: calibri;
+            font-size: 16px;
+            color : red;
+            text-decoration : normal;
+            }
+
+            hr 
+            {
+            display: block;
+            height: 1px;
+            border: 0;
+            border-top: 1.5px solid #ff8c00;
+            padding: 0;
+            }
+           
+            th
+            {
+            font-family: calibri;
+            font-size: 14px;
+            color : darkblue;
+            font-weight : bold;
+            }
+
+            .footer
+            {
+            position: fixed;
+            bottom: -75px;
+            width: 80%;
+            clear: both;
+            margin:80px; 
+            }
+
+            .eightyfive
+            { 
+            width: 85px;
+            }
+
+            .ten
+            { 
+            width: 10px;
+            }
+
+            .threehundred
+            { 
+            width: 300px%;
+            }
+
+            td2
+            {
+            color : red;
+            }
+            
+
+    </style>
+    </head>      
+    <!------------------------------------------------------------>
+    <!---------               First Page                ---------->
+    <!------------------------------------------------------------>                        
+
+    
+    <div class="header">
+            <apex:image value="{!URLFOR($Resource.ConnectITQuoteFrontPage)}" width="100%" height="100%" />
+    </div>
+    
+    <div class="body">
+       <div class="tablebox">
+         <tablebox>
+            <tr>        
+              <th colspan="3">  {! Opportunity.Account.Name} </th>
+            </tr>
+            <tr>
+              <td class="eightyfive">&nbsp;</td>
+              <td class="ten">&nbsp;</td>
+              <td class="threehundred">&nbsp;</td>
+            </tr>
+             <tr>
+              <th2 class="eightyfive">Project:&nbsp; </th2>
+              <td class="ten">&nbsp;</td>
+              <td class="threehundred">{! Opportunity.Name }</td>
+            </tr>
+            <tr>
+              <td class="eightyfive">&nbsp;</td>
+              <td class="ten">&nbsp;</td>
+              <td class="threehundred">{! oppSite.BillingStreet }</td>
+            </tr>
+            <tr>
+              <td class="eightyfive">&nbsp;</td>
+              <td class="ten">&nbsp;</td>
+              <td class="threehundred">{! oppSite.BillingCity } </td>
+            </tr>
+            <tr>
+              <td class="eightyfive">&nbsp;</td>
+              <td class="ten">&nbsp;</td>
+              <td class="threehundred">{! oppSite.BillingPostalCode} </td>
+            </tr>
+            <tr>
+              <td class="eightyfive">&nbsp;</td>
+              <td class="ten">&nbsp;</td>
+              <td class="threehundred">{! oppSite.BillingCountry} </td>
+            </tr>
+          </tablebox>
+        </div>
+            
+        <div class="tablebox2" >
+          <tablebox2 >
+            <tr>
+               <th></th>
+               <th></th>
+               <th>{! Opportunity.Type}</th>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>{! Opportunity.Owner.Title} </td>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>                
+               <td>&nbsp;</td>
+               <td>{! Opportunity.Owner.FirstName} {! Opportunity.Owner.LastName}</td>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>Date &nbsp;<apex:outputText value="{0,date,dd'.'MM'.'yyyy}"><apex:param value="{! Opportunity.Estimate_date__c }" /></apex:outputText></td>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+             </tr>
+             <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>Connect IT Utility Services</td>
+              </tr>                               
+              <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>Foundation House Unit C (West) Hamilton Business Park</td>
+              </tr>
+              <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>Hamilton Way</td>
+              </tr>
+              <tr>
+               <td>&nbsp;</td>                
+               <td>&nbsp;</td>
+               <td>Hedge End</td>
+              </tr>
+              <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>Southampton</td>
+              </tr>
+              <tr>
+               <td>&nbsp;</td>                
+               <td>&nbsp;</td>
+               <td>SO30 2JR</td>
+              </tr>
+              <tr>
+               <td>&nbsp;</td>                
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               </tr>
+               <tr>
+                <td>&nbsp;</td>
+                <td>T:&nbsp;</td>
+                <td>{! Opportunity.Owner.Phone}</td>
+               </tr>
+               <tr>
+                <td>&nbsp;</td>                
+                <td>E:&nbsp;</td>
+                <td>{! Opportunity.Owner.Email}</td>
+               </tr>
+               <tr>
+                <td>&nbsp;</td>
+                <td>W:&nbsp;</td>
+                <td>www.cius.co.uk</td>
+               </tr>                 
+           </tablebox2>
+          </div>
+        </div>
+    
+                     <table2>
+                      <tr>
+                       <th align="left" width="50%" colspan="1" >Project Ref - </th>
+                       <th style="text-align:center" width="50%" colspan="4" >Charge Point Services</th>
+                     </tr>
+                    </table2>
+    
+                    <table2>
+                      <tr>
+                       <th align="left" width="50%" >ICP Works</th>
+                       <th style="text-align:center" width="10%">UOM</th>
+                       <th style="text-align:center" width="10%">Qty</th>                       
+                       <th style="text-align:center" width="15%">Rate</th>
+                       <th style="text-align:center" width="15%">Total</th>
+                     </tr>
+                    </table2>
+    
+    
+    <div class="footer" >
+       <p1>Let&#39;s get connected</p1>
+        <hr></hr>
+    </div>                               
+  
+    </apex:page>

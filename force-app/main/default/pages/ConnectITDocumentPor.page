@@ -1,0 +1,142 @@
+<apex:page standardController="Task" showHeader="false" renderAs="pdf" contenttype="application/pdf" applyBodyTag="false">
+ <head>
+        <style type="text/css" media="print">
+            @page
+            {
+            size: 8.27in 11.69in;  <!-- A4 -->
+            margin: 0in 0in 0in 0in;
+             
+            @top-center
+            {
+            content: element(header);
+            }
+            
+            @bottom-center
+            {
+            content: element(footer);
+            }
+            
+            div.header
+            {
+            position: running(header);
+            }
+
+            div.footer
+            {
+            position: running(footer);
+            }            
+            }
+            
+            .pagenumber:before
+            {
+            content: counter(page);
+            }
+            
+            .pagecount:before
+            {
+            content: counter(pages);
+            }
+            
+            .my-nowrap 
+            {
+            white-space: nowrap;
+            }
+
+           .pagebreak 
+            { 
+            page-break-after: always; 
+            } 
+
+  
+
+            thead
+            {
+            font-family: calibri;
+            font-size: 14px;
+            font-weight : bold;
+            background-color: darkblue;
+            border-style: solid;
+            border-color: darkblue;
+            color : red;
+            }
+            
+            .footer
+            {
+            position: fixed;
+            bottom: -75px;
+            width: 80%;
+            clear: both;
+            margin:80px; 
+
+            }
+                 
+            h
+            { 
+            font-family:helvetica;
+            font-size: 30px;
+            font-weight : bold;
+            color : darkblue;
+            }
+            
+            p
+            {
+            font-family: calibri;
+            font-size: 16px;
+            }
+            
+            p1 
+            {
+            font-family: calibri;
+            font-size: 20px;
+            color : #ff8c00;
+            font-weight : bold;
+            }
+
+            p2
+            {
+            font-family: calibri;
+            font-size: 16px;
+            color : red;
+            }
+
+            hr 
+            {
+            display: block;
+            height: 1px;
+            border: 0;
+            border-top: 1.5px solid #ff8c00;
+            padding: 0;
+            }
+           
+            th
+            {
+            font-family: calibri;
+            font-size: 14px;
+            color : darkblue;
+            font-weight : bold;
+            }
+
+
+
+    </style>
+    </head>   
+
+ 
+    <!------------------------------------------------------------>
+    <!---------               Page 1                    ---------->
+    <!------------------------------------------------------------>     
+    <div class="header" style="text-align:center;">
+            <p>&nbsp;</p>
+            <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%" />
+    </div>
+    
+    <div class="body" style="margin:80px; margin-top: 0px;">
+        <p><apex:outputField value="{!Task.Description}"/></p>
+    </div>
+      
+    <div class="footer">
+           <p1>Let&#39;s get connected</p1>
+           <hr></hr>
+    </div>               
+                  
+</apex:page>

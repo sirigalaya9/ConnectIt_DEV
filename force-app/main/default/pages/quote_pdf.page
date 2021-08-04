@@ -1,0 +1,1735 @@
+<apex:page standardController="Opportunity" extensions="opportunityControllerExtension" showHeader="false" renderAs="pdf" contenttype="application/pdf" applyBodyTag="false">
+ <head>
+        <style type="text/css" media="print">
+            @page
+            {
+            size: 8.27in 11.69in;  <!-- A4 -->
+            margin: 0in 0in 0in 0in;
+             
+            @top-center
+            {
+            content: element(header);
+            }
+            
+            @bottom-center
+            {
+            content: element(footer);
+            }
+            
+            div.header
+            {
+            position: running(header);
+            }
+            
+            div.footer 
+            { 
+             display:block; 
+             height:30px; 
+             position: running(footer); 
+                          }
+
+           
+           
+            }
+            
+            .pagenumber:before
+            {
+            content: counter(page);
+            }
+            
+            .pagecount:before
+            {
+            content: counter(pages);
+            }
+            
+            .my-nowrap 
+            {
+            white-space: nowrap;
+            }
+
+           .pagebreak 
+            { 
+            page-break-after: always; 
+            } 
+
+            .table
+            {
+            width: 600px; 
+            border-collapse: collapse;
+            border: 1px solid black;
+            border-width : 0.5px;
+            border-color: black;
+            }
+  
+            
+            .table td
+            {
+            border: 1px solid black;
+            border-width : 0.5px;
+            border-color: black;
+            border-collapse: collapse;
+            }
+            
+            .table tr
+            {
+            border: 1px solid black;
+            border-width : 0.5px;
+            border-color: black;
+            border-collapse: collapse;
+            }
+
+          
+            .datatable1
+            {
+            background-color: #000057; 
+            table-layout : fixed;
+            }
+
+            .atttable
+            {
+            border-style: solid;
+            border-color: black;
+            width : 100%;
+            table-layout : fixed;
+            }
+
+            .atttable tr
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : black;
+            font-weight : normal;
+            background-color: white; 
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: black;
+            border-collapse: collapse;
+            }
+            
+            .datatable1 th
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : white;
+            font-weight : normal;
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: black;
+            border-collapse: collapse;
+            }
+
+            .datatable1 td
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : black;
+            font-weight : normal;
+            background-color: white; 
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: black;
+            border-collapse: collapse;
+            }
+
+            .datatable2
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : white;
+            font-weight : normal;
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: white;
+            border-collapse: collapse;
+            text-align: center;
+            background-color: #000057;
+            }
+            
+            .datatable2 th
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : white;
+            font-weight : normal;
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: white;
+            border-collapse: collapse;
+            text-align: center;
+            background-color: #000057;
+            }
+
+            .datatable2 tr
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : white;
+            font-weight : normal;
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: white;
+            border-collapse: collapse;
+            text-align: center;
+            background-color: #000057;
+            }
+
+            .datatable2 thead
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : white;
+            font-weight : normal;
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: white;
+            border-collapse: collapse;
+            text-align: center;
+            background-color: #000057;
+            }
+
+            .datatable2 td
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : white;
+            font-weight : normal;
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: white;
+            border-collapse: collapse;
+            text-align: center;
+            background-color: #000057;
+            }
+
+            .wide 
+            {
+            width: 450px;
+            }
+
+
+           
+            .leftaligned
+            {
+            margin-left: 30px;
+            margin-right: auto;
+            }
+
+            thead
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            font-weight : bold;
+            background-color: darkblue;
+            border-style: solid;
+            border-color: darkblue;
+            color : red;
+            }
+            
+            footer2
+            {
+            position: relative; 
+            margin-top: -180px; 
+            height: 100px; 
+            clear: both;
+            }
+                 
+            h
+            { 
+            font-family:helvetica;
+            font-size: 30px;
+            font-weight : bold;
+            color : darkblue;
+            }
+            
+            p.detail
+            {
+            font-family: calibri;
+            font-size: 16px;
+            }
+            
+            .alignright { text-align: right; }
+            .alignleft { text-align: left; }
+                        
+            .boxed {
+            border: 1px solid black ;
+            padding: 8px;
+            width: 600px;
+            font-family:helvetica;
+            font-size: 15px;
+            margin-bottom: 5px;
+            }
+            
+            p
+            {
+            font-family: helvetica;
+            margin-bottom: 1em;  
+            margin-top: 0em;
+            font-size: 14px;
+            }
+                                 
+            p1 
+            {
+            font-family: helvetica;
+            font-size: 20px;
+            color : #ff8c00;
+            font-weight : bold;
+            margin-bottom: 1em;  
+            margin-top: 0em;
+            }
+            
+            p2
+            {
+            font-family: helvetica;
+            color : red;
+            }
+
+            span.chg
+            {
+            font-family: helvetica;
+            font-size: 16px;
+            color : red;
+            text-decoration : underline;
+            }
+            
+            span.chg2
+            {
+            font-family: helvetica;
+            font-size: 16px;
+            color : red;
+            text-decoration : normal;
+            }
+
+            hr 
+            {
+            display: block;
+            height: 1px;
+            border: 0;
+            border-top: 1.5px solid #ff8c00;
+            padding: 0;
+            }
+           
+            th
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : darkblue;
+            font-weight : bold;
+            }
+
+             .footer
+            {
+            position: fixed;
+            bottom: -75px;
+            width:80%;
+            clear:both;
+            margin:80px;
+            text-align:left;
+            }
+
+
+
+            td2
+            {
+            color : red;
+            }
+
+            table.tablebox
+            { 
+            position: absolute; 
+            top: 240px; 
+            left: 45px; 
+            width: 410px; 
+            height: 280px; 
+            background-color: white; 
+            border-style: solid;
+            border-color: #000057;
+            }
+
+            table.tablebox th2
+            {
+            font-family: helvetica;
+            font-size: 25px;
+            color : #000057;
+            font-weight : bold;
+            }
+            
+            table.tablebox td
+            {
+            font-family: helvetica;
+            font-size: 24px;
+            color : #ff8c00;
+            font-weight : bold;
+            }
+           
+            table.tablebox th
+            {
+            font-family: helvetica;
+            font-size: 30px;
+            color : #000057;
+            font-weight : bold;
+            }  
+
+            table.tablebox2
+            {
+            position: absolute; 
+            top: 240px; 
+            left: 490px; 
+            width: 255px; 
+            height: 340px; 
+            background-color: white; 
+            border-style: solid;
+            border-color: #000057;
+            }
+
+
+            table.tablebox2 th
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : #000057;
+            font-weight : bold;
+            text-decoration: underline;
+            } 
+           
+            table.tablebox2 td
+            {
+            font-family: helvetica;
+            font-size: 13px;
+            color : #000057;
+            font-weight : bold;
+            text-align: left;            
+            }
+
+
+            table.attendance
+            {
+              width:100%;
+              border-collapse: collapse;
+            }
+            
+            table.attendance th 
+            {
+              border: 1px solid black;
+              border-collapse: collapse;
+              padding: 3px;
+            }
+            
+            table.attendance td 
+            {
+              border: 1px solid black;
+              border-collapse: collapse;
+              padding: 3px;
+            }
+            
+            table.chargepoint
+            {
+             width:100%;
+              border-collapse: collapse;
+            }
+            
+            table.chargepoint th 
+            {
+              border: 1px solid black;
+              border-collapse: collapse;
+              padding: 3px;
+            }
+            
+            table.chargepoint td 
+            {
+              border: 1px solid black;
+              border-collapse: collapse;
+              padding: 3px;
+            }
+            
+            
+            table.streetlight
+            {
+             width:100%;
+              border-collapse: collapse;
+            }
+            
+            table.streetlight th 
+            {
+              border: 1px solid black;
+              border-collapse: collapse;
+              padding: 3px;
+            }
+            
+            table.streetlight td 
+            {
+              border: 1px solid black;
+              border-collapse: collapse;
+              padding: 3px;
+            }
+            
+            div
+            {
+
+            }
+            
+    </style>
+    </head>      
+    <!------------------------------------------------------------>
+    <!---------               First Page                ---------->
+    <!------------------------------------------------------------>                        
+
+    
+    <div class="header">
+            <apex:image value="{!URLFOR($Resource.ConnectITQuoteFrontPage)}" width="100%" height="100%" />
+    </div>
+    
+    <div class="body">
+       <table class="tablebox">
+            <tr>        
+              <th style="text-align:left" colspan="3">  {!Opportunity.Account.Name} </th>
+            </tr>
+            <tr>
+              <td style="text-align:left" width="85px">&nbsp;</td>
+              <td style="text-align:left" width="10px">&nbsp;</td>
+              <td style="text-align:left" width="300px">&nbsp;</td>
+            </tr>
+             <tr>
+              <th2 style="text-align:left" width="85px">Project:&nbsp; </th2>
+              <td style="text-align:left" width="10px">&nbsp;</td>
+              <td style="text-align:left" width="300px"> {!Opportunity.Name} </td>
+            </tr>
+            <tr>
+              <td style="text-align:left" width="85px">&nbsp;</td>
+              <td style="text-align:left" width="10px">&nbsp;</td>
+              <td style="text-align:left" width="300px"> {!oppSite.BillingStreet} </td>
+            </tr>
+            <tr>
+              <td style="text-align:left" width="85px">&nbsp;</td>
+              <td style="text-align:left" width="10px">&nbsp;</td>
+              <td style="text-align:left" width="300px"> {!oppSite.BillingCity}  </td>
+            </tr>
+            <tr>
+              <td style="text-align:left" width="85px">&nbsp;</td>
+              <td style="text-align:left" width="10px">&nbsp;</td>
+              <td style="text-align:left" width="300px"> {!oppSite.BillingPostalCode} </td>
+            </tr>
+            <tr>
+              <td style="text-align:left" width="85px">&nbsp;</td>
+              <td style="text-align:left" width="10px">&nbsp;</td>
+              <td style="text-align:left" width="300px"> {!oppSite.BillingCountry} </td>
+            </tr>
+          </table>        
+          
+              
+       <table class="tablebox2">
+            <tr>
+               <th></th>
+               <th></th>
+               <th>{! Opportunity.Type}</th>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>{! Opportunity.Owner.Title} </td>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>                
+               <td>&nbsp;</td>
+               <td>{! Opportunity.Owner.FirstName} {! Opportunity.Owner.LastName}</td>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>Date &nbsp;<apex:outputText value="{0,date,dd'.'MM'.'yyyy}"><apex:param value="{! Opportunity.Estimate_date__c }" /></apex:outputText></td>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+             </tr>
+             <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>Connect IT Utility Services</td>
+              </tr>                               
+              <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>Unit 1&nbsp;&amp;&nbsp;2</td>
+              </tr>
+              <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>Berrywood Business Village</td>
+              </tr>
+              <tr>
+               <td>&nbsp;</td>                
+               <td>&nbsp;</td>
+               <td>Hedge End</td>
+              </tr>
+              <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>Southampton</td>
+              </tr>
+              <tr>
+               <td>&nbsp;</td>                
+               <td>&nbsp;</td>
+               <td>SO30 2UN</td>
+              </tr>
+              <tr>
+               <td>&nbsp;</td>                
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               </tr>
+               <tr>
+                <td>&nbsp;</td>
+                <td>T:&nbsp;</td>
+                <td>{! Opportunity.Owner.Phone}</td>
+               </tr>
+               <tr>
+                <td>&nbsp;</td>                
+                <td>E:&nbsp;</td>
+                <td>{! Opportunity.Owner.Email}</td>
+               </tr>
+               <tr>
+                <td>&nbsp;</td>
+                <td>W:&nbsp;</td>
+                <td>www.cius.co.uk</td>
+               </tr>                 
+           </table>
+        </div>
+        
+    <!------------------------------------------------------------>
+    <!---------       Car Charger - Charger Point       ---------->
+    <!------------------------------------------------------------>     
+    <div class="Charger">  
+        <apex:outputText rendered="{!CONTAINS(Opportunity.Type,'Charger')}">
+            <apex:outputText rendered="{!CONTAINS(Opportunity.Charger_Point_Provider__c,'ChargePoint')}">
+
+         <div class="header" style="text-align:center">
+            <p>&nbsp;</p>
+            <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%"/>
+            <BR/><BR/>
+         </div>  
+
+         <table class="chargepoint">
+          <tr>
+            <th align="left" width="56%" colspan="1" >Project Ref - {! Opportunity.Name} - {! Opportunity.Account.Name} </th> 
+            <th style="text-align:center" width="44%" colspan="4">Charge Point Services</th>
+          </tr>
+          <tr>
+            <th style="text-align:left" width="56%">ICP Works</th>
+            <th style="text-align:center" width="9%">UOM</th>
+            <th style="text-align:center" width="9%">Qty</th>                       
+            <th style="text-align:center" width="12%">Rate</th>
+            <th style="text-align:center" width="12%">Total</th>
+           </tr>
+         </table>             
+
+            <apex:dataTable value="{!chargePointICPWorksOLIs}" var="line" columnClasses="centre,centre" styleclass="chargepoint">
+              <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="56%"></apex:column>
+              <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+              <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column> 
+              <apex:column value="{!line.UnitPrice}" style="text-align:center" width="12%"></apex:column>             
+              <apex:column value="{!line.Total_Sell__c}" style="text-align:center" width="12%"></apex:column>  
+            </apex:dataTable> 
+
+          <table class="chargepoint">
+           <tr>
+            <th style="text-align:right" width="88%" colspan="4">ICP Works Total</th>
+            <th style="text-align:center" width="12%">£!opportunity.Total_Charge_Point_ICP_Works__c</th>
+           </tr>
+           <tr>
+            <th style="text-align:left" width="56%">&nbsp;</th>
+            <th style="text-align:center" width="9%">&nbsp;</th>
+            <th style="text-align:left" width="9%">&nbsp;</th>
+            <th style="text-align:center" width="12%">&nbsp;</th>
+            <th style="text-align:center" width="12%">&nbsp;</th>
+           </tr>
+           <tr>
+            <th style="text-align:left" width="56%">Charger Installation Costs</th>
+            <th style="text-align:center" width="9%">UOM</th>
+            <th style="text-align:center" width="9%">Qty</th>                       
+            <th style="text-align:center" width="12%">Rate</th>
+            <th style="text-align:center" width="12%">Total</th>
+           </tr>
+        </table>
+
+            <apex:dataTable value="{!chargePointInstallOLIs}" var="line" columnClasses="centre,centre" styleclass="chargepoint">
+              <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="56%"></apex:column>
+              <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+              <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column> 
+              <apex:column value="{!line.UnitPrice}" style="text-align:center" width="12%"></apex:column>             
+              <apex:column value="{!line.Total_Sell__c}" style="text-align:center" width="12%"></apex:column>  
+            </apex:dataTable> 
+            
+        <table class="chargepoint">
+           <tr>
+            <th style="text-align:right" width="88%" colspan="4">Charger Installation Costs Total</th>
+            <th style="text-align:center" width="12%">£!opportunity.Total_Charge_Point_Installation_Costs__c</th>
+           </tr>
+           <tr>
+            <th style="text-align:left" width="56%">&nbsp;</th>
+            <th style="text-align:center" width="9%">&nbsp;</th>
+            <th style="text-align:left" width="9%">&nbsp;</th>
+            <th style="text-align:center" width="12%">&nbsp;</th>
+            <th style="text-align:center" width="12%">&nbsp;</th>
+           </tr>
+          <tr>
+            <th align="right" width="88%" colspan="4" >Project Total</th>
+            <th style="text-align:center" width="12%">£{!Opportunity.Total_Charge_Point__c}</th>   
+          </tr>
+       </table>
+
+           <div class="footer" style="text-align:left">
+              <br/>
+              <p1>Let&#39;s get connected</p1>
+              <hr></hr>
+           </div>               
+ 
+      <div class="pagebreak">     
+      </div>
+     
+
+<!------------------------------------------------------------->
+<!----- Get Charger Point documents related to quote       ---->
+<!------------------------------------------------------------->
+       <div class="CPDocuments" width="80%" height="25%">
+         <div class="header" style="text-align:center">
+            <p>&nbsp;</p>
+            <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%"/>
+            <BR/><BR/>
+         </div>  
+       <BR/>
+        <apex:dataTable value="{!fileUrlChargerPoints}" var="url">
+              <apex:column style="text-align:center">
+                 <apex:image url="{!url}"/>
+              </apex:column>
+        </apex:dataTable>    
+       </div>
+   </apex:outputText> 
+  </apex:outputText> 
+ </div>
+        
+<!------------------------------------------------------------->
+<!----------       Car Charger - Instavolt         ------------>
+<!------------------------------------------------------------->     
+    <div class="Charger">  
+            <apex:outputText rendered="{!CONTAINS(Opportunity.Type,'Charger')}">
+            <apex:outputText rendered="{!CONTAINS(Opportunity.Charger_Point_Provider__c,'Instavolt')}">
+
+         <div class="header" style="text-align:center">
+            <p>&nbsp;</p>
+            <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%"/>
+            <BR/><BR/>
+         </div>  
+         <table class="chargepoint">
+          <tr>
+            <th align="left" width="58%" colspan="1" >Project Ref - {! Opportunity.Name} - {! Opportunity.Account.Name} </th> 
+            <th style="text-align:center" width="42%" colspan="4">Instavolt</th>
+          </tr>
+          </table> 
+<!---------------------------------------------------------------------------------------------------------------------------->            
+         <table class="chargepoint">
+          <tr>
+            <th style="text-align:left" width="58%">Site Setup</th>
+            <th style="text-align:center" width="9%">UOM</th>
+            <th style="text-align:center" width="9%">Qty</th>                       
+            <th style="text-align:center" width="12%">Rate</th>
+            <th style="text-align:center" width="12%">Total</th>
+           </tr>
+         </table>             
+            <apex:dataTable value="{!InstavoltSiteSetupOLIs}" var="line" columnClasses="centre,centre" styleclass="chargepoint">
+              <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+              <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+              <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column> 
+              <apex:column value="{!line.UnitPrice}" style="text-align:center" width="12%"></apex:column>             
+              <apex:column value="{!line.Total_Sell__c}" style="text-align:center" width="12%"></apex:column>  
+            </apex:dataTable> 
+          <table class="chargepoint">
+           <tr>
+            <th style="text-align:right" width="88%" colspan="4">Site Setup Total</th>
+            <th style="text-align:center" width="12%">!opportunity.Total_Instavolt_Site_Setup__c</th> 
+           </tr>
+           <tr>
+            <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+           </tr>
+          </table> 
+  <!---------------------------------------------------------------------------------------------------------------------------->         
+          <table class="chargepoint"> 
+            <tr>
+            <th style="text-align:left" width="58%">Travel and Accomodation Costs</th>
+            <th style="text-align:center" width="9%">UOM</th>
+            <th style="text-align:center" width="9%">Qty</th>                       
+            <th style="text-align:center" width="12%">Rate</th>
+            <th style="text-align:center" width="12%">Total</th>
+           </tr>
+        </table>
+            <apex:dataTable value="{!InstavoltTravelOLIs}" var="line" columnClasses="centre,centre" styleclass="chargepoint">
+              <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+              <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+              <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column> 
+              <apex:column value="{!line.UnitPrice}" style="text-align:center" width="12%"></apex:column>             
+              <apex:column value="{!line.Total_Sell__c}" style="text-align:center" width="12%"></apex:column>  
+            </apex:dataTable> 
+        <table class="chargepoint">
+           <tr>
+            <th style="text-align:right" width="88%" colspan="4">Travel and Accomodation Costs Total</th>
+            <th style="text-align:center" width="12%"> !opportunity.Total_Instavolt_Travel_Accomodation__c</th>
+           </tr>
+           <tr>
+            <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+           </tr>        
+       </table>   
+
+<!---------------------------------------------------------------------------------------------------------------------------->   
+       <table class="chargepoint">
+           <tr>
+            <th style="text-align:left" width="56%">DNO - ICP Works Only</th>
+            <th style="text-align:center" width="9%">UOM</th>
+            <th style="text-align:center" width="9%">Qty</th>                       
+            <th style="text-align:center" width="12%">Rate</th>
+            <th style="text-align:center" width="12%">Total</th>
+           </tr>
+        </table>
+            <apex:dataTable value="{!InstavoltDNOICPWorksOLIs}" var="line" columnClasses="centre,centre" styleclass="chargepoint">
+              <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="56%"></apex:column>
+              <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+              <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column> 
+              <apex:column value="{!line.UnitPrice}" style="text-align:center" width="12%"></apex:column>             
+              <apex:column value="{!line.Total_Sell__c}" style="text-align:center" width="12%"></apex:column>  
+            </apex:dataTable> 
+        <table class="chargepoint">
+           <tr>
+            <th style="text-align:right" width="88%" colspan="4">DNO - ICP Works Only Costs Total</th>
+            <th style="text-align:center" width="12%">! opportunity.Total_Instavolt_DNO_ICP_Works_Only__c </th>
+           </tr>
+           <tr>
+            <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+           </tr>        
+       </table>   
+       
+           <div class="footer" style="text-align:left">
+              <br/>
+              <p1>Let&#39;s get connected</p1>
+              <hr></hr>
+           </div>               
+ 
+      <div class="pagebreak">     
+      </div>
+
+<!----------------------------------------------------------------------------------------------------------------------------> 
+         <div class="header" style="text-align:center">
+            <p>&nbsp;</p>
+            <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%"/>
+            <BR/> <BR/>
+         </div>  
+         
+        <table class="chargepoint">
+           <tr>
+            <th style="text-align:left" width="56%">DNO Civils Works</th>
+            <th style="text-align:center" width="9%">UOM</th>
+            <th style="text-align:center" width="9%">Qty</th>                       
+            <th style="text-align:center" width="12%">Rate</th>
+            <th style="text-align:center" width="12%">Total</th>
+           </tr>
+        </table>
+            <apex:dataTable value="{!InstavoltDNOCivilsOLIs}" var="line" columnClasses="centre,centre" styleclass="chargepoint">
+              <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="56%"></apex:column>
+              <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+              <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column> 
+              <apex:column value="{!line.UnitPrice}" style="text-align:center" width="12%"></apex:column>             
+              <apex:column value="{!line.Total_Sell__c}" style="text-align:center" width="12%"></apex:column>  
+            </apex:dataTable> 
+        <table class="chargepoint">
+           <tr>
+            <th style="text-align:right" width="88%" colspan="4">DNO Civils Works Total</th>
+            <th style="text-align:center" width="12%">! opportunity.Total_Instavolt_DNO_Civils__c</th>
+           </tr>
+           <tr>
+            <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+           </tr>        
+       </table>  
+<!----------------------------------------------------------------------------------------------------------------------------------------->         
+  <table class="chargepoint">
+           <tr>
+            <th style="text-align:left" width="56%">On-Site DNO Civils Works</th>
+            <th style="text-align:center" width="9%">UOM</th>
+            <th style="text-align:center" width="9%">Qty</th>                       
+            <th style="text-align:center" width="12%">Rate</th>
+            <th style="text-align:center" width="12%">Total</th>
+           </tr>
+        </table>
+            <apex:dataTable value="{!InstavoltOnsiteDNOOLIs}" var="line" columnClasses="centre,centre" styleclass="chargepoint">
+              <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="56%"></apex:column>
+              <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+              <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column> 
+              <apex:column value="{!line.UnitPrice}" style="text-align:center" width="12%"></apex:column>             
+              <apex:column value="{!line.Total_Sell__c}" style="text-align:center" width="12%"></apex:column>  
+            </apex:dataTable> 
+        <table class="chargepoint">
+           <tr>
+            <th style="text-align:right" width="88%" colspan="4">On-Site DNO Civils Works Total</th>
+            <th style="text-align:center" width="12%">! opportunity.Total_Instavolt_Onsite_DNO_Civils__c</th>
+           </tr>
+           <tr>
+            <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+           </tr> 
+             
+           <div class="footer" style="text-align:left">
+              <br/>
+              <p1>Let&#39;s get connected</p1>
+              <hr></hr>
+           </div>      
+           
+                
+       </table>  
+          <div class="pagebreak">     
+      </div>
+
+      <div class="header" style="text-align:center">
+            <p>&nbsp;</p>
+            <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%"/>
+            <BR/><BR/>
+      </div>  
+
+<!--------------------------------------------------------------------------------------------------------------------------->       
+         <table class="chargepoint">
+           <tr>
+            <th style="text-align:left" width="56%">Civils Costs for Bases</th>
+            <th style="text-align:center" width="9%">UOM</th>
+            <th style="text-align:center" width="9%">Qty</th>                       
+            <th style="text-align:center" width="12%">Rate</th>
+            <th style="text-align:center" width="12%">Total</th>
+           </tr>
+        </table>
+            <apex:dataTable value="{!InstavoltCivilsCostsBasesOLIs}" var="line" columnClasses="centre,centre" styleclass="chargepoint">
+              <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="56%"></apex:column>
+              <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+              <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column> 
+              <apex:column value="{!line.UnitPrice}" style="text-align:center" width="12%"></apex:column>             
+              <apex:column value="{!line.Total_Sell__c}" style="text-align:center" width="12%"></apex:column>  
+            </apex:dataTable> 
+        <table class="chargepoint">
+           <tr>
+            <th style="text-align:right" width="88%" colspan="4">Civils Costs for Bases Total</th>
+            <th style="text-align:center" width="12%">! opportunity.Total_Instavolt_Civil_Costs_for_Bases__c</th>
+           </tr>
+           <tr>
+            <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+           </tr>        
+       </table>   
+       
+
+<!---------------------------------------------------------------------------------------------------------------------------------------------->
+ 
+  <table class="chargepoint">
+           <tr>
+            <th style="text-align:left" width="56%">Civil Costs for Charger Build</th>
+            <th style="text-align:center" width="9%">UOM</th>
+            <th style="text-align:center" width="9%">Qty</th>                       
+            <th style="text-align:center" width="12%">Rate</th>
+            <th style="text-align:center" width="12%">Total</th>
+           </tr>
+        </table>
+            <apex:dataTable value="{!InstavoltCivilsCostsBuildOLIs}" var="line" columnClasses="centre,centre" styleclass="chargepoint">
+              <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="56%"></apex:column>
+              <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+              <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column> 
+              <apex:column value="{!line.UnitPrice}" style="text-align:center" width="12%"></apex:column>             
+              <apex:column value="{!line.Total_Sell__c}" style="text-align:center" width="12%"></apex:column>  
+            </apex:dataTable> 
+        <table class="chargepoint">
+           <tr>
+            <th style="text-align:right" width="88%" colspan="4">Civil Costs for Charger Build Total</th>
+            <th style="text-align:center" width="12%">! opportunity.Total_Instavolt_Civil_Costs_for_Charger__c</th>
+           </tr>
+           <tr>
+            <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+           </tr>        
+       </table>   
+       
+           <div class="footer" style="text-align:left">
+              <br/>
+              <p1>Let&#39;s get connected</p1>
+              <hr></hr>
+           </div>            
+ 
+      <div class="pagebreak">     
+      </div>
+<!----------------------------------------------------------------------------------------------------------------------------------------->
+      <div class="header" style="text-align:center">
+            <p>&nbsp;</p>
+            <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%"/>
+            <BR/><BR/>
+      </div> 
+  
+  <table class="chargepoint">
+           <tr>
+            <th style="text-align:left" width="56%">EV Rapid Charging Unit</th>
+            <th style="text-align:center" width="9%">UOM</th>
+            <th style="text-align:center" width="9%">Qty</th>                       
+            <th style="text-align:center" width="12%">Rate</th>
+            <th style="text-align:center" width="12%">Total</th>
+           </tr>
+        </table>
+            <apex:dataTable value="{!InstavoltEVRapidChargerOLIs}" var="line" columnClasses="centre,centre" styleclass="chargepoint">
+              <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="56%"></apex:column>
+              <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+              <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column> 
+              <apex:column value="{!line.UnitPrice}" style="text-align:center" width="12%"></apex:column>             
+              <apex:column value="{!line.Total_Sell__c}" style="text-align:center" width="12%"></apex:column>  
+            </apex:dataTable> 
+        <table class="chargepoint">
+           <tr>
+            <th style="text-align:right" width="88%" colspan="4">EV Rapid Charging Unit Total</th>
+            <th style="text-align:center" width="12%">! opportunity.Total_Instavolt_Ev_Rapid_Charging_Unit__c</th>
+           </tr>
+           <tr>
+            <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+           </tr>        
+       </table>   
+       
+
+
+<!----------------------------------------------------------------------------------------------------------------------------------------->
+ 
+  <table class="chargepoint">
+           <tr>
+            <th style="text-align:left" width="56%">Feeder Pillar - Internal Installation (NON FORECOURT SITE)</th>
+            <th style="text-align:center" width="9%">UOM</th>
+            <th style="text-align:center" width="9%">Qty</th>                       
+            <th style="text-align:center" width="12%">Rate</th>
+            <th style="text-align:center" width="12%">Total</th>
+           </tr>
+        </table>
+            <apex:dataTable value="{!InstavoltFPInternalNONFCOLIs}" var="line" columnClasses="centre,centre" styleclass="chargepoint">
+              <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="56%"></apex:column>
+              <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+              <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column> 
+              <apex:column value="{!line.UnitPrice}" style="text-align:center" width="12%"></apex:column>             
+              <apex:column value="{!line.Total_Sell__c}" style="text-align:center" width="12%"></apex:column>  
+            </apex:dataTable> 
+        <table class="chargepoint">
+           <tr>
+            <th style="text-align:right" width="88%" colspan="4">Feeder Pillar - Internal Installation (NON FORECOURT SITE) Total</th>
+            <th style="text-align:center" width="12%">! opportunity.Total_Instavolt_Fdr_Pillar_Int_Inst_NFS__c</th>
+           </tr>
+           <tr>
+            <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+           </tr>        
+       </table>   
+       
+<!----------------------------------------------------------------------------------------------------------------------------------------->
+  <table class="chargepoint">
+           <tr>
+            <th style="text-align:left" width="56%">Feeder Pillar - Internal Installation (FORECOURT ONLY SITE)</th>
+            <th style="text-align:center" width="9%">UOM</th>
+            <th style="text-align:center" width="9%">Qty</th>                       
+            <th style="text-align:center" width="12%">Rate</th>
+            <th style="text-align:center" width="12%">Total</th>
+           </tr>
+        </table>
+            <apex:dataTable value="{!InstavoltFPInternalFCOLIs}" var="line" columnClasses="centre,centre" styleclass="chargepoint">
+              <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="56%"></apex:column>
+              <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+              <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column> 
+              <apex:column value="{!line.UnitPrice}" style="text-align:center" width="12%"></apex:column>             
+              <apex:column value="{!line.Total_Sell__c}" style="text-align:center" width="12%"></apex:column>  
+            </apex:dataTable> 
+        <table class="chargepoint">
+           <tr>
+            <th style="text-align:right" width="88%" colspan="4">Feeder Pillar - Internal Installation (FORECOURT ONLY SITE) Total</th>
+            <th style="text-align:center" width="12%">! opportunity.Total_Instavolt_Fdr_Pillar_Int_Inst_FOS__c</th>
+           </tr>
+           <tr>
+            <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+           </tr>        
+       </table>   
+<!----------------------------------------------------------------------------------------------------------------------------------------->
+  <table class="chargepoint">
+
+           <tr>
+            <th style="text-align:left" width="56%">Designated Parking Bays - Road Markings</th>
+            <th style="text-align:center" width="9%">UOM</th>
+            <th style="text-align:center" width="9%">Qty</th>                       
+            <th style="text-align:center" width="12%">Rate</th>
+            <th style="text-align:center" width="12%">Total</th>
+           </tr>
+        </table>
+            <apex:dataTable value="{!InstavoltDesParkBaysCOLIs}" var="line" columnClasses="centre,centre" styleclass="chargepoint">
+              <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="56%"></apex:column>
+              <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+              <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column> 
+              <apex:column value="{!line.UnitPrice}" style="text-align:center" width="12%"></apex:column>             
+              <apex:column value="{!line.Total_Sell__c}" style="text-align:center" width="12%"></apex:column>  
+            </apex:dataTable> 
+        <table class="chargepoint">
+           <tr>
+            <th style="text-align:right" width="88%" colspan="4">Designated Parking Bays - Road Markings Total</th>
+            <th style="text-align:center" width="12%">! opportunity.Total_Instavolt_Designated_Parking_Bays__c</th>
+           </tr>
+           <tr>
+            <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+           </tr>        
+       </table> 
+       
+           <div class="footer" style="text-align:left">
+              <br/>
+              <p1>Let&#39;s get connected</p1>
+              <hr></hr>
+           </div>                
+ 
+      <div class="pagebreak">     
+      </div>
+<!----------------------------------------------------------------------------------------------------------------------------------------->
+      <div class="header" style="text-align:center">
+            <p>&nbsp;</p>
+            <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%"/>
+            <BR/><BR/>
+      </div> 
+  
+  <table class="chargepoint">
+           <tr>
+            <th style="text-align:left" width="56%">Additional Scope of Works</th>
+            <th style="text-align:center" width="9%">UOM</th>
+            <th style="text-align:center" width="9%">Qty</th>                       
+            <th style="text-align:center" width="12%">Rate</th>
+            <th style="text-align:center" width="12%">Total</th>
+           </tr>
+        </table>
+            <apex:dataTable value="{!InstavoltAddScopeOLIs}" var="line" columnClasses="centre,centre" styleclass="chargepoint">
+              <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="56%"></apex:column>
+              <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+              <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column> 
+              <apex:column value="{!line.UnitPrice}" style="text-align:center" width="12%"></apex:column>             
+              <apex:column value="{!line.Total_Sell__c}" style="text-align:center" width="12%"></apex:column>  
+            </apex:dataTable> 
+        <table class="chargepoint">
+           <tr>
+            <th style="text-align:right" width="88%" colspan="4">Additional Scope of Works Total</th>
+            <th style="text-align:center" width="12%">! opportunity.Total_Instavolt_Additional_Scope_of_Work__c</th>
+           </tr>
+           <tr>
+            <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+           </tr>        
+       </table>   
+
+<!-------------------------------------------------------------------------------------------------------------------------------------->
+       
+        <table class="chargepoint">
+          <tr>
+            <th align="right" width="88%" colspan="4" >Total PO Value</th>
+            <th style="text-align:center" width="12%">£{!Opportunity.Total_Charge_Point__c}</th> 
+          </tr>
+       </table>
+
+           <div class="footer" style="text-align:left">
+              <br/>
+              <p1>Let&#39;s get connected</p1>
+              <hr></hr>
+           </div>         
+       
+      <div class="pagebreak">     
+      </div>
+       
+       <div class="header" style="text-align:center">
+            <p>&nbsp;</p>
+            <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%"/>
+            <BR/><BR/>
+      </div> 
+<!------------------------------------------------------------->
+<!----- Get Charger Point documents related to quote       ---->
+<!------------------------------------------------------------->
+      <div class="CPDocuments"  width="80%" height="25%">
+        <apex:dataTable value="{!fileUrlChargerPoints}" var="url">
+              <apex:column style="text-align:center">
+                 <apex:image url="{!url}"/>
+              </apex:column>
+           </apex:dataTable>          
+      </div>
+  </apex:outputText> 
+ </apex:outputText> 
+</div>
+     
+<!------------------------------------------------------------>
+<!---------             Streetlighting              ---------->
+<!------------------------------------------------------------>     
+    <div class="Street Lighting">  
+      <apex:outputText rendered="{!CONTAINS(Opportunity.Type,'Street Lighting')}">
+      
+        <div class="header" style="text-align:center;">
+           <p>&nbsp;</p>
+           <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%" />
+           <BR/><BR/>
+        </div>
+     
+        <table class="streetlight">
+          <tr>
+            <th align="left" width="70%" colspan="1" >Project Ref - </th>
+            <th style="text-align:center" width="30%" colspan="3" >Street Lighting</th>
+          </tr>
+          <tr>
+            <th style="text-align:left" width="70%" >Proposed Equipment</th>
+            <th style="text-align:center" width="10%">Qty</th>                       
+            <th style="text-align:center" width="10%">Rate</th>
+            <th style="text-align:center" width="10%">Total</th>
+           </tr>
+         </table>
+       
+          <apex:dataTable value="{!streetLightsOLIs}" var="line" columnClasses="centre,centre" styleclass="streetlight">
+         <!-- <apex:outputText rendered="{!line.Work_Type__c == 'ICP Works'}"> -->
+          <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="70%"></apex:column>
+          <apex:column value="{!line.Quantity__c}" style="text-align:center" width="10%"></apex:column> 
+          <apex:column value="{!line.UnitPrice}" style="text-align:center" width="10%"></apex:column>
+          <apex:column value="{!line.Total_Sell__c}" style="text-align:center" width="10%"></apex:column>    
+         <!-- </apex:outputText>  -->        
+          </apex:dataTable>
+
+         <table class="streetlight">
+            <tr>
+              <th align="right" width="90%" colspan="3" >Total</th>
+              <th style="text-align:center" width="10%">£!Opportunity.Total_Street_Lighting__c</th>
+            </tr>
+         </table>
+
+           <div class="footer" style="text-align:left">
+              <br/>
+              <p1>Let&#39;s get connected</p1>
+              <hr></hr>
+           </div>            
+   
+        <div class="pagebreak"> </div>
+        
+      <div class="header" style="text-align:center">
+            <p>&nbsp;</p>
+            <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%"/>
+            <BR/><BR/>
+      </div> 
+        
+<!------------------------------------------------------------->
+<!----- Get Street Lighting documents related to quote     ---->
+<!------------------------------------------------------------->
+      <div class="SLPDocuments"  width="80%" height="25%">
+        <apex:dataTable value="{!fileUrlStreetLighting}" var="url">
+              <apex:column style="text-align:center">
+                 <apex:image url="{!url}"/>
+              </apex:column>
+           </apex:dataTable> 
+      </div>
+      
+  </apex:outputText>
+  </div>
+          
+<!------------------------------------------------------------>
+<!---------             Schemes                     ---------->
+<!------------------------------------------------------------>  
+ <div class="Schemes"> 
+       <apex:outputText rendered="{!NOT CONTAINS(Opportunity.Type,'Street Lighting')}">
+       <apex:outputText rendered="{!NOT CONTAINS(Opportunity.Type,'Charger')}">   
+         <div class="header" style="text-align:center">          
+           <p>&nbsp;</p>
+           <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%" />
+           <BR/><BR/>
+         </div>
+ 
+    <div class="Scheme Text" style="margin:80px; margin-bottom: 0px; margin-top: 0px">
+        <p1><apex:outputLabel value="{!$ObjectType.opportunity.fields.Scheme_Summary__c.Label}"/></p1> 
+        <p><apex:outputField value="{!Opportunity.Scheme_Summary__c}"/></p>
+    </div>
+       </apex:outputText>
+       </apex:outputText>
+             
+             
+         
+<!------------------------------------------------------------>
+<!---------             Investment                  ---------->
+<!------------------------------------------------------------>  
+    <div class="Investment" style="margin:80px; margin-bottom: 0em;  margin-top: 0em"> 
+       <apex:outputText rendered="{!NOT CONTAINS(Opportunity.Type,'Street Lighting')}">
+       <apex:outputText rendered="{!NOT CONTAINS(Opportunity.Type,'Charge')}">
+         <p1><apex:outputLabel value="{!$ObjectType.opportunity.fields.Investment__c.Label}"/></p1><BR/>
+         <apex:outputField value="{!Opportunity.Investment__c}"/>
+         <BR/>
+       </apex:outputText>
+              </apex:outputText>
+    </div> 
+           
+           
+<!------------------------------------------------------------>
+<!---------             Client Contribution         ---------->
+<!------------------------------------------------------------>         
+    <div class="Client Contribution" style="margin:80px; margin-bottom: 0em;  margin-top: 0em"> 
+       <apex:outputText rendered="{!NOT CONTAINS(Opportunity.Type,'Street Lighting')}">
+       <apex:outputText rendered="{!NOT CONTAINS(Opportunity.Type,'Charge')}">
+           <p1><apex:outputLabel value="Client Contribution"/></p1><BR/>
+           <apex:outputText value="Our estimate is fixed for 90 days; however, third party costs may change and any increases will be charged as a variation." /><BR/><BR/>
+                
+       
+        <div class="datatable2"  styleclass="datatable2">
+           <B><apex:outputLabel value="CUIS Ltd's Costs - Including Asset Value(s)" /></B><BR/>   
+
+           <apex:panelGrid styleclass="datatable2" columns="2" width="100%">
+       
+            <apex:outputText rendered="{!CONTAINS(Opportunity.Utilities__c,'Electric')}">
+              <apex:outputLabel value="{!$ObjectType.opportunity.fields.Electric_Construction__c.Label}" style="width:85%"/>
+              <apex:outputField value="{!Opportunity.Electric_Construction__c}" style="width:15%" />
+            </apex:outputText>  
+         
+            <apex:outputText rendered="{!CONTAINS(Opportunity.Utilities__c,'Gas')}">
+              <apex:outputLabel value="{!$ObjectType.opportunity.fields.Gas_Construction__c.Label}" style="width:85%"/>
+              <apex:outputField value="{!Opportunity.Gas_Construction__c}" style="width:15%"/>
+            </apex:outputText> 
+         
+            <apex:outputText rendered="{!CONTAINS(Opportunity.Utilities__c,'Water')}">
+              <apex:outputLabel value="!$ObjectType.opportunity.fields.Water_Construction__c.Label" style="width:85%"/>
+              <apex:outputField value="!Opportunity.Water_Construction__c" style="width:15%"/>
+            </apex:outputText> 
+         
+            <apex:outputLabel value="!$ObjectType.opportunity.fields.Subtotal_construction__c.Label" style="width:85%"/>
+            <apex:outputField value="!Opportunity.Subtotal_construction__c" style="width:15%"/>
+
+        </apex:panelGrid>
+      </div>
+      </apex:outputText>
+           </apex:outputText>
+   </div>
+
+   <div class="datatable2" style="text-align:center" styleclass="datatable2">
+       <apex:outputText rendered="{!NOT CONTAINS(Opportunity.Type,'Street Lighting')}">
+       <apex:outputText rendered="{!NOT CONTAINS(Opportunity.Type,'Charge')}"> 
+           <apex:dataTable value="{!nonContestableOLIs}" var="line" columnClasses="centre,centre" width="100%" styleclass="datatable2">
+              <apex:column value="{!line.Product_Text__c}" style="text-align:center">
+                <apex:facet name="footer">
+                     <apex:outputLabel value="Total" style="width:85%"/>
+                </apex:facet>
+              </apex:column>
+              <apex:column value="£{!line.Total_Sell__c}" style="text-align:center" width="15%">
+                 <apex:facet name="footer">
+                     <apex:outputField value="!Opportunity.Subtotal_non_contestable__c" />
+                 </apex:facet>
+              </apex:column>
+            </apex:dataTable>
+         </apex:outputText>  
+        </apex:outputText>  
+     </div>
+
+       <BR/>
+     
+       <div class="datatable2" style="text-align:center" styleclass="datatable2">
+       <apex:outputText rendered="{!NOT CONTAINS(Opportunity.Type,'Street Lighting')}">
+       <apex:outputText rendered="{!NOT CONTAINS(Opportunity.Type,'Charge')}"> 
+          <apex:panelGrid styleclass="datatable2" columns="2" width="100%" >
+            <apex:outputLabel value="Total" style="width:85%"/>
+            <apex:outputField value="{!Opportunity.Total_Client_Contribution__c}" style="width:15%"/>
+          </apex:panelGrid>          
+         </apex:outputText>
+        </apex:outputText>  
+       </div>
+      
+       <BR/>                 
+       <BR/>  
+       
+           <div class="footer" style="text-align:left">
+              <br/>
+              <p1>Let&#39;s get connected</p1>
+              <hr></hr>
+           </div>                
+   
+    <div class="pagebreak"> </div>
+
+
+<!------------------------------------------------------------>
+<!---------             Electricity Scheme          ---------->
+<!------------------------------------------------------------>  
+   <div class="Electric Scheme" style="margin:80px; margin-bottom: 0em;  margin-top: 0em;">  
+     <apex:outputText rendered="{!CONTAINS(Opportunity.Utilities__c,'Electric')}">
+        <apex:dataTable value="{!siteElectricScheme}" var="line" columnClasses="left,right" width="100%"  cellPadding="4px" styleClass="datatable1" style="text-align:center">
+          <apex:column headerValue="{!$ObjectType.Site_Scheme__c.fields.Units_Type__c.Label}" value="{!line.Units_Type__c}" style="text-align:center" width="16%"/>
+          <apex:column headerValue="{!$ObjectType.Site_Scheme__c.fields.No_of_Units__c.Label}" value="{!line.No_of_Units__c}" style="text-align:center" width="16%"/>
+          <apex:column headerValue="{!$ObjectType.Site_Scheme__c.fields.Total_Load_kVA__c.Label}" value="{!line.Total_Load_kVA__c}" style="text-align:center" width="17%"/>
+          <apex:column headerValue="{!$ObjectType.Site_Scheme__c.fields.POC__c.Label}" value="{!line.POC__c}" style="text-align:center" width="16%"/>
+          <apex:column headerValue="{!$ObjectType.Site_Scheme__c.fields.Metering_Voltage__c.Label}" value="{!line.Metering_Voltage__c}" style="text-align:center" width="16%" />
+          <apex:column headerValue="{!$ObjectType.Site_Scheme__c.fields.DNO__c.Label}" value="{!line.DNO__c}" style="text-align:center" width="16%"/>
+        </apex:dataTable>   
+     </apex:outputText>
+   </div>
+    
+<!------------------------------------------------------------>
+<!---------             Gas Scheme                  ---------->
+<!------------------------------------------------------------>    
+    <div class="Gas Scheme" style="margin:80px; margin-bottom: 0em;  margin-top: 0em">  
+        <apex:outputText rendered="{!CONTAINS(Opportunity.Utilities__c,'Gas')}">
+         <apex:dataTable value="{!siteGasScheme}" var="line" columnClasses="left,right" width="100%" cellPadding="4px" styleClass="datatable1" style="text-align:center" >
+          <apex:column headerValue="{!$ObjectType.Site_Scheme__c.fields.Units_Type__c.Label}" value="{!line.Units_Type__c}" style="text-align:center" width="16%"/>
+          <apex:column headerValue="{!$ObjectType.Site_Scheme__c.fields.No_of_Units__c.Label}" value="{!line.No_of_Units__c}" style="text-align:center" width="16%"/>
+          <apex:column headerValue="{!$ObjectType.Site_Scheme__c.fields.Total_Load_kwh__c.Label}" value="{!line.Total_Load_kwh__c}" style="text-align:center" width="17%"/>
+          <apex:column headerValue="{!$ObjectType.Site_Scheme__c.fields.CSEP__c.Label}" value="{!line.CSEP__c}" style="text-align:center" width="16%"/>
+          <apex:column headerValue="{!$ObjectType.Site_Scheme__c.fields.Metering__c.Label}" value="{!line.Metering__c}" style="text-align:center" width="16%"/>
+          <apex:column headerValue="{!$ObjectType.Site_Scheme__c.fields.IGT__c.Label}" value="{!line.IGT__c}" style="text-align:center" width="16%"/>
+         </apex:dataTable>
+        </apex:outputText>
+    </div>
+
+</div>          
+<div class = "Responsibilities">
+      <apex:outputText rendered="{!NOT CONTAINS(Opportunity.Type,'Street Lighting')}">
+      <apex:outputText rendered="{!NOT CONTAINS(Opportunity.Type,'Charger')}">   
+       <div class="header" style="text-align:center;">
+          <p>&nbsp;</p>
+          <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%" />
+          <BR/><BR/>
+       </div>
+    
+       <div class="body" style="margin:80px; margin-top: 0px;">
+          <p1><apex:outputLabel value="Responsibilites Checklist (Onsite)"/></p1>        
+              <apex:dataTable value="{!oppCheckListResponsibilites}" var="line" columnClasses="left,right" width="100%" cellPadding="4px" styleClass="datatable1">
+              <apex:column headerValue="{!$ObjectType.Estimate_Checklist__c.fields.Title__c.Label}" value="{!line.Title__c}" style="text-align:left width:70%"/>
+              <apex:column headerValue="{!$ObjectType.Estimate_Checklist__c.fields.Responsibility__c.Label}" value="{!line.Responsibility__c}" style="text-align:center width:30%"/>
+          </apex:dataTable>   
+          <BR/>
+       </div>
+    
+           <div class="footer" style="text-align:left">
+              <br/>
+              <p1>Let&#39;s get connected</p1>
+              <hr></hr>
+           </div>   
+       
+      <div class="pagebreak"> </div>         
+       </apex:outputText>
+       </apex:outputText>
+      
+     </div>     
+    
+    
+    <!------------------------------------------------------------>
+    <!---------        Electricity Checklist            ---------->
+    <!------------------------------------------------------------>   
+    <div class="Electricity checklist">  
+       <apex:outputText rendered="{!CONTAINS(Opportunity.Utilities__c,'Electric')}">
+         <div class="header" style="text-align:center;">
+           <p>&nbsp;</p>
+           <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%" />
+           <BR/><BR/>
+        </div>
+    
+        <div class="body" style="margin:80px; margin-top: 0px;">
+           <p1><apex:outputLabel value="Electricity"/></p1>
+           <apex:dataTable value="{!oppCheckListElectricity}" var="line" columnClasses="left,right" width="100%" cellPadding="4px" styleClass="datatable1">
+             <apex:column headerValue="{!$ObjectType.Estimate_Checklist__c.fields.Title__c.Label}"  value="{!line.Title__c}" style="textalign:left"/>
+             <apex:column headerValue="{!$ObjectType.Estimate_Checklist__c.fields.Responsibility__c.Label}" value="{!line.Responsibility__c}" style="text-align:center"/>
+           </apex:dataTable> 
+        </div>
+
+       <div class="ElectricDocuments"  width="80%" height="25%">
+           <apex:dataTable value="{!fileUrlElectricity}" var="url">
+              <apex:column style="text-align:center">
+                 <apex:image url="{!url}"/>
+              </apex:column>
+           </apex:dataTable> 
+           <BR/>
+       </div>
+
+       <div class="footer" style="text-align:left">
+           <br/>
+           <p1>Let&#39;s get connected</p1>
+           <hr></hr>
+       </div>  
+       
+        <div class="pagebreak"> </div>                   
+
+       </apex:outputText>
+    </div>
+
+    <!------------------------------------------------------------>
+    <!---------        Gas Checklist                    ---------->
+    <!------------------------------------------------------------>     
+     <div class="Gas checklist">  
+      <apex:outputText rendered="{!CONTAINS(Opportunity.Utilities__c,'Gas')}">
+     
+        <div class="header" style="text-align:center;">
+           <p>&nbsp;</p>
+           <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%" />
+           <BR/><BR/>
+        </div>
+    
+        <div class="body" style="margin:80px; margin-top: 0px;">
+           <p1><apex:outputLabel value="Gas"/></p1>
+           <apex:dataTable value="{!oppCheckListGas}" var="line" columnClasses="left,right" width="100%" cellPadding="4px" styleClass="datatable1">
+              <apex:column headerValue="{!$ObjectType.Estimate_Checklist__c.fields.Title__c.Label}" value="{!line.Title__c}" style="text-align:left"/>
+              <apex:column headerValue="{!$ObjectType.Estimate_Checklist__c.fields.Responsibility__c.Label}" value="{!line.Responsibility__c}" style="text-align:center"/>
+           </apex:dataTable>  
+        </div>
+       
+        <div class="GasDocuments"  width="80%" height="25%">     
+           <apex:dataTable value="{!fileUrlGas}" var="url" columnClasses="left,right" width="100%" cellPadding="4px">
+              <apex:column style="text-align:center">
+              <apex:image url="{!url}"/>
+              </apex:column>
+           </apex:dataTable> 
+           <BR/>
+        </div>
+    
+           <div class="footer" style="text-align:left">
+              <br/>
+              <p1>Let&#39;s get connected</p1>
+              <hr></hr>
+           </div>                
+   
+        <div class="pagebreak"> </div>                
+      </apex:outputText>       
+     </div>    
+    
+    <!------------------------------------------------------------>
+    <!---------              Water Checklist            ---------->
+    <!------------------------------------------------------------>   
+    
+    <div class="Water checklist">  
+    <apex:outputText rendered="{!CONTAINS(Opportunity.Utilities__c,'Water')}">
+      
+      <div class="header" style="text-align:center;">
+         <p>&nbsp;</p>
+         <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%" />
+         <BR/><BR/>
+      </div>
+    
+      <div class="body" style="margin:80px; margin-top: 0px;">
+        <p1><apex:outputLabel value="Self-Lay Water"/></p1>
+        <apex:dataTable value="{!oppCheckListWater}" var="line" columnClasses="left,right" width="100%" cellPadding="4px" styleClass="datatable1">
+            <apex:column headerValue="{!$ObjectType.Estimate_Checklist__c.fields.Title__c.Label}" value="{!line.Title__c}" style="text-align:left"/>
+            <apex:column headerValue="{!$ObjectType.Estimate_Checklist__c.fields.Responsibility__c.Label}" value="{!line.Responsibility__c}" style="text-align:center"/>
+        </apex:dataTable>  
+      </div>
+
+      <div class="WaterDocuments"  width="80%" height="25%">
+        <apex:dataTable value="{!fileUrlWater}" var="url" columnClasses="left,right" width="100%" cellPadding="4px" styleClass="item">
+            <apex:column style="text-align:center">
+                <apex:image url="{!url}"/>
+            </apex:column>
+        </apex:dataTable> 
+        <BR/>
+      </div>
+
+           <div class="footer" style="text-align:left">
+              <br/>
+              <p1>Let&#39;s get connected</p1>
+              <hr></hr>
+           </div>                
+   
+    <div class="pagebreak"> </div>    
+
+   </apex:outputText>
+</div>
+    
+
+    <!------------------------------------------------------------>
+    <!------Customer Acceptance & Client Payment Schedule--------->
+    <!------------------------------------------------------------>     
+    <div class="Customer Acceptance and Client Payment Schedule">
+      <apex:outputText rendered="{!NOT CONTAINS(Opportunity.Type,'Budget')}">
+        <apex:outputText rendered="{!NOT CONTAINS(Opportunity.Type,'Street Lighting')}">
+         <apex:outputText rendered="{!NOT CONTAINS(Opportunity.Type,'Charge')}"> 
+        <apex:pageBlock >  
+        
+        <div class="header" style="text-align:center;">
+          <p>&nbsp;</p>
+          <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%" />
+          <BR/><BR/>          
+        </div>
+    
+        <div class="body" style="margin:80px; margin-top: 0px;">
+          <p1><apex:outputLabel value="Customer Acceptance"/></p1><BR/>
+              
+          <div class="datatable2" style="text-align:center" styleclass="datatable2">
+           <B><apex:outputLabel value="CUIS Ltd's Costs - Including Asset Value(s)" /></B><BR/>
+           
+           <apex:panelGrid styleclass="datatable2" columns="2"  width="100%" >
+             <apex:outputLabel value="{!$ObjectType.opportunity.fields.Electric_Construction__c.Label}"  />
+             <apex:outputField value="{!Opportunity.Electric_Construction__c}"  />
+             <apex:outputLabel value="{!$ObjectType.opportunity.fields.Gas_Construction__c.Label}" />
+             <apex:outputField value="{!Opportunity.Gas_Construction__c}" />
+             <apex:outputLabel value="!$ObjectType.opportunity.fields.Water_Construction__c.Label" />
+             <apex:outputField value="!Opportunity.Water_Construction__c" />
+             <apex:outputLabel value="!$ObjectType.opportunity.fields.Subtotal_construction__c.Label"/>
+             <apex:outputField value="!Opportunity.Subtotal_construction__c"/>
+           </apex:panelGrid>
+         </div>
+    
+         <BR/>
+         <div class="datatable2" style="text-align:center">
+            <B><apex:outputLabel value="Third Party Costs" /></B>        
+            <apex:dataTable value="{!nonContestableOLIs}" var="line" columnClasses="centre,centre" width="100%" styleclass="datatable2">
+              <apex:column value="{!line.Product_Text__c}" style="text-align:center">
+                <apex:facet name="footer">
+                    <apex:outputLabel value="Total" />
+                </apex:facet>
+             </apex:column>
+             <apex:column value="£{!line.Total_Sell__c}" style="text-align:center">
+                <apex:facet name="footer">
+                    <apex:outputField value="!Opportunity.Subtotal_non_contestable__c" />
+                </apex:facet>
+             </apex:column>
+            </apex:dataTable>
+          </div>
+
+          <BR/>
+       
+         <div class="datatable2">
+           <apex:panelGrid styleclass="datatable2" columns="2" width="100%" >
+           <apex:outputLabel value="Total" />
+           <apex:outputField value="{!Opportunity.Total_Client_Contribution__c}" />
+           </apex:panelGrid>          
+         </div>
+                <BR/>
+         
+          <div class="Client Payment Schedule">
+                <p1><apex:outputLabel value="Client Payment Schedule"/></p1> 
+                <apex:dataTable value="{!paymentSchedule}" var="line" columnClasses="left,right" width="100%" cellPadding="4px" styleClass="datatable1">
+                <apex:column headerValue="{!$ObjectType.Estimate_Client_Payment_Schedule__c.fields.Trigger__c.Label}" value="{!line.Trigger__c}" style="text-align:left"/>
+                <apex:column headerValue="{!$ObjectType.Estimate_Client_Payment_Schedule__c.fields.No_Installments__c.Label}" value="{!line.No_Installments__c}" style="text-align:center"/>
+                <apex:column headerValue="{!$ObjectType.Estimate_Client_Payment_Schedule__c.fields.Total_Payment__c.Label}" style="text-align:right">
+            
+                <apex:outputText value="'£'{0,number,###,##0.00}" style="text-align:right">
+                <apex:param value="{!line.Total_Payment__c}" />
+             </apex:outputText>
+            
+            <apex:facet name="footer">
+              <apex:outputField value="{!opportunity.Payment_Schedule_Total2__c}"/>
+            </apex:facet>
+            
+            </apex:column>
+           </apex:dataTable> 
+           <BR/><BR/>
+           
+            <p>I accept the offer for the design and installation of the electrical, gas, water infrastructure in line with the offer listed within this document.</p>
+            
+            <table width="60%">
+             <tr>
+              <th style="text-align:left" width="20%" >Date</th>
+              <td style="text-align:center" width="40%">______________________________</td>                       
+            </tr>
+            <tr>
+              <th style="text-align:left" width="20%">Name</th>
+              <td style="text-align:center" width="40%">______________________________</td>                         
+            </tr>
+            <tr>
+              <th style="text-align:left" width="20%" >Position</th>
+              <td style="text-align:center" width="40%">______________________________</td>                    
+            </tr>
+            <tr>
+              <th style="text-align:left" width="20%" >Signature</th>
+              <td style="text-align:center" width="40%">______________________________</td>                          
+            </tr>
+           </table>
+  
+        </div>  
+        
+           <div class="footer" style="text-align:left">
+              <br/>
+              <p1>Let&#39;s get connected</p1>
+              <hr></hr>
+           </div>  
+      
+        <div class="pagebreak"> </div>    
+      </div>     
+         </apex:pageBlock>  
+    </apex:outputText>     
+        </apex:outputText>   
+            </apex:outputText>   
+            
+ </div>   
+
+
+
+    <!------------------------------------------------------------>
+    <!---------                                         ---------->
+    <!--------- Calls the termsandconditions component  ---------->
+    <!------------------------------------------------------------>
+     <div class="Terms and Conditions">     
+        <apex:outputText rendered="{!NOT CONTAINS(Opportunity.Type,'Street Lighting')}">
+         <apex:outputText rendered="{!NOT CONTAINS(Opportunity.Type,'Charge')}"> 
+
+         <apex:pageBlock >     
+            <div class="header" style="text-align:center;">
+               <p>&nbsp;</p>
+               <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%" />
+               <BR/><BR/>
+            </div>
+          
+            <c:termsandconditions />
+          
+           <div class="footer" style="text-align:left">
+              <br/>
+              <p1>Let&#39;s get connected</p1>
+              <hr></hr>
+           </div>    
+          
+            <div class="pagebreak"> 
+            </div>  
+          </apex:pageBlock> 
+                  </apex:outputText>   
+            </apex:outputText>   
+       </div> 
+           
+
+
+    <!------------------------------------------------------------>
+    <!---------                                         ---------->
+    <!--------- Calls the leadtimes component           ---------->
+    <!------------------------------------------------------------>     
+    <div class="Leadtimes">
+        <apex:outputText rendered="{!NOT CONTAINS(Opportunity.Type,'Street Lighting')}">
+         <apex:outputText rendered="{!NOT CONTAINS(Opportunity.Type,'Charge')}"> 
+         
+       <apex:pageBlock >   
+          <div class="header" style="text-align:center;">
+             <p>&nbsp;</p>
+             <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%" />
+             <BR/><BR/>
+          </div>    
+          
+          <c:leadtimes />    
+          
+       <div class="footer" style="text-align:left">
+              <br/>
+              <p1>Let&#39;s get connected</p1>
+              <hr></hr>
+       </div>  
+       <div class="pagebreak">  </div>  
+       </apex:pageBlock>
+            </apex:outputText>  
+              </apex:outputText>  
+    </div>
+ 
+         
+    <!------------------------------------------------------------>
+    <!--------- Calls the Attendance component          ---------->
+    <!------------------------------------------------------------>     
+    <div class="Attendance"> 
+            <apex:outputText rendered="{!NOT CONTAINS(Opportunity.Type,'Street Lighting')}">
+         <apex:outputText rendered="{!NOT CONTAINS(Opportunity.Type,'Charge')}"> 
+        <apex:pageBlock >      
+           <div class="header" style="text-align:center;">
+              <p>&nbsp;</p>
+              <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%" />
+              <BR/><BR/>
+           </div>
+       
+           <c:attendance />
+       
+           <div class="footer" style="text-align:left">
+              <br/>
+              <p1>Let&#39;s get connected</p1>
+              <hr></hr>
+           </div>  
+                  
+       </apex:pageBlock>
+                      </apex:outputText>  
+              </apex:outputText>              
+    </div> 
+    
+    
+    
+ </apex:page>

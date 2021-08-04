@@ -1,0 +1,11 @@
+<apex:page standardController="Opportunity" extensions="opportunityControllerExtension"  lightningStylesheets="true">
+
+    <apex:tabPanel switchType="Scheme">
+        <apex:tab label="Details"><c:Schemes_Details /></apex:tab>
+        <apex:tab label="Electricity"><c:Electricity_Connection_Log /></apex:tab>
+        <apex:tab label="Gas"><c:Gas_Connection_Log /></apex:tab>
+        <apex:tab label="Water"><c:Water_Connection_Log /></apex:tab>
+        <apex:tab label="Street Lighting"><c:Street_Lighting_Log /></apex:tab>
+        <apex:tab label="Charger Point"><c:Charger_Point_Log /></apex:tab>
+    </apex:tabPanel>
+</apex:page>

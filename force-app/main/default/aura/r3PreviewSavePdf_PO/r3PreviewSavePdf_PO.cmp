@@ -1,0 +1,12 @@
+<aura:component extends="c:r3PreviewSavePdf">
+    // configurable settings
+    <aura:attribute name="VisualForcePage" type="String" default="ConnectITPurchaseOrder"/>
+    <aura:attribute name="Filename" type="String" default="purchase order" />
+    <aura:attribute name="ButtonName" type="String" default="Create PO" />
+    <aura:attribute name="Group" type="String" default="PO" />
+    <aura:attribute name="Type" type="String" default="Document" />
+    
+    // leave as is for any action
+    <aura:attribute name="isOpen" type="boolean" default="false" />
+    <aura:attribute name="showButton" type="boolean" default="false" />
+</aura:component>

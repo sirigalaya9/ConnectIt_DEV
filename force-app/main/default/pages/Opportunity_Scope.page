@@ -1,0 +1,30 @@
+<apex:page standardcontroller="Opportunity" recordSetvar="Opportunity">
+
+
+ <apex:pageBlock title="Project Scope">
+<!--
+  <apex:form id="theForm">
+    
+        <apex:pageBlock title="Edit Project Scope">
+        <apex:pageBlockSection>
+            <apex:inputField value="{! Account.Name }"/>       
+                <apex:inputField value="{! Account.Name }"/>
+                <apex:inputField value="{! Account.Phone }"/>        
+                <apex:inputField value="{! Account.Industry }"/>        
+                <apex:inputField value="{! Account.AnnualRevenue }"/> 
+        </apex:pageBlockSection>
+        <apex:pageBlockButtons>
+            <apex:commandButton action="{! save }" value="Save" />        
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+    
+    
+     </apex:pageBlockTable>
+
+
+  </apex:form>
+  -->
+  
+</apex:pageBlock>
+
+</apex:page>

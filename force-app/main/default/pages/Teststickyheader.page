@@ -1,0 +1,137 @@
+<apex:page standardController="Contact">  
+   <!--<apex:includeScript value="{!$Resource.jquery}" />  -->
+   <!-- Better to include jquery as a static resource and refer it using visualforce's standard component Or you can also use:   -->
+     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> 
+   <!-- css for the sticky header section-->  
+   
+   <style>  
+     .floatingHeader {  
+                position: fixed;  
+                top: 0;  
+                visibility: hidden;  
+                z-index: 10;  
+                background-color: white;  
+     }  
+   </style>  
+   
+   
+   <!-- script to clone and show/hide the sticky section when scrolling the page-->  
+   <script type="text/javascript">  
+     function sectionHeaders() {  
+                $(".persist-area").each(function() {  
+                     var el     = $(this),  
+                     offset     = el.offset(),  
+                     scrollTop   = $(document).scrollTop(),  
+                     floatingHeader = $(".floatingHeader", this)  
+                     if ((scrollTop > offset.top) && (scrollTop < offset.top + el.height())) {  
+                          floatingHeader.css({  
+                               "visibility": "visible"  
+                          });  
+                     } else {  
+                          floatingHeader.css({  
+                               "visibility": "hidden"  
+                          });     
+                     };  
+                });  
+     }  
+     $(function() {  
+                var clonedHeaderRow;  
+                $(".persist-area").each(function() {  
+                     clonedHeaderRow = $(".persist-header", this);  
+                     clonedHeaderRow  
+                     .before(clonedHeaderRow.clone())  
+                     .css("width", clonedHeaderRow.width())  
+                     .addClass("floatingHeader");  
+                });  
+                $(document)  
+                     .scroll(sectionHeaders)  
+                     .trigger("scroll");  
+     });  
+   </script>  
+   <div class="persist-area">  
+     <!-- non-persistent components to be displayed on the page can be placed over here or even it can go above div section -->  
+     <div id="staticPanel" class="persist-header" >  
+       <!-- All your sticky components that needs to be persistent on the header of the page can be specified under this div section. We can can use salesforce standard components like pageblocksection, outputPanel etc.-->  
+       <h>Heading</h>
+     </div>  
+          <p>test</p>
+          <p>test</p>
+               <p>test</p>
+                    <p>test</p>
+                         <p>test</p>
+                              <p>test</p>
+                                   <p>test</p>
+                                        <p>test</p>
+                                             <p>test</p>
+                                                  <p>test</p>
+                                                       <p>test</p>
+                                                            <p>test</p>
+          <p>test</p>
+               <p>test</p>
+                    <p>test</p>
+                         <p>test</p>
+                              <p>test</p>
+                                   <p>test</p>
+                                        <p>test</p>
+                                             <p>test</p>
+                                                  <p>test</p>
+                                                       <p>test</p>
+                                                            <p>test</p>
+          <p>test</p>
+               <p>test</p>
+                    <p>test</p>
+                         <p>test</p>
+                              <p>test</p>
+                                   <p>test</p>
+                                        <p>test</p>
+                                             <p>test</p>
+                                                  <p>test</p>
+                                                       <p>test</p>
+                                                            <p>test</p>
+          <p>test</p>
+               <p>test</p>
+                    <p>test</p>
+                         <p>test</p>
+                              <p>test</p>
+                                   <p>test</p>
+                                        <p>test</p>
+                                             <p>test</p>
+                                                  <p>test</p>
+                                                       <p>test</p>
+                                                            <p>test</p>
+          <p>test</p>
+               <p>test</p>
+                    <p>test</p>
+                         <p>test</p>
+                              <p>test</p>
+                                   <p>test</p>
+                                        <p>test</p>
+                                             <p>test</p>
+                                                  <p>test</p>
+                                                       <p>test</p>
+                                                            <p>test</p>
+          <p>test</p>
+               <p>test</p>
+                    <p>test</p>
+                         <p>test</p>
+                              <p>test</p>
+                                   <p>test</p>
+                                        <p>test</p>
+                                             <p>test</p>
+                                                  <p>test</p>
+                                                       <p>test</p>
+                                                       
+     <p>test</p>
+          <p>test</p>
+               <p>test</p>
+                    <p>test</p>
+                         <p>test</p>
+                              <p>test</p>
+                                   <p>test</p>
+                                        <p>test</p>
+                                             <p>test</p>
+                                                  <p>test</p>
+                                                       <p>test</p>
+     <!-- Rest of the non-persistent components like related lists / pageblock sections which needs to be below this section on the page can be specified over here-->  
+   </div>  
+ </apex:page>

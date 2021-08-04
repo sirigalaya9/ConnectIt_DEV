@@ -1,0 +1,21 @@
+<apex:page standardController="User" lightningStylesheets="true">
+    <apex:sectionHeader title="Section Header" />
+    <apex:form >
+        <apex:pageBlock title="Block Title" >
+            <apex:panelGrid columns="6" border="0" styleClass="tableStyle" width="100%" >
+                <apex:outputLabel value="{!$ObjectType.User.Fields.Username.Label}" />
+                <apex:outputField value="{!user.Username}" />
+                <apex:outputLabel value="{!$ObjectType.User.Fields.FirstName.Label}" />
+                <apex:outputField value="{!user.FirstName}" label="First Name"/>
+                <apex:outputLabel value="{!$ObjectType.User.Fields.LastName.Label}" />
+                <apex:outputField value="{!user.LastName}" label="Last Name"/>
+                <apex:outputLabel value="{!$ObjectType.User.Fields.Division.Label}" />
+                <apex:outputField value="{!user.Division}" label="Division"/>
+                <apex:outputLabel value="{!$ObjectType.User.Fields.Email.Label}" />
+                <apex:outputField value="{!user.Email}" label="Email"/>
+                <apex:outputLabel value="{!$ObjectType.User.Fields.Title.Label}" />
+                <apex:outputField value="{!user.Title}" label="Title"/>
+            </apex:panelGrid>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

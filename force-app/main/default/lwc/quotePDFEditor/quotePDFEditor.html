@@ -1,0 +1,261 @@
+<template>
+    <div class="slds-card">
+
+
+
+        <!--<iframe src="/sfc/servlet.shepherd/document/download/0693G000000LKwMQAW" style="width: 100%; border: 0;height: 500px;"></iframe>-->
+        <!--<iframe src="/apex/quotePDFViewer" style="width: 100%; border: 0;height: 500px;"></iframe>-->
+
+        <div class="slds-align_absolute-center slds-m-top_small slds-m-bottom_small">
+            <lightning-button variant="brand" label="Preview PDF" onclick={renderPDF} class="slds-m-left_x-small">
+            </lightning-button>
+
+            <!--
+            <form action="https://www.webmerge.me/merge/758346/l2ukww?test=1&download=1" method="post"
+                target="renderFrame" id="pdfForm">                
+                <input type="hidden" value={image_overview} name="image_overview" />
+                <input type="hidden" value={image_electricity} name="image_electricity" />
+                <input type="hidden" value={image_gas} name="image_gas" />
+                <input type="hidden" value={image_water} name="image_water" />
+                <input type="hidden" value={account_name} name="account_name" />
+                <input type="hidden" value={user_name} name="user_name" />
+                <input type="hidden" value={user_title} name="user_title" />
+                <input type="hidden" value={createddate} name="createddate" />
+                <input type="hidden" value={closedate} name="closedate" />
+                <input type="hidden" value={user_phone} name="user_phone" />
+                <input type="hidden" value={user_email} name="user_email" />                         
+
+                <lightning-button variant="brand" label="Download DOCX" onclick={renderDOCX} class="slds-m-left_x-small"
+                    type="submit"></lightning-button>
+            </form>
+            -->
+
+            <lightning-button variant="brand" label="Download DOCX" onclick={renderDOCX2} class="slds-m-left_x-small"></lightning-button>
+        </div>
+
+        <lightning-layout>
+            <lightning-layout-item size="6">
+
+                <iframe src={PDF} height="800px" width="100%"></iframe>
+
+
+
+                <iframe id="frame" name="renderFrame" src="" height="0px" width="100%" style="border:0">
+
+                </iframe>
+
+            </lightning-layout-item>
+
+            <lightning-layout-item size="6" style="overflow:scroll;height:800px;">
+
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered"
+                    aria-label="Example table of Opportunities with vertical borders">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th class="" scope="col" style="width: 30%">
+                                <div class="slds-truncate">Scheme</div>
+                            </th>
+                            <th class="" scope="col" style="width: 70%">
+                                <div class="slds-truncate">Image</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="slds-hint-parent">
+                            <th data-label="Opportunity Name" scope="row">
+                                <div class="slds-truncate">
+                                    Overview
+
+                                </div>
+                            </th>
+                            <td data-label="Account Name">
+                                <lightning-input type="file" label="Upload Image" accept="image/*"
+                                    onchange={handleImageChange} class="" data-id="fileUpload" data-type="overview">
+                                </lightning-input>
+
+                                <div>
+                                <template for:each={image_overview} for:item="image">                                
+                                    <div class="slds-file slds-file_card slds-has-title" key={image.id}>
+                                        <figure>
+                                            <a href="javascript:void(0);" style="cursor:default">
+                                                <span class="slds-assistive-text">Preview:</span>
+                                                <div>
+                                                    <iframe data-id={image.id} height="0px" width="100%"
+                                                        src={image.src} style="border:0"></iframe>
+                                                </div>
+                                            </a>                               
+                                            <figcaption class="slds-file__title slds-file__title_card slds-file-has-actions">
+                                                <div class="slds-media slds-media_small slds-media_center">
+                                                    <div class="slds-media__figure slds-line-height_reset">
+                                                        <lightning-icon icon-name="doctype:image" alternative-text="Image file" title="Image" size="x-small">
+                                                        </lightning-icon>
+                                                    </div>
+                                                    <div class="slds-media__body">
+                                                        <span class="slds-file__text slds-truncate" title=""></span>
+                                                    </div>
+                                                </div>
+                                            </figcaption>
+                                        </figure>
+                                        <div class="slds-file__actions-menu">
+                                            <div class="slds-button-group" role="group">
+                                                <lightning-button-icon icon-name="utility:delete" variant="bare" data-type="overview" data-id={image.id} onclick={handleRemoveImageClicked} alternative-text="Remove" title="Remove">
+                                                </lightning-button-icon>
+                                            </div>
+                                        </div>
+                                    </div>                                
+                                </template>
+                                </div>
+                            
+                            </td>
+                        </tr>
+                        <tr class="slds-hint-parent">
+                            <th data-label="Opportunity Name" scope="row">
+                                <div class="slds-truncate">
+                                    Electricity
+                                </div>
+                            </th>
+                            <td data-label="Account Name">
+                                <lightning-input type="file" label="Upload Image" accept="image/*"
+                                    onchange={handleImageChange} class="" data-id="fileUpload" data-type="electricity">
+                                </lightning-input>
+                                <div>
+                                    <template for:each={image_electricity} for:item="image">                                
+                                        <div class="slds-file slds-file_card slds-has-title" key={image.id}>
+                                            <figure>
+                                                <a href="javascript:void(0);" style="cursor:default">
+                                                    <span class="slds-assistive-text">Preview:</span>
+                                                    <div>
+                                                        <iframe data-id={image.id} height="0px" width="100%"
+                                                            src={image.src} style="border:0"></iframe>
+                                                    </div>
+                                                </a>                               
+                                                <figcaption class="slds-file__title slds-file__title_card slds-file-has-actions">
+                                                    <div class="slds-media slds-media_small slds-media_center">
+                                                        <div class="slds-media__figure slds-line-height_reset">
+                                                            <lightning-icon icon-name="doctype:image" alternative-text="Image file" title="Image" size="x-small">
+                                                            </lightning-icon>
+                                                        </div>
+                                                        <div class="slds-media__body">
+                                                            <span class="slds-file__text slds-truncate" title=""></span>
+                                                        </div>
+                                                    </div>
+                                                </figcaption>
+                                            </figure>
+                                            <div class="slds-file__actions-menu">
+                                                <div class="slds-button-group" role="group">
+                                                    <lightning-button-icon icon-name="utility:delete" variant="bare" data-type="electricity" data-id={image.id} onclick={handleRemoveImageClicked} alternative-text="Remove" title="Remove">
+                                                    </lightning-button-icon>
+                                                </div>
+                                            </div>
+                                        </div>                                
+                                    </template>
+                                    </div>
+                            </td>
+                        </tr>
+                        <tr class="slds-hint-parent">
+                            <th data-label="Opportunity Name" scope="row">
+                                <div class="slds-truncate">
+                                    Gas
+                                </div>
+                            </th>
+                            <td data-label="Account Name">
+                                <lightning-input type="file" label="Upload Image" accept="image/*"
+                                    onchange={handleImageChange} class="" data-id="fileUpload" data-type="gas">
+                                </lightning-input>
+                                <div>
+                                    <template for:each={image_gas} for:item="image">                                
+                                        <div class="slds-file slds-file_card slds-has-title" key={image.id}>
+                                            <figure>
+                                                <a href="javascript:void(0);" style="cursor:default">
+                                                    <span class="slds-assistive-text">Preview:</span>
+                                                    <div>
+                                                        <iframe data-id={image.id} height="0px" width="100%"
+                                                            src={image.src} style="border:0"></iframe>
+                                                    </div>
+                                                </a>                               
+                                                <figcaption class="slds-file__title slds-file__title_card slds-file-has-actions">
+                                                    <div class="slds-media slds-media_small slds-media_center">
+                                                        <div class="slds-media__figure slds-line-height_reset">
+                                                            <lightning-icon icon-name="doctype:image" alternative-text="Image file" title="Image" size="x-small">
+                                                            </lightning-icon>
+                                                        </div>
+                                                        <div class="slds-media__body">
+                                                            <span class="slds-file__text slds-truncate" title=""></span>
+                                                        </div>
+                                                    </div>
+                                                </figcaption>
+                                            </figure>
+                                            <div class="slds-file__actions-menu">
+                                                <div class="slds-button-group" role="group">
+                                                    <lightning-button-icon icon-name="utility:delete" variant="bare" data-type="gas" data-id={image.id} onclick={handleRemoveImageClicked} alternative-text="Remove" title="Remove">
+                                                    </lightning-button-icon>
+                                                </div>
+                                            </div>
+                                        </div>                                
+                                    </template>
+                                    </div>
+                            </td>
+                        </tr>
+                        <tr class="slds-hint-parent">
+                            <th data-label="Opportunity Name" scope="row">
+                                <div class="slds-truncate">
+                                    Water
+                                </div>
+                            </th>
+                            <td data-label="Account Name">
+                                <lightning-input type="file" label="Upload Image" accept="image/*"
+                                    onchange={handleImageChange} class="" data-id="fileUpload" data-type="water">
+                                </lightning-input>
+                                <div>
+                                    <template for:each={image_water} for:item="image">                                
+                                        <div class="slds-file slds-file_card slds-has-title" key={image.id}>
+                                            <figure>
+                                                <a href="javascript:void(0);" style="cursor:default">
+                                                    <span class="slds-assistive-text">Preview:</span>
+                                                    <div>
+                                                        <iframe data-id={image.id} height="0px" width="100%"
+                                                            src={image.src} style="border:0"></iframe>
+                                                    </div>
+                                                </a>                               
+                                                <figcaption class="slds-file__title slds-file__title_card slds-file-has-actions">
+                                                    <div class="slds-media slds-media_small slds-media_center">
+                                                        <div class="slds-media__figure slds-line-height_reset">
+                                                            <lightning-icon icon-name="doctype:image" alternative-text="Image file" title="Image" size="x-small">
+                                                            </lightning-icon>
+                                                        </div>
+                                                        <div class="slds-media__body">
+                                                            <span class="slds-file__text slds-truncate" title=""></span>
+                                                        </div>
+                                                    </div>
+                                                </figcaption>
+                                            </figure>
+                                            <div class="slds-file__actions-menu">
+                                                <div class="slds-button-group" role="group">
+                                                    <lightning-button-icon icon-name="utility:delete" variant="bare" data-type="water" data-id={image.id} onclick={handleRemoveImageClicked} alternative-text="Remove" title="Remove">
+                                                    </lightning-button-icon>
+                                                </div>
+                                            </div>
+                                        </div>                                
+                                    </template>
+                                    </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </lightning-layout-item>
+
+        </lightning-layout>
+
+        <iframe id="frame2" name="renderFrame2" src="" height="0px" width="100%" style="border:0">
+
+        </iframe>
+
+        <div if:true={showSpinner}>
+            <lightning-spinner variant="brand" size="large">
+            </lightning-spinner>
+        </div>
+
+    </div>
+
+</template>

@@ -1,0 +1,58 @@
+<apex:page standardController="Opportunity" recordSetVar="opportunities">
+
+    <apex:form >
+
+        <apex:pageBlock >
+
+            <apex:pageMessages />
+
+            <apex:pageBlockButtons >
+
+                <apex:commandButton value="Save" action="{!save}"/>
+
+                 <apex:commandButton value="Quick Save" action="{!quicksave}"/>
+
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockTable value="{!opportunities}" var="opp">
+
+  
+
+                <apex:column value="{!opp.id}"/>
+
+                <apex:column value="{!opp.name}"/>
+
+                 
+
+                <apex:column headerValue="Stage">
+
+                    <apex:inputField value="{!opp.stageName}"/>
+
+                </apex:column>
+
+ 
+
+                <apex:column headerValue="Amount">
+
+                    <apex:inputField value="{!opp.amount}"/>
+
+                </apex:column>
+
+            </apex:pageBlockTable>    
+
+            <apex:panelGrid columns="2">
+
+                  <apex:commandLink action="{!first}">First</apex:commandlink>
+      <apex:commandLink action="{!last}">Last</apex:commandlink>
+
+      <apex:commandLink action="{!previous}">Previous</apex:commandlink>
+
+      <apex:commandLink action="{!next}">Next</apex:commandlink>
+
+    </apex:panelGrid>
+
+        </apex:pageBlock>
+
+    </apex:form>
+
+</apex:page>

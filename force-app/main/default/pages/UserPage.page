@@ -1,0 +1,36 @@
+<apex:page standardcontroller="User" recordSetvar="Users">
+ <apex:pageBlock title="List of Users">
+
+  <apex:form id="theForm">
+   <apex:pageBlockTable value="{!Users}" var="listofusers" >
+           
+        <apex:column headerValue="Name">
+            {!listofusers.Name}  
+        </apex:column>
+        
+        <apex:column headerValue="Manager">
+            {!listofusers.Manager.Name}  
+        </apex:column>
+        
+        <apex:column headerValue="Job Title">
+            {!listofusers.title}  
+        </apex:column>
+        
+         <apex:column headerValue="Profile">
+            {!listofusers.Profile}  
+        </apex:column>
+
+        <apex:column headerValue="Personal Email Address ">
+           {!listofusers.Personal_Email_Address__c}
+        </apex:column>  
+
+     </apex:pageBlockTable>
+    <apex:panelGrid columns="2">
+      <apex:commandLink action="{!previous}">Previous</apex:commandlink>
+      <apex:commandLink action="{!next}">Next</apex:commandlink>
+    </apex:panelGrid>
+
+  </apex:form>
+</apex:pageBlock>
+     
+</apex:page>

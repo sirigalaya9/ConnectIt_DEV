@@ -1,0 +1,50 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" 
+                controller="r3FileManagerController"
+                access="global" >
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="fileList" type="List"/>
+    <aura:attribute name="groupList" type="List" />
+    <aura:attribute name="folderList" type="List" />
+    <aura:attribute name="title" type="String"/>
+    <aura:attribute name="activeSections" type="List" />
+    <aura:attribute name="activeSectionsMessage" type="String" default="" />
+    <aura:attribute name="fileFilter" type="String" default="" />
+    <aura:handler event="force:refreshView" action="{!c.checkFileList}" />
+    
+    <lightning:notificationsLibrary aura:id="notifLib" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.checkFileList}" />
+    
+    <lightning:card iconName="standard:file" title="{!v.title}">
+        <c:setFileType />
+        <div class="slds-align_absolute-center">
+            <lightning:fileUpload label="Attach files"
+                                  multiple="true"
+                                  recordId="{!v.recordId}"
+                                  onuploadfinished="{!c.handleUploadFinished}" />
+        </div>
+        <lightning:accordion allowMultipleSectionsOpen="true" onsectiontoggle="{! c.handleSectionToggle }" activeSectionName="{! v.activeSections }" >
+            <aura:iteration items="{!v.folderList}" var="folder">
+                <lightning:accordionSection name="{!folder.name}" label="{!folder.name}">    
+                    <aura:iteration items="{!folder.files}" var="file">
+                        <div class="slds-align_absolute-center slds-m-top_x-small">
+                            <li class="slds-item">
+                                <lightning:tile>
+                                    <aura:set attribute="media" >
+                                        <img src="{!'/sfc/servlet.shepherd/version/renditionDownload?rendition=THUMB120BY90&amp;versionId='+file.id}" style="width:30px;height:37px;"/>
+                                    </aura:set>
+                                    <c:r3ViewFile recordId="{!file.contentdocumentid}" title="{!file.title}" tooltip="{!file.title}"></c:r3ViewFile>
+                                    <ul class="slds-list_horizontal slds-has-dividers_right">
+                                        <li class="slds-item">{!file.type}</li>
+                                        <li class="slds-item"><lightning:formattedDateTime value="{!file.created}"/></li>
+                                        <li class="slds-item">{!file.sizeTxt}</li>
+                                    </ul>
+                                </lightning:tile>
+                            </li>
+                        </div>
+                    </aura:iteration>
+                </lightning:accordionSection>
+            </aura:iteration>
+        </lightning:accordion>
+    </lightning:card>
+</aura:component>

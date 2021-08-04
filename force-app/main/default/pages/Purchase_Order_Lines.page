@@ -1,0 +1,33 @@
+<apex:page standardController="Purchase_Order__c" lightningStylesheets="true">
+
+ <apex:pageBlock >
+        <apex:pageBlockSection title="Purchase Order Lines" columns="6">
+            <apex:pageBlockTable value="{!Purchase_Order__c.Purchase_Order_Line_Items__r}" var="poli" id="list">
+            <p>Account: {!Purchase_Order__c.name}</p>
+            <p>POL Line: {!Purchase_Order__c.Purchase_Order_Line_Items__r}</p>
+            <p>POL Desc: {!poli.Product_Description__c}</p>
+            <p>POL Picked Y/N: {!poli.Picked_from_Warehouse__c}</p>
+            <p>POL QTY Delivered: {!poli.Quantity_Delivered__c}</p>
+ 
+        </apex:pageBlockTable> 
+        </apex:pageBlockSection>
+
+ </apex:pageBlock>
+                             
+
+ <!--   <apex:pageBlock>
+        <apex:pageBlockTable value="{!Purchase_Order__c.Purchase_Order_Line_Items__r}" var="poli" id="list">
+
+            <apex:column headerValue="{!$ObjectType.Purchase_Order__c.Fields.Name.Label}" >
+                 <apex:facet name="header">   
+                      <apex:commandLink action="{!getPurchaseOrder}" value="{!$ObjectType.Purchase_Order__c.Name.Label}{!IF(sortExpression=='Name',IF(sortDirection='ASC','▼','▲'),'')}" >
+                       <apex:param value="Name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                      </apex:commandLink>
+                 </apex:facet>
+            </apex:column>
+
+        </apex:pageBlockTable>     
+    </apex:pageBlock>     
+-->
+
+</apex:page>

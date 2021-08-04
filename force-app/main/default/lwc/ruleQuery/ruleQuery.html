@@ -1,0 +1,44 @@
+<template>
+
+    <div class="slds-card">
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+            <thead>
+                <tr class="slds-line-height_reset">
+                    <th class="" scope="col" style="width:20%">
+                        <div class="slds-truncate" title="PRODUCT NAME">Products ({newlineItems.length})</div>
+                    </th>
+                </tr>
+                <!--
+            <tr class="slds-line-height_reset">
+                <th class="" scope="col" style="width:20%">
+                    <lightning-input type="text" label="Name" data-name="Name" variant="label-inline" onchange={handleChange}></lightning-input>
+                </th>
+            </tr>            
+            -->
+                <tr class="slds-line-height_reset">
+                    <th class="" scope="col" style="width:20%">
+                        <lightning-input type="text" label="DNO Reference" data-name="Adopter__c" variant="label-inline"
+                            onchange={handleChange}></lightning-input>
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <template for:each={newlineItems} for:item="item">
+                    <tr key={item.Id}>
+                        <td data-label="Product Name" scope="row">
+                            <div class="slds-truncate">{item.Name}</div>
+                        </td>
+                    </tr>
+
+                </template>
+
+            </tbody>
+        </table>
+
+        <template if:true={showSpinner}>
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </template>
+
+    </div>
+</template>

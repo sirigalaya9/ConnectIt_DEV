@@ -1,0 +1,250 @@
+<aura:component
+                implements="forceCommunity:themeLayout,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes"
+                access="global"
+                >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    
+    
+    <aura:attribute
+                    name="iconColor"
+                    type="String"
+                    default="Velvet Red"
+                    access="global"
+                    />
+    
+    <aura:attribute
+                    name="iconType"
+                    type="String"
+                    default="announcement"
+                    access="global"
+                    />
+    
+     <aura:attribute
+                    name="iconSize"
+                    type="String"
+                    default="medium"
+                    access="global"
+                    />
+
+
+    <aura:attribute
+                    name="header"
+                    type="String"
+                    default="COVID-19 Update"
+                    access="global"
+                    />
+    
+    <aura:attribute
+                    name="headerBackgroundColor"
+                    type="String"
+                    default=""
+                    access="global"
+                    />
+    
+    <aura:attribute
+                    name="headerCDCLink"
+                    type="String"
+                    default="https://www.cdc.gov/coronavirus/2019-ncov/index.html"
+                    access="global"
+                    />
+    
+    <!--<aura:attribute
+                    name="headerArticleLink"
+                    type="String"
+                    default=""
+                    access="global"
+                    />-->
+    
+    <aura:attribute name="headerYearDisplay" 
+                    type="Boolean" 
+                    default="false" 
+                    access="global" />
+    
+    <aura:attribute name="headerMessageLearnMoreDisplay" 
+                    type="Boolean" 
+                    default="false" 
+                    access="global" />
+    
+    
+    <aura:attribute name="headerYear"
+                    type="String" 
+                    default="" 
+                    access="global" />
+    
+    
+    <aura:attribute
+                    name="backgroundColor"
+                    type="String"
+                    access="global"
+                    />
+    
+    <aura:attribute name="colorVariant" 
+                    type="String"
+                    access="global"
+                    />
+    
+    <aura:attribute
+                    name="linkColor"
+                    type="String"
+                    access="global"
+                    />
+    
+    <aura:attribute
+                    name="boxPadding"
+                    type="String"
+                    default="10"
+                    access="global"
+                    />
+    <aura:attribute
+                    name="paddingRadius"
+                    type="String"
+                    default=""
+                    access="global"
+                    />
+    <aura:attribute name="logoURL" 
+                    type="String" 
+                    default="" 
+                    access="global" />
+    
+    <aura:attribute
+                    name="textFontSize"
+                    type="String"
+                    default="18"
+                    access="global"
+                    />
+    <aura:attribute
+                    name="textColor"
+                    type="String"
+                    default="#FFFFFF"
+                    access="global"
+                    />
+    
+    <aura:attribute
+                    name="headerMessage"
+                    type="String"
+                    default="Please visit the CDC for the latest news and resources on COVID-19."
+                    access="global"
+                    />
+    
+    <aura:attribute
+                    name="textHeaderMessageFontSize"
+                    type="String"
+                    default="18"
+                    access="global"
+                    />
+    
+    <aura:attribute
+                    name="textHeaderColor"
+                    type="String"
+                    default="White"
+                    access="global"
+                    />
+    
+    <aura:attribute
+                    name="textHeaderMessageColor"
+                    type="String"
+                    default="White"
+                    access="global"
+                    />
+    <aura:attribute name="borderColor"
+                    type="String" 
+                    default="" 
+                    access="global" />
+    
+    <aura:attribute name="boxBorder"
+                    type="String" 
+                    default="" 
+                    access="global" />
+    
+    <aura:attribute name="boxWidth" 
+                    type="String" 
+                    default="" 
+                    access="global" />
+    
+    <aura:attribute name="borderStyle"
+                    type="String" 
+                    default="" 
+                    access="global" />
+    
+    <aura:attribute
+                    name="borderRadius"
+                    type="String"
+                    default="5"
+                    access="global"
+                    />
+
+    
+    <div style="{!'background-color:' + v.colorVariant +';border-radius:'+v.borderRadius+'px'}"
+         >
+        
+        <div
+             style="{!'border:' + v.boxBorder +'px; border-width:'+v.boxWidth +'; border-color:' + v.borderColor +';border-style:'+v.borderStyle +';border-radius:'+v.borderRadius+'px' }"
+             >
+            <div
+                 style="{!'padding:' + v.boxPadding +'px; background-color:' + v.backgroundColor +';border-radius:'+v.borderRadius+'px;'+'background-clip:border-box'}"
+                 >
+                <div
+                     class="slds-grid slds-grid_vertical-align-start slds-grid_vertical-align-center"
+                     >
+                    <div class="slds-col slds-size_3-of-12" >
+                        <p
+                           style="{!'font-size:' + v.textFontSize + 'px; color:' + v.textHeaderColor}"
+                           >
+                            <span
+                                  class="slds-icon_container" style="{!'background-color'+':' + v.headerBackgroundColor}"
+                                  title="Description of icon when needed"
+                                  >
+                                <lightning:icon
+                                                class="iconColor" style="{!'background-color:' + v.iconColor}"
+                                                iconName="{!'action'+':' +v.iconType}"
+                                                size="{!v.iconSize}"
+                                                alternativeText="SOS Announcement"
+                                                />
+                                <span>{!v.header}</span>
+                                <span class="slds-assistive-text"
+                                      >Description of icon when needed</span
+                                    >
+                            </span>
+                        </p>
+                    </div>
+                    <p
+                       style="{!'font-size:' + v.textHeaderMessageFontSize + 'px; color:' + v.textHeaderMessageColor}"
+                       >
+                        <div class="slds-col slds-size_12-of-12 ">
+                            <div alert-body=""
+                                 ><div class="alert-content">
+                                <div class="alert-body">
+                                    <p class="description">
+                                        <p
+                                           ><span>{!v.headerMessage} 
+                                            <aura:if isTrue="{!not(v.headerMessageLearnMoreDisplay)}"> 
+                                                <a href="{!v.headerCDCLink}" style="{!'color:' + v.linkColor}" target="_blank"> Learn More</a>
+                                              
+                                                 </aura:if> 
+                                            </span>
+                           
+                                            
+                                           
+                                           <!--<span >&nbsp;for the latest news and resources. Learn more about
+                                            our company's response to the current crisis 
+                                            </span>-->
+                                             <!--<a href="{!v.headerCDCLink}" style="{!'color:' + v.linkColor}" target="_blank">CDC</a>
+                                             <a href="{!v.headerArticleLink}" style="{!'color:' + v.linkColor}"  target="_blank">here</a>-->
+                                        </p></p
+                                        >
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                        <aura:if isTrue="{!v.headerYearDisplay}">
+                            <div class="slds-col copyright ">
+                                <span>&copy; Copyright {!v.headerYear}</span>
+                            </div>
+                        </aura:if> 
+                    </p>
+                </div>
+            </div>
+        </div> 
+    </div> 
+</aura:component>

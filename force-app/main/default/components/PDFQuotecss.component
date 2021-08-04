@@ -1,0 +1,458 @@
+<apex:component >
+
+            .table
+            {
+            width: 600px; 
+            border-collapse: collapse;
+            border: 1px solid black;
+            border-width : 0.5px;
+            border-color: black;
+            }
+          
+            .table td
+            {
+            border: 1px solid black;
+            border-width : 0.5px;
+            border-color: black;
+            border-collapse: collapse;
+            }
+            
+            .table tr
+            {
+            border: 1px solid black;
+            border-width : 0.5px;
+            border-color: black;
+            border-collapse: collapse;
+            }
+          
+            .datatable1
+            {
+            background-color: #000057; 
+            table-layout : fixed;
+            }
+
+            .atttable
+            {
+            border-style: solid;
+            border-color: black;
+            width : 100%;
+            table-layout : fixed;
+            }
+
+            .atttable tr
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : black;
+            font-weight : normal;
+            background-color: white; 
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: black;
+            border-collapse: collapse;
+            }
+            
+            .datatable1 th
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : white;
+            font-weight : normal;
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: black;
+            border-collapse: collapse;
+            }
+
+            .datatable1 td
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : black;
+            font-weight : normal;
+            background-color: white; 
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: black;
+            border-collapse: collapse;
+            }
+
+            .datatable2
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : white;
+            font-weight : normal;
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: white;
+            border-collapse: collapse;
+            text-align: center;
+            background-color: #000057;
+            }
+            
+            .datatable2 th
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : white;
+            font-weight : normal;
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: white;
+            border-collapse: collapse;
+            text-align: center;
+            background-color: #000057;
+            }
+
+            .datatable2 tr
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : white;
+            font-weight : normal;
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: white;
+            border-collapse: collapse;
+            text-align: center;
+            background-color: #000057;
+            }
+
+            .datatable2 thead
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : white;
+            font-weight : normal;
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: white;
+            border-collapse: collapse;
+            text-align: center;
+            background-color: #000057;
+            }
+
+            .datatable2 td
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : white;
+            font-weight : normal;
+            border-style: solid;
+            border-width : 0.5px;
+            border-color: white;
+            border-collapse: collapse;
+            text-align: center;
+            background-color: #000057;
+            }
+
+            .wide 
+            {
+            width: 450px;
+            }
+         
+            .leftaligned
+            {
+            margin-left: 30px;
+            margin-right: auto;
+            }
+
+            thead
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            font-weight : bold;
+            background-color: darkblue;
+            border-style: solid;
+            border-color: darkblue;
+            color : red;
+            }
+            
+            footer2
+            {
+            position: relative; 
+            margin-top: -180px; 
+            height: 100px; 
+            clear: both;
+            }
+                 
+            h
+            { 
+            font-family:helvetica;
+            font-size: 30px;
+            font-weight : bold;
+            color : darkblue;
+            }
+            
+            p.detail
+            {
+            font-family: calibri;
+            font-size: 16px;
+            }
+            
+            .alignright { text-align: right; }
+            .alignleft { text-align: left; }
+                        
+            .boxed {
+            border: 1px solid black ;
+            padding: 8px;
+            width: 600px;
+            font-family:helvetica;
+            font-size: 15px;
+            margin-bottom: 5px;
+            }
+            
+            p
+            {
+            font-family: helvetica;
+            margin-bottom: 1em;  
+            margin-top: 0em;
+            font-size: 14px;
+            }
+                                 
+            p1 
+            {
+            font-family: helvetica;
+            font-size: 20px;
+            color : #ff8c00;
+            font-weight : bold;
+            margin-bottom: 1em;  
+            margin-top: 0em;
+            }
+            
+            p2
+            {
+            font-family: helvetica;
+            color : red;
+            }
+
+            span.chg
+            {
+            font-family: helvetica;
+            font-size: 16px;
+            color : red;
+            text-decoration : underline;
+            }
+            
+            span.chg2
+            {
+            font-family: helvetica;
+            font-size: 16px;
+            color : red;
+            text-decoration : normal;
+            }
+
+            hr 
+            {
+            display: block;
+            height: 1px;
+            border: 0;
+            border-top: 1.5px solid #ff8c00;
+            padding: 0;
+            }
+           
+            th
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : darkblue;
+            font-weight : bold;
+            }
+
+            .footer
+            {
+            position: fixed;
+            bottom: -75px;
+            width:80%;
+            clear:both;
+            margin:80px;
+            text-align:left;
+            }
+
+            td2
+            {
+            color : red;
+            }
+
+            table.tablebox
+            { 
+            position: absolute; 
+            top: 240px; 
+            left: 45px; 
+            width: 410px; 
+            height: 340px; 
+            background-color: white; 
+            border-style: solid;
+            border-color: #000057;
+            }
+
+            table.tablebox th2
+            {
+            font-family: helvetica;
+            font-size: 25px;
+            color : #000057;
+            font-weight : bold;
+            }
+            
+            table.tablebox td
+            {
+            font-family: helvetica;
+            font-size: 24px;
+            color : #ff8c00;
+            font-weight : bold;
+            }
+           
+            table.tablebox th
+            {
+            font-family: helvetica;
+            font-size: 30px;
+            color : #000057;
+            font-weight : bold;
+            }  
+
+            table.tablebox2
+            {
+            position: absolute; 
+            top: 240px; 
+            left: 490px; 
+            width: 255px; 
+            height: 340px; 
+            background-color: white; 
+            border-style: solid;
+            border-color: #000057;
+            }
+
+            table.tablebox2 th
+            {
+            font-family: helvetica;
+            font-size: 14px;
+            color : #000057;
+            font-weight : bold;
+            text-decoration: underline;
+            } 
+           
+            table.tablebox2 td
+            {
+            font-family: helvetica;
+            font-size: 13px;
+            color : #000057;
+            font-weight : bold;
+            text-align: left;            
+            }
+
+            table.attendance
+            {
+              width:100%;
+              border-collapse: collapse;
+            }
+            
+            table.attendance th 
+            {
+              border: 1px solid black;
+              border-collapse: collapse;
+              padding: 3px;
+            }
+            
+            table.attendance td 
+            {
+              border: 1px solid black;
+              border-collapse: collapse;
+              padding: 3px;
+            }
+            
+            table.chargepoint
+            {
+              margin-left:auto; 
+              margin-right:auto;
+              width:95%;
+              border-collapse: collapse;
+            }
+            
+            table.chargepoint th 
+            {
+              border: 1px solid black;
+              border-collapse: collapse;
+              padding: 3px;
+            }
+            
+            table.chargepoint td 
+            {
+              border: 1px solid black;
+              border-collapse: collapse;
+              padding: 3px;
+            }
+                   
+            table.Offer
+            {
+              margin-left:auto; 
+              margin-right:auto;
+              width:95%;
+              border-collapse: collapse;
+            }
+
+            table.Offer td
+            {
+            font-family: helvetica;
+            font-size: 20px;
+            color : black;
+            font-weight : normal;
+            text-align: left;         
+            }            
+
+            table.Offer th
+            {
+            font-family: helvetica;
+            font-size: 20px;
+            color : black;
+            font-weight : normal;
+            text-align: left;   
+            }  
+          
+            
+            table.Streetlight
+            {
+              margin-left:auto; 
+              margin-right:auto;
+              width:95%;
+              border-collapse: collapse;
+            }
+            
+            table.Streetlight th 
+            {
+              border: 1px solid black;
+              border-collapse: collapse;
+              padding: 3px;
+            }
+            
+            table.Streetlight td 
+            {
+              border: 1px solid black;
+              border-collapse: collapse;
+              padding: 3px;
+            }
+                        
+            table.SSEUtilities
+            {
+              margin-left:auto; 
+              margin-right:auto;
+              width:95%;
+              border-collapse: collapse;
+            }
+            
+            table.SSEUtilities th 
+            {
+              border: 1px solid black;
+              border-collapse: collapse;
+              padding: 3px;
+            }
+            
+            table.SSEUtilities td 
+            {
+              border: 1px solid black;
+              border-collapse: collapse;
+              padding: 3px;
+            }
+            
+
+</apex:component>

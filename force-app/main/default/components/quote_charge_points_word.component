@@ -1,0 +1,76 @@
+<apex:component controller="quote_charge_point_controller" >
+    <apex:attribute name="opportunityId" description="Opportunity Record Id" type="String" required="required" assignTo="{!oppId}"/>
+
+      
+<!------------------------------------------------------------>
+<!---------       Car Charger - Charger Point       ---------->
+<!------------------------------------------------------------>     
+<div class="Charger">  
+     <div class="header" style="text-align:center">
+        <p>&nbsp;</p>
+                   <img src="https://cius--c.documentforce.com/servlet/servlet.ImageServer?id=0154J000000cmK5&oid=00D4J000000D3J8" height="80%" width="25%"/>
+        <BR/><BR/>
+     </div>  
+
+     <table class="chargepoint centre">
+       <tr>
+         <th align="left" width="56%" colspan="1" >Project Ref - {! theOpp.Name} - {! theOpp.Account.Name} </th>
+         <th style="text-align:center" width="44%" colspan="4">Charge Point Services</th>
+       </tr>
+       <tr>
+          <th style="text-align:left" width="58%">ICP Works</th>
+          <th style="text-align:center" width="9%">UOM</th>
+          <th style="text-align:center" width="9%">Qty</th>                       
+          <th style="text-align:center" width="12%">Rate</th>
+          <th style="text-align:center" width="12%">Total</th>
+        </tr>
+     </table>             
+
+     <apex:dataTable value="{!ChargePointICPWorksOLIs}" var="line" columnClasses="centre,centre" styleclass="chargepoint">
+          <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+          <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+          <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column> 
+          <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>             
+          <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>  
+     </apex:dataTable> 
+
+     <table class="chargepoint centre">
+       <tr>
+         <th style="text-align:right" width="88%" colspan="4">ICP Works Total</th>
+         <th style="text-align:center" width="12%">£{!ChargePointICPWorksTotal}</th>
+       </tr>
+       <tr>
+         <th style="text-align:left" width="58%">Charger Installation Costs</th>
+         <th style="text-align:center" width="9%">UOM</th>
+         <th style="text-align:center" width="9%">Qty</th>                       
+         <th style="text-align:center" width="12%">Rate</th>
+         <th style="text-align:center" width="12%">Total</th>
+       </tr>
+     </table>
+
+     <apex:dataTable value="{!ChargePointInstallOLIs}" var="line" columnClasses="centre,centre" styleclass="chargepoint">
+        <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+        <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+        <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column> 
+        <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>             
+        <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>  
+     </apex:dataTable> 
+            
+     <table class="chargepoint centre"> 
+      <tr>
+        <th style="text-align:right" width="88%" colspan="4">Charger Installation Costs Total</th>
+        <th style="text-align:center" width="12%">£{!ChargePointInstallTotal}</th>
+      </tr>
+      <tr>
+        <th align="right" width="88%" colspan="4" >Project Total</th>
+        <th style="text-align:center" width="12%">£{!ChargePointEstimateTotal}</th>   
+      </tr>
+    </table>
+
+    <div class="footer" style="text-align:left">
+       <p>Page <span class="pagenumber" /> of <span class="pagecount" /></p>
+    </div>               
+ 
+
+</div>
+</apex:component>

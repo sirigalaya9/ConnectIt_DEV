@@ -1,0 +1,116 @@
+<apex:page standardController="Product2" recordSetvar="prods" applyHTMLTag="false" applyBodyTag="false" showHeader="false" sidebar="false" renderAs="pdf">
+    <head>
+       <style type="text/css" media="print">
+        @page { margin-bottom:3cm; margin-top:0cm; @bottom-center { content: element(footer); } }
+                                              
+        div.footer { display:block; height:100px; position: running(footer); }
+             
+        table { font-family: verdana,arial,sans-serif; width: 100%; border: 1px solid black; border-spacing:0px; }  
+        table.lines { text-align: center; border-spacing: 0px; }  
+        table.total { text-align: center; width: 50%; margin-right: 0px; margin-left: auto; }      
+        table.footer { border: 0px; font-family: verdana,arial,sans-serif; color: #37383a; padding:0px; margin:0px; border-collapse: collapse; }            
+        th { border: 0.2px solid black; padding:5px; font-size: 13px; }        
+        td { border: 0.2px solid black; padding:5px; font-size: 13px; }
+        td.header2 { font-weight:bold;}
+        td.footer  { border: 0px; cell-spacing:0px; padding:0px; margin:0px; border-collapse: collapse; text-align:center; font-size: 10px; color: #000956; }
+        td.footer2  { border: 0px; cell-spacing:0px; padding:0px; margin:0px; border-collapse: collapse; text-align:right;  font-size: 10px; }
+        tr.header { text-align:center; font-size: 14px; font-weight:bold; }
+        tr.other { font-size: 12px; }   
+
+        h  { font-family: helvetica; font-size: 16px; font-weight : bold; color : #000956 ; }            
+        h2 { font-family: verdana,arial,sans-serif; text-align:center; color: #000956; font-size : 30px; font-weight : 1900; }
+        h3 { font-family: verdana,arial,sans-serif; text-align:center; }
+                        
+            
+        .pagenumber:before { content: counter(page); }
+        .pagecount:before  { content: counter(pages);  }
+
+        p  { font-family: calibri; font-size: 10px; color : black; font-weight : normal; text-align: center; } 
+        p1 { font-family: calibri; font-size: 20px; color : #ff8c00; font-weight : bold; text-align: center; }
+            
+        hr { display: block; height: 1px; border: 0; border-top: 1.5px solid #ff8c00; padding: 0; }
+            
+        fulldoc { margin:0px; left-margin:0px; right-margin 0px; background-color: #4e8975; }
+                
+      </style> 
+    </head> 
+    
+   <apex:form >
+              
+    <div class="header" style="text-align:center">
+  <!--      <apex:image id="logo" value="{!$Resource.ScottishandSouthern}" width="100%" height="25%"/>   -->
+        <h>Foundation House Unit C (West) Hamilton Business Park, Hamilton Way, Hedge End,Southampton, SO30 2JR</h><br/>
+        <h class="centre">T: 01489 346444  &nbsp; E: sales@cius.co.uk </h>
+    </div>
+    
+    <br/>
+    
+    <div>
+        <table>
+           <tr>
+             <th colspan="3"><b><h2>Purchase Order</h2></b></th>
+    <!--           <td><apex:outputText value="{!Purchase_Order__c.Name}"/></td>  -->
+           </tr>
+        </table>
+        
+        <table>
+           <tr class="other">
+             <td>
+                To Seller:<br/>
+     <!--             FAO: {!Purchase_Order__c.Supplier_Contact__r.Name}<br/>
+              <apex:outputText value="{!Purchase_Order__c.Supplier__r.Name}"/><br/>
+                <apex:outputText value="{!Purchase_Order__c.Supplier__r.BillingStreet}"/><br/>
+                <apex:outputText value="{!Purchase_Order__c.Supplier__r.BillingCity}"/><br/>
+                <apex:outputText value="{!Purchase_Order__c.Supplier__r.BillingPostalCode}"/><br/>  -->
+             </td>
+             <td>
+                 Deliver to:<br/>
+                 Delivery Name<br/>
+                 Delivery St<br/>
+                 Delivery City<br/>
+                 Delivery PCode<br/>
+             </td>
+            </tr>
+
+            <tr>
+     <!--           <td colspan="2">Date of Order:&nbsp;<apex:outputField value="{!Purchase_Order__c.Date__c}"/></td>  -->
+            </tr>
+        </table>    
+               
+      </div>
+
+
+      <div class="footer">
+  
+             
+          <div style="text-align:center">
+              <br/>
+              <p1>Let&#39;s get connected</p1>
+              <p align="center">Page <span class="pagenumber" /> of <span class="pagecount" /></p>
+           </div>
+       </div>  
+       
+       
+   <!--    <apex:pageBlock >
+            <apex:variable value="{!1}" var="num" />
+
+            <apex:repeat value="{!Purchase_Order__c.Purchase_Order_Line_Items__r}" var="prods" id="list">  -->
+
+               <!-- -------------FOR PAGINATION START--------------- -->
+    <!--           <apex:outputpanel rendered="{!num == 1  || num == 11 || num == 31 || num == 51 || num == 71 || num == 91 || num == 111 || num == 131}">
+               
+                  <table class="lines" style="{!IF(Purchase_Order__c.Purchase_Order_Line_Items__r.size > 0,'','display: none;')} -fs-table-paginate: paginate;">
+                     <tr>
+                         <th>Product Code</th><th style="width:50%">Description</th><th>New Min Quantityh</th><th>New Max Quantity</th><th>ABC Clarification</th><th>New/Remove/Change?</th>
+                     </tr>
+                  </table>
+
+               
+               </apex:outputpanel>
+
+            </apex:repeat>  
+       </apex:pageBlock> -->
+
+     </apex:form> 
+
+</apex:page>

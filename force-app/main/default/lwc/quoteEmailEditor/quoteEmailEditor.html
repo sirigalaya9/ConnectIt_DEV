@@ -1,0 +1,136 @@
+<template>
+    <div class="slds-card slds-p-around_medium">
+    
+        <lightning-layout class="slds-form-element_stacked">
+            <lightning-layout-item size="2">
+                <label class="slds-form-element__label"><abbr class="slds-required" title="required">* </abbr>To Address</label>            
+            </lightning-layout-item>
+            <lightning-layout-item size="10">
+                <lightning-input class="copy-me" name="toAddress" data-name="toAddress" type="email" value={toAddress} label="To Address" variant="label-hidden" required></lightning-input>
+            </lightning-layout-item>        
+        </lightning-layout>
+    
+        <lightning-layout class="slds-form-element_stacked">
+            <lightning-layout-item size="2">
+                <label class="slds-form-element__label">Cc Addresses</label>                      
+            </lightning-layout-item>
+            <lightning-layout-item size="10">
+                <lightning-input name="ccAddress" data-name="ccAddress" type="text" value={ccAddress} label="Cc Address" variant="label-hidden" 
+                message-when-pattern-mismatch="Please enter a valid email or valid emails separated by a comma"
+                pattern="^(([a-zA-Z0-9_\-\.\+]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)(\s*,\s*|\s*$))*$" ></lightning-input>
+            </lightning-layout-item>        
+        </lightning-layout> 
+    
+        <lightning-layout class="slds-form-element_stacked">
+            <lightning-layout-item size="2">
+                <label class="slds-form-element__label">Bcc Addresses</label>               
+            </lightning-layout-item>
+            <lightning-layout-item size="10">
+                <lightning-input name="bccAddress" data-name="bccAddress" type="text" value={bccAddress} label="Bcc Address" variant="label-hidden"
+                message-when-pattern-mismatch="Please enter a valid email or valid emails separated by a comma"
+                pattern="^(([a-zA-Z0-9_\-\.\+]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)(\s*,\s*|\s*$))*$" >            
+                </lightning-input>
+            </lightning-layout-item>        
+        </lightning-layout>     
+    
+        <lightning-layout class="slds-form-element_stacked">
+            <lightning-layout-item size="2">
+                <label class="slds-form-element__label"><abbr class="slds-required" title="required">* </abbr>Subject</label>            
+            </lightning-layout-item>
+            <lightning-layout-item size="10">
+                <lightning-input name="subject" data-name="subject" type="text" value={subject} label="Subject" variant="label-hidden" required></lightning-input>
+            </lightning-layout-item>        
+        </lightning-layout>
+    
+        <lightning-layout class="slds-form-element_stacked">
+            <lightning-layout-item size="12">
+    
+                <lightning-layout>
+                    <lightning-layout-item size="12">
+                        <label class="slds-form-element__label">Email Body</label>
+                    </lightning-layout-item>
+                </lightning-layout>
+    
+                <lightning-layout class="slds-box" style="padding-top: 10px;padding-left: 10px;padding-right: 10px;">
+                    <lightning-layout-item size="12" class="slds-form-element__control">                
+                
+    
+                        <lightning-layout class="slds-m-left_xx-small">
+                            <lightning-layout-item size="12"> 
+                                <lightning-formatted-rich-text data-name="salutationText" value={salutationText}></lightning-formatted-rich-text>
+                            </lightning-layout-item> 
+                        </lightning-layout> 
+                        
+                        <lightning-layout class="slds-form-element_stacked">
+                            <lightning-layout-item size="12" class="slds-m-bottom_small">
+                                <lightning-textarea name="bodyText" data-name="bodyText" value={bodyText} placeholder={emailBodyPlaceholder}></lightning-textarea>
+                            </lightning-layout-item>
+                        </lightning-layout>                                                           
+        
+                        <lightning-layout class="slds-form-element_stacked">
+                            <lightning-layout-item size="12"> 
+                                <lightning-formatted-rich-text name={signatureText} data-name="signatureText" value={signatureText}></lightning-formatted-rich-text>
+                            </lightning-layout-item> 
+                        </lightning-layout> 
+    
+                    </lightning-layout-item>
+    
+                </lightning-layout>
+    
+            </lightning-layout-item>
+    
+        </lightning-layout>
+    
+        <template if:true={contentDocumentId}>
+            <lightning-layout class="slds-form-element_stacked">
+                <lightning-layout-item size="2">
+                    <label class="slds-form-element__label">File Attachment</label>            
+                </lightning-layout-item>            
+                <lightning-layout-item size="10" class="slds-m-top_xx-small">
+                    <c-file-previewer record-id={contentDocumentId} file-name={attachmentName}></c-file-previewer>
+                </lightning-layout-item>
+            </lightning-layout>      
+        </template>    
+    
+    
+        <lightning-layout>
+            <lightning-layout-item size="12" class="slds-align_absolute-center">
+                <lightning-button label="Send Email" onclick={sendEmail}></lightning-button>&nbsp;
+                <!--<a href={mailToUrl} target="_top"><lightning-button label="Send Email from Default Email App" onclick={copyToClipboard}></lightning-button></a>-->
+                <!--<lightning-button label="Preview" onclick={previewEmail}></lightning-button>-->
+            </lightning-layout-item>
+        </lightning-layout>  
+        
+        <!-- spinner-->
+        <template if:true={showSpinner}>
+            <lightning-spinner alternative-text="Loading" size="medium" variant="brand"></lightning-spinner>
+        </template>  
+    </div>
+    
+    <template if:true={showPreviewModal}>
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <lightning-button-icon icon-name="utility:close" onclick={closePreviewEmail} alternative-text="close" variant="bare-inverse" class="slds-modal__close">
+                </lightning-button-icon>
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Preview</h2>
+            </header>    
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="min-height:300px;">
+                
+                <lightning-formatted-rich-text value={previewContent}></lightning-formatted-rich-text>
+     
+            </div>       
+    
+            <footer class="slds-modal__footer">
+                <lightning-button name="cancel" label="Cancel" onclick={closePreviewEmail}>
+                </lightning-button>       
+            </footer>                     
+        </div>
+        <template if:true={showSpinner}>
+            <lightning-spinner alternative-text="Loading" size="medium" variant="brand"></lightning-spinner>
+        </template>                 
+    </section>        
+    <div class="slds-backdrop slds-backdrop_open"></div>     
+    </template>
+</template>

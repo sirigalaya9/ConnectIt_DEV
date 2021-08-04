@@ -1,0 +1,323 @@
+<apex:page lightningStylesheets="true" >
+
+
+ <html>
+   <head>
+   <script type="text/css">
+   
+   .myNodeClass {
+    text-align: center;
+    vertical-align: middle;
+    font-family: arial,helvetica;
+    cursor: default;
+    border: 2px solid #b5d9ea;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.5) 3px 3px 3px;
+    -moz-box-shadow: rgba(0, 0, 0, 0.5) 3px 3px 3px;
+    background-color: #b0d7ee; 
+    background: -webkit-gradient(linear, left top, left bottom, from(#b0d7ff), to(#b0d7ee));
+    }
+    
+    .mySelectedNodeClass {
+    border: 2px solid #e38493;
+    background-color: red;
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffb0d7), to(#eeb0d7));
+}
+   
+   
+   </script>
+
+
+      <div class="header" style="text-align:center;">
+            <p>&nbsp;</p>
+            <apex:image value="{!URLFOR($Resource.ConnectITLogo)}" />
+            <p>Connect IT Utility Services Organisation Chart</p>
+      </div>
+  
+
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+
+      google.charts.load('current', {packages:["orgchart"]});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Name');
+        data.addColumn('string', 'Manager');
+        data.addColumn('string', 'ToolTip');
+
+        // For each orgchart box, provide the name, manager, and tooltip to show.
+        data.addRows([
+          [{'v':'Peter Leech', 'f':'Peter Leech<div style="color:red; font-style:italic">Managing Director</div>'},
+           '', 'Managing Director'],
+           
+          [{'v':'Sharon Leech', 'f':'Sharon Leech<div style="color:red; font-style:italic">Company Secretary</div>'},
+           '', 'Company Secretary'],    
+                 
+          [{'v':'Karol Denham', 'f':'Karol Denham<div style="color:red; font-style:italic">Purchase Ledger Clerk</div>'},
+           'Laban Giles', 'Purchase Ledger Clerk'],            
+         
+          [{'v':'Sally Hunt', 'f':'Sally Hunt<div style="color:red; font-style:italic">Purchase Ledger Clerk</div>'},
+           'Laban Giles', 'Purchase Ledger Clerk'],   
+                      
+          [{'v':'Chris Lee', 'f':'Chris Lee<div style="color:red; font-style:italic">Senior Technical Manager</div>'},
+           'Peter Leech', 'Senior Technical Manager'],
+           
+          [{'v':'Marcia Wilson', 'f':'Marcia Wilson<div style="color:red; font-style:italic">Project Delivery Coordinator</div>'},
+           'Chris Lee', 'Project Delivery Coordinator'],
+           
+          [{'v':'Louisa Piredda', 'f':'Louisa Piredda<div style="color:red; font-style:italic">Design Engineer</div>'},
+           'Ryan Leech', 'Design Engineer '],
+           
+          [{'v':'Martin Withnall', 'f':'Martin Withnall<div style="color:red; font-style:italic">CAD Technician</div>'},
+           'Chris Lee', 'CAD Technician'],
+           
+          [{'v':'Nicola Barnes', 'f':'Nicola Barnes<div style="color:red; font-style:italic">Streetworks Co-Ordinator</div>'},
+           'Chris Lee', 'Streetworks Co-Ordinator'], 
+           
+          [{'v':'Rachael Edwards', 'f':'Rachael Edwards<div style="color:red; font-style:italic">Streetworks Supervisor</div>'},
+           'Chris Lee', 'Streetworks Supervisor'],            
+                                
+          [{'v':'Anya Parkhouse Turner', 'f':'Anya Parkhouse Turner<div style="color:red; font-style:italic">PMO Co-ordinator</div>'},
+           'Ian Williams', 'PMO Co-ordinator'],                                  
+                                 
+          [{'v':'Jane Leech', 'f':'Jane Leech<div style="color:red; font-style:italic">Senior SHEQ, HR & Compliance Manager</div>'},
+           'Peter Leech', 'Senior SHEQ, HR & Compliance Manager'],  
+          
+          [{'v':'Sharon Lovelace', 'f':'Sharon Lovelace<div style="color:red; font-style:italic">HR Advisor</div>'},
+           'Jane Leech', 'HR Advisor'], 
+
+          [{'v':'Lona Fryatt', 'f':'Lona Fryatt<div style="color:red; font-style:italic">HR Coordinator</div>'},
+           'Jane Leech', 'HR Coordinator'], 
+           
+          [{'v':'Phil Tobin', 'f':'Phil Tobin<div style="color:red; font-style:italic">SHEQ Auditor</div>'},
+           'Rachel Reade', 'SHEQ Auditor'], 
+           
+          [{'v':'Steve Whiting', 'f':'Steve Whiting<div style="color:red; font-style:italic">SHEQ Auditor</div>'},
+           'Rachel Reade', 'SHEQ Auditor'],          
+         
+          [{'v':'Rachel Reade', 'f':'Rachel Reade<div style="color:red; font-style:italic">SHEQ Manager </div>'},
+           'Jane Leech', 'SHEQ Manager '],                        
+           
+          [{'v':'Lee Sadler', 'f':'Lee Sadler<div style="color:red; font-style:italic">IT Transformation Manager</div>'},
+           'Peter Leech', 'IT Transformation Manager'],
+           
+          [{'v':'Ben Leech', 'f':'Ben Leech<div style="color:red; font-style:italic">Web Development</div>'},
+           'Lee Sadler', 'Web Development'],
+           
+          [{'v':'Ian Williams', 'f':'Ian Williams<div style="color:red; font-style:italic">Framework PM</div>'},
+           'Andrew Leech', 'Framework PM'],
+           
+          [{'v':'Laban Giles', 'f':'Laban Giles<div style="color:red; font-style:italic">Senior Commercial Manager</div>'},
+           'Peter Leech', 'Senior Commercial Manager'],           
+          
+          [{'v':'Sarah Evans', 'f':'Sarah Evans<div style="color:red; font-style:italic">Asset Adoption Co-Ordinator</div>'},
+           'Laban Giles', 'Asset Adoption Co-Ordinator'],
+                                 
+          [{'v':'Zoe Darlison', 'f':'Zoe Darlison<div style="color:red; font-style:italic">Commercial Administrator</div>'},
+           'Laban Giles', 'Commercial Administrator'],
+          
+          [{'v':'Claire Figg', 'f':'Claire Figg<div style="color:red; font-style:italic">Commercial Assistant</div>'},
+           'Laban Giles', 'Commercial Administrator'],
+           
+          [{'v':'Moore Maradzika', 'f':'Moore Maradzika<div style="color:red; font-style:italic">Graduate QS</div>'},
+           'Laban Giles', 'Graduate QS'], 
+                     
+          [{'v':'Andrew Leech', 'f':'Andrew Leech<div style="color:red; font-style:italic">Operations Director</div>'},
+           '', 'Operations Director'],   
+
+          [{'v':'Brian Baker', 'f':'Brian Baker<div style="color:red; font-style:italic">SSE Depot Project Manager </div>'},
+           'Nigel Bond', 'SSE Depot Project Manager '], 
+           
+          [{'v':'Andy Moir', 'f':'Andy Moir<div style="color:red; font-style:italic">MU Project Manager</div>'},
+           'Martin Vowles', 'MU Manager'],  
+           
+          [{'v':'Darren Baker', 'f':'Darren Baker<div style="color:red; font-style:italic">Project Manager</div>'},
+           'West', 'Project Manager'],    
+             
+          [{'v':'Paul Duke', 'f':'Paul Duke<div style="color:red; font-style:italic">MU Project Managers</div>'},
+           'Martin Vowles', 'MU Project Manager'], 
+           
+          [{'v':'Joey Clark', 'f':'Joey Clark<div style="color:red; font-style:italic">MU Project Manager</div>'},
+           'Martin Vowles', 'MU Project Manager'], 
+           
+          [{'v':'Nigel Gough', 'f':'Nigel Gough<div style="color:red; font-style:italic">Project Manager</div>'},
+           'East', 'Project Manager'], 
+           
+           [{'v':'Lee Agate', 'f':'Lee Agate<div style="color:red; font-style:italic">SSEN SAP</div>'},
+           'Nigel Gough', 'SSEN SAP'], 
+           
+           [{'v':'Jeremy Dunn', 'f':'Jeremy Dunn<div style="color:red; font-style:italic">SSEN Civils Manager</div>'},
+           'Nigel Gough', 'SSEN Civils Manager'], 
+           
+           [{'v':'David Bowes', 'f':'David Bowes<div style="color:red; font-style:italic">SSEN Civils Supervisor</div>'},
+           'Jeremy Dunn', 'SSEN Civils Supervisor'], 
+           
+          [{'v':'Martin Vowles', 'f':'Martin Vowles<div style="color:red; font-style:italic">Senior Project Manager</div>'},
+           'Andrew Leech', 'Senior Project Manager'],
+           
+          [{'v':'Jacob Williams', 'f':'Jacob Williams<div style="color:red; font-style:italic">Planning Assistant </div>'},
+           'Martin Vowles', 'Planning Assistant '],
+           
+          [{'v':'Ellie Cove', 'f':'Ellie Cove<div style="color:red; font-style:italic">Planner</div>'},
+           'Brian Baker', 'Planner'],
+           
+          [{'v':'David Morris', 'f':'David Morris<div style="color:red; font-style:italic">SSEN Project Manager</div>'},
+           'West', 'SSEN Project Manager'],
+           
+          [{'v':'Peter Nixon', 'f':'Peter Nixon<div style="color:red; font-style:italic">SSEN Project Manager</div>'},
+           'Nigel Bond', 'SSEN Project Manager'],
+           
+          [{'v':'Mohamed Baker Khaled', 'f':'Mohamed Baker Khaled<div style="color:red; font-style:italic">SSEN OHL Supervisor</div>'},
+           'Peter Nixon', 'SSEN OHL Supervisor'], 
+           
+          [{'v':'Tony Van Rooyan', 'f':'Tony Van Rooyan<div style="color:red; font-style:italic">SSEN Project Manager</div>'},
+           'Brian Baker', 'SSEN Project Manager'], 
+           
+          [{'v':'Mark Barnes', 'f':'Mark Barnes<div style="color:red; font-style:italic">SSEN Site Estimator</div>'},
+           'Gary Corbin', 'SSEN Project Manager'], 
+           
+          [{'v':'James Hayward', 'f':'James Hayward<div style="color:red; font-style:italic">SSEN SAP</div>'},
+           'West', 'SSEN SAP'], 
+           
+          [{'v':'Aaron Barzey', 'f':'Aaron Barzey<div style="color:red; font-style:italic">SSEN SAP</div>'},
+           'East', 'SSEN SAP'], 
+           
+          [{'v':'Phil Lusted', 'f':'Phil Lusted<div style="color:red; font-style:italic">SSEN Project Manager</div>'},
+           'Central', 'SSEN Project Manager'],  
+           
+          [{'v':'Daniel Glew', 'f':'Daniel Glew<div style="color:red; font-style:italic">SSEN SAP</div>'},
+           'Central', 'SSEN SAP'],  
+               
+          [{'v':'Stuart Darley', 'f':'Stuart Darley<div style="color:red; font-style:italic">SSEN Civils Manager</div>'},
+           'Phil Lusted', 'SSEN Civils Manager'],  
+           
+          [{'v':'Matthew Stone', 'f':'Matthew Stone<div style="color:red; font-style:italic">SSEN Project Manager</div>'},
+           'Phil Lusted', 'SSEN Project Manager'],  
+           
+          [{'v':'East', 'f':'East<div style="color:red; font-style:italic"></div>'},
+           'Nigel Bond', ''], 
+           
+          [{'v':'Central', 'f':'Central<div style="color:red; font-style:italic"></div>'},
+           'Nigel Bond', ''], 
+           
+          [{'v':'West', 'f':'West<div style="color:red; font-style:italic"></div>'},
+           'Nigel Bond', ''], 
+           
+          [{'v':'Mark Humby', 'f':'Mark Humby<div style="color:red; font-style:italic">Project Manager</div>'},
+           'Andrew Leech', 'Project Manager'],  
+           
+          [{'v':'Russell Barker', 'f':'Russell Barker<div style="color:red; font-style:italic">Senior Project Manager</div>'},
+           'Andrew Leech', 'Senior Project Manager'], 
+           
+          [{'v':'Gavin Meaden', 'f':'Gavin Meaden<div style="color:red; font-style:italic">Civils Manager</div>'},
+           'West', 'Civils Manager'], 
+          
+          [{'v':'Peter Daulton', 'f':'Peter Daulton<div style="color:red; font-style:italic">Civils Supervisor</div>'},
+           'Gavin Meaden', 'Civils Supervisor'],  
+           
+           [{'v':'Clint Chappell', 'f':'Clint Chappell<div style="color:red; font-style:italic">MU Delivery Driver</div>'},
+           'Gavin Meaden', 'MU Delivery Driver'],  
+                                 
+          [{'v':'Jeremy Cox', 'f':'Jeremy Cox<div style="color:red; font-style:italic">Service Engineers</div>'},
+           'Michelle Nasr', 'Service Engineer'],                
+           
+          [{'v':'Alix Lambert', 'f':'Alix Lambert<div style="color:red; font-style:italic">Office Manager</div>'},
+           'Brian Karangwa', 'Office Manager'],     
+
+          [{'v':'Brian Karangwa', 'f':'Brian Karangwa<div style="color:red; font-style:italic">Quantity Surveyor</div>'},
+           'Ian Williams', 'Quantity Surveyor'],     
+           
+          [{'v':'Neil Giles', 'f':'Neil Giles<div style="color:red; font-style:italic">SSEN Site Estimator</div>'},
+           'Gary Corbin', 'SSEN Site Estimator'],   
+           
+          [{'v':'Tom Lowe', 'f':'Tom Lowe<div style="color:red; font-style:italic">SSEN Site Estimator</div>'},
+           'Gary Corbin', 'SSEN Site Estimator'], 
+           
+          [{'v':'Robert Dean', 'f':'Robert Dean<div style="color:red; font-style:italic">SSEN Site Estimator</div>'},
+           'Gary Corbin', 'SSEN Site Estimator'], 
+          
+          [{'v':'Elaine Bourne', 'f':'Elaine Bourne<div style="color:red; font-style:italic">SSEN Quantity Surveyor</div>'},
+           'Brian Karangwa', 'SSEN Quantity Surveyor'],  
+             
+          [{'v':'Nigel Bond', 'f':'Nigel Bond<div style="color:red; font-style:italic">Senior Project Manager SSEN</div>'},
+           'Ian Williams', 'Senior Project Manager SSEN'],  
+             
+          [{'v':'John Andrews', 'f':'John Andrews<div style="color:red; font-style:italic">SSEN Site Estimator</div>'},
+           'Gary Corbin', 'SSEN Site Estimator'],         
+           
+          [{'v':'Gary Corbin', 'f':'Gary Corbin<div style="color:red; font-style:italic">SSEN Technical Manager</div>'},
+           'Brian Karangwa', 'SSEN Technical Manager'],      
+          
+          [{'v':'Chris Darling', 'f':'Chris Darling<div style="color:red; font-style:italic">SSEN Site Estimator</div>'},
+           'Gary Corbin', 'SSEN Site Estimator'],     
+         
+          [{'v':'Michelle Nasr', 'f':'Michelle Nasr<div style="color:red; font-style:italic">Logistics / Transport Manager</div>'},
+           'Andrew Leech', 'Logistics / Transport Manager'],     
+           
+          [{'v':'Matthew Leech', 'f':'Matthew Leech<div style="color:red; font-style:italic">Buyer</div>'},
+           'Martin Vowles', 'Buyer'],
+           
+          [{'v':'Vacancy SM', 'f':'Vacancy<div style="color:red; font-style:italic">Stores Manager</div>'},
+           'Michelle Nasr', 'Stores Manager'], 
+           
+          [{'v':'Daren Easey', 'f':'Daren Easey<div style="color:red; font-style:italic">SSEN Stores</div>'},
+           'Vacancy SM', 'SSEN Stores'], 
+           
+          [{'v':'Matthew Randell', 'f':'Matthew Randell<div style="color:red; font-style:italic">Stores</div>'},
+           'Vacancy SM', 'Stores'],
+           
+          [{'v':'Sam Leech', 'f':'Sam Leech<div style="color:red; font-style:italic">Stores</div>'},
+           'Vacancy SM', 'Stores'], 
+           
+          [{'v':'Harvey Lambourne', 'f':'Harvey Lambourne<div style="color:red; font-style:italic">Stores</div>'},
+           'Vacancy SM', 'Stores'],      
+           
+          [{'v':'John Clarke', 'f':'John Clarke<div style="color:red; font-style:italic">Delivery Driver</div>'},
+           'Michelle Nasr', 'Delivery Driver'],  
+    
+          [{'v':'', 'f':'<div style="color:red; font-style:italic">Delivery Driver</div>'},
+           'Michelle Nasr', 'Delivery Driver'],       
+           
+          [{'v':'Sophie Leech', 'f':'Sophie Leech<div style="color:red; font-style:italic">Calibration Assistant</div>'},
+           'Michelle Nasr', 'Delivery Driver'],           
+           
+          [{'v':'Ryan Leech', 'f':'Ryan Leech<div style="color:red; font-style:italic">Managing Estimator</div>'},
+           'Peter Leech', 'Managing Estimator'],
+           
+          [{'v':'Elliot Goater', 'f':'Elliot Goater<div style="color:red; font-style:italic">Estimator</div>'},
+           'Ryan Leech', 'Estimator'],
+           
+          [{'v':'Tobi Heng', 'f':'Tobi Heng<div style="color:red; font-style:italic">Utilities Coordinator</div>'},
+           'Ryan Leech', 'Utilities Coordinator'],
+           
+          [{'v':'Ian Cousins', 'f':'Ian Cousins<div style="color:red; font-style:italic">National Sales Manager </div>'},
+           'Peter Leech', 'National Sales Manager ']
+                    
+        ]);
+
+        // Create the chart.
+        var chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
+        // Draw the chart, setting the allowHtml option to true for the tooltips.
+
+        chart.draw(data, {
+        allowHtml:true,
+        nodeClass:'myNodeClass',
+        selectedNodeClass: 'mySelectedNodeClass'});
+      }
+      
+         </script>
+    </head>
+  <body>
+    <div id="chart_div"></div>
+    
+
+    
+  </body>
+</html>
+
+      
+</apex:page>

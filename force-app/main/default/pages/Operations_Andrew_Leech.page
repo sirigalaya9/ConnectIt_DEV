@@ -1,0 +1,178 @@
+<apex:page lightningStylesheets="true" >
+
+
+ <html>
+   <head>
+   <script type="text/css">
+   
+   .myNodeClass {
+    text-align: center;
+    vertical-align: middle;
+    font-family: arial,helvetica;
+    cursor: default;
+    border: 2px solid #b5d9ea;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.5) 3px 3px 3px;
+    -moz-box-shadow: rgba(0, 0, 0, 0.5) 3px 3px 3px;
+    background-color: #b0d7ee; 
+    background: -webkit-gradient(linear, left top, left bottom, from(#b0d7ff), to(#b0d7ee));
+    }
+    
+    .mySelectedNodeClass {
+    border: 2px solid #e38493;
+    background-color: red;
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffb0d7), to(#eeb0d7));
+}
+   
+   
+   </script>
+
+
+      <div class="header" style="text-align:center;">
+            <p>&nbsp;</p>
+            <apex:image value="{!URLFOR($Resource.ConnectITLogo)}" />
+            <p>Connect IT Utility Services Organisation Chart - Operations</p>
+      </div>
+  
+
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+
+      google.charts.load('current', {packages:["orgchart"]});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Name');
+        data.addColumn('string', 'Manager');
+        data.addColumn('string', 'ToolTip');
+
+        // For each orgchart box, provide the name, manager, and tooltip to show.
+        data.addRows([
+                          
+          [{'v':'Andrew Leech', 'f':'Andrew Leech<div style="color:red; font-style:italic">Operations Director</div>'},
+           '', 'Operations Director'],   
+
+          [{'v':'Brian Baker', 'f':'Brian Baker<div style="color:red; font-style:italic">SSEN Site Manager</div>'},
+           'Russell Barker', 'SSEN Site Manager'], 
+           
+          [{'v':'Andy Moir', 'f':'Andy Moir<div style="color:red; font-style:italic">Project Manager</div>'},
+           'Martin Vowles', 'Project Manager'],  
+           
+          [{'v':'Darren Baker', 'f':'Darren Baker<div style="color:red; font-style:italic">Project Manager</div>'},
+           'Martin Vowles', 'Project Manager'],    
+             
+          [{'v':'Paul Duke', 'f':'Paul Duke<div style="color:red; font-style:italic">Project Manager</div>'},
+           'Martin Vowles', 'Project Manager'], 
+           
+          [{'v':'Joey Clark', 'f':'Joey Clark<div style="color:red; font-style:italic">Project Manager</div>'},
+           'Martin Vowles', 'Project Manager'], 
+           
+          [{'v':'Nigel Gough', 'f':'Nigel Gough<div style="color:red; font-style:italic">Project Manager</div>'},
+           'Martin Vowles', 'Project Manager'], 
+           
+          [{'v':'Martin Vowles', 'f':'Martin Vowles<div style="color:red; font-style:italic">Project Manager</div>'},
+           'Andrew Leech', 'Project Manager'],
+           
+          [{'v':'Jacob Williams', 'f':'Jacob Williams<div style="color:red; font-style:italic">Planning Assistant </div>'},
+           'Martin Vowles', 'Planning Assistant '],
+           
+          [{'v':'Ellie Cove', 'f':'Ellie Cove<div style="color:red; font-style:italic">Planner</div>'},
+           'Martin Vowles', 'Planner'],
+           
+          [{'v':'David Morris', 'f':'David Morris<div style="color:red; font-style:italic">SSEN Project Manager</div>'},
+           'Russell Barker', 'SSEN Project Manager'],
+           
+          [{'v':'Peter Nixon', 'f':'Peter Nixon<div style="color:red; font-style:italic">SSEN Project Manager</div>'},
+           'Russell Barker', 'SSEN Project Manager'],
+           
+          [{'v':'Tony Van Rooyan', 'f':'Tony Van Rooyan<div style="color:red; font-style:italic">SSEN Project Manager</div>'},
+           'Russell Barker', 'SSEN Project Manager'], 
+           
+          [{'v':'Mark Barnes', 'f':'Mark Barnes<div style="color:red; font-style:italic">SSEN Project Manager</div>'},
+           'Russell Barker', 'SSEN Project Manager'], 
+           
+          [{'v':'James Hayward', 'f':'James Hayward<div style="color:red; font-style:italic">SSEN Project Manager</div>'},
+           'Russell Barker', 'SSEN Project Manager'], 
+           
+          [{'v':'Phil Lusted', 'f':'Phil Lusted<div style="color:red; font-style:italic">SSEN Project Manager</div>'},
+           'Russell Barker', 'SSEN Project Manager'],  
+           
+          [{'v':'Mark Humby', 'f':'Mark Humby<div style="color:red; font-style:italic">Project Manager</div>'},
+           'Andrew Leech', 'Project Manager'],  
+           
+          [{'v':'Russell Barker', 'f':'Russell Barker<div style="color:red; font-style:italic">Project Manager</div>'},
+           'Andrew Leech', 'Project Manager'], 
+           
+          [{'v':'Gavin Meaden', 'f':'Gavin Meaden<div style="color:red; font-style:italic">Civils Manager</div>'},
+           'Andrew Leech', 'Civils Manager'], 
+          
+          [{'v':'Michelle Nasr', 'f':'Michelle Nasr<div style="color:red; font-style:italic">Transport Manager</div>'},
+           'Andrew Leech', 'Transport Manager'], 
+           
+          [{'v':'Tony Fullerton', 'f':'Tony Fullerton<div style="color:red; font-style:italic">Mechanic</div>'},
+           'Michelle Nasr', 'Mechanic'],  
+          
+          [{'v':'John Hales', 'f':'John Hales<div style="color:red; font-style:italic">Mechanic</div>'},
+           'Michelle Nasr', 'Mechanic'],  
+                 
+          [{'v':'Jon Ivey', 'f':'Jon Ivey<div style="color:red; font-style:italic">SSEN Project Manager</div>'},
+           'Andrew Leech', 'SSEN Project Manager'], 
+           
+          [{'v':'Alix Lambert', 'f':'Alix Lambert<div style="color:red; font-style:italic">Office Manager</div>'},
+           'Brian Karangwa', 'Office Manager'],     
+
+          [{'v':'Brian Karangwa', 'f':'Brian Karangwa<div style="color:red; font-style:italic">Quantity Surveyor</div>'},
+           'Jon Ivey', 'Quantity Surveyor'],     
+           
+          [{'v':'Neil Giles', 'f':'Neil Giles<div style="color:red; font-style:italic">Site Estimator</div>'},
+           'Jon Ivey', 'Site Estimator'],   
+             
+          [{'v':'John Andrews', 'f':'John Andrews<div style="color:red; font-style:italic">Site Estimator</div>'},
+           'Jon Ivey', 'Site Estimator'],             
+          
+          [{'v':'Chris Darling', 'f':'Chris Darling<div style="color:red; font-style:italic">Project Manager</div>'},
+           'Jon Ivey', 'Project Manager'],        
+                    
+          [{'v':'Peter Whitten', 'f':'Peter Whitten<div style="color:red; font-style:italic">Stores Manager</div>'},
+           'Andrew Leech', 'Stores Manager'], 
+           
+          [{'v':'Daren Easey', 'f':'Daren Easey<div style="color:red; font-style:italic">SSEN Stores</div>'},
+           'Peter Whitten', 'SSEN Stores'], 
+           
+          [{'v':'Matthew Randell', 'f':'Matthew Randell<div style="color:red; font-style:italic">Stores</div>'},
+           'Peter Whitten', 'Stores'],
+           
+          [{'v':'Sam Leech', 'f':'Sam Leech<div style="color:red; font-style:italic">Stores</div>'},
+           'Peter Whitten', 'Stores'], 
+           
+          [{'v':'Harvey Lambourne', 'f':'Harvey Lambourne<div style="color:red; font-style:italic">Stores</div>'},
+           'Peter Whitten', 'Stores'],           
+           
+                           
+        ]);
+
+        // Create the chart.
+        var chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
+        // Draw the chart, setting the allowHtml option to true for the tooltips.
+
+        chart.draw(data, {
+        allowHtml:true,
+        nodeClass:'myNodeClass',
+        selectedNodeClass: 'mySelectedNodeClass'});
+      }
+      
+         </script>
+    </head>
+  <body>
+    <div id="chart_div"></div>
+    
+
+    
+  </body>
+</html>
+
+      
+</apex:page>

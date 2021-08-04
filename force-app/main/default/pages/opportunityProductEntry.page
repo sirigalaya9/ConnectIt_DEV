@@ -1,0 +1,534 @@
+<apex:page standardController="Opportunity" extensions="opportunityProductEntryExtension" action="{!priceBookCheck}" lightningStylesheets="true">
+
+    <apex:messages />
+     <!-- Script to enable sticky header -->
+     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> 
+
+
+    <style>
+        .search{
+            font-size:14pt;
+            margin-right: 20px;    
+        }
+        .fyi{
+            color:red;
+            font-style:italic;
+        }
+        .label{
+            margin-right:10px;
+            font-weight:bold;
+        }
+        .Gas {background-color:LightYellow; color:black; }
+        .Electricity {background-color: #ffcccc; color:black; }
+        .Water {background-color:#e6f2ff; color:black; } 
+    //    .LowVoltage {background-color:SeaGreen; color:White; } 
+    //    .HighVoltage {background-color:IndianRed; color:White; } 
+       .StreetLighting {background-color:#ffe6cc; color:Black; }
+        .ChargePoint {background-color:White; color:Black; }
+    //    .Onsite {background-color:Gainsboro; color:White; }
+    //    .Offsite {background-color:Gainsboro; color:White; }
+    //    .Non-Contestable {background-color:Grey; color:White; }
+        a {color:black;}
+        a:hover {color:black;}
+        
+        <!-- css for the sticky header section-->  
+   
+     .floatingHeader 
+     {  
+                position: fixed;  
+                top: 0;  
+                visibility: hidden;  
+                z-index: 10;  
+                background-color: white;  
+     }  
+     
+       
+    </style>
+    
+    <script type='text/javascript'>
+    
+        // This script assists the search bar functionality
+        // It will execute a search only after the user has stopped typing for more than 1 second
+        // To raise the time between when the user stops typing and the search, edit the following variable:
+        
+        var waitTime = 1; 
+        var countDown = waitTime+1;
+        var started = false;
+        
+        function resetTimer()
+        {
+            countDown=waitTime+1;
+            
+            if(started==false)
+            {
+                started=true;
+                runCountDown();
+            }
+        }
+    //function reloadContent()
+    //{
+    //document.location.reload(true);
+    //}
+        function runCountDown()
+        {        
+            countDown--;
+            
+            if(countDown<=0)
+            {
+                fetchResults();
+                started=false;
+            }
+            else
+            {
+                window.setTimeout(runCountDown,1000);
+            }
+        }
+    
+    </script>
+   
+  <!-- script to clone and show/hide the sticky section when scrolling the page-->  
+   <script type="text/javascript">  
+     function sectionHeaders() {  
+                $(".persist-area").each(function() {  
+                     var el     = $(this),  
+                     offset     = el.offset(),  
+                     scrollTop   = $(document).scrollTop(),  
+                     floatingHeader = $(".floatingHeader", this)  
+                     if ((scrollTop > offset.top) && (scrollTop < offset.top + el.height())) {  
+                          floatingHeader.css({  
+                               "visibility": "visible"  
+                          });  
+                     } else {  
+                          floatingHeader.css({  
+                               "visibility": "hidden"  
+                          });     
+                     };  
+                });  
+     }  
+     $(function() {  
+                var clonedHeaderRow;  
+                $(".persist-area").each(function() {  
+                     clonedHeaderRow = $(".persist-header", this);  
+                     clonedHeaderRow  
+                     .before(clonedHeaderRow.clone())  
+                     .css("width", clonedHeaderRow.width())  
+                     .addClass("floatingHeader");  
+                });  
+                $(document)  
+                     .scroll(sectionHeaders)  
+                     .trigger("scroll");  
+     });  
+   </script>  
+  
+  
+  
+    <apex:form >
+    
+        <apex:outputPanel id="mainBody">
+            
+            <!-- this is the upper table... a.k.a. the "Shopping Cart"-->
+
+            <!-- notice we use a lot of $ObjectType merge fields... I did that because if you have changed the labels of fields or objects it will reflect your own lingo -->
+            
+            <apex:outputPanel id="displayMode">               
+                <!--This Panel Only display the fields-->  
+                <apex:outputLink value="{!URLFOR($Action.Opportunity.View,Opportunity.id)}" target="_parent">
+                    &lt;&lt; Back to {!Opportunity.Name} 
+                </apex:outputLink>
+
+                <apex:pageBlock id="displayed" rendered="{!showDisplayPanel}">
+                    
+                    <apex:panelGrid columns="9" id="totals_show_costs" width="100%" style="text-align: center" rendered="{!showCosts}">
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.Total_Kit_Sell__c.Label}"/>
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.Total_Labour_Cost__c.Label}"/>
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.Total_Material_Cost__c.Label}"/>
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.Total_Plant_Cost__c.Label}"/>
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.Overall_Cost__c.Label}"/>
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.Total_Labour_Sell__c.Label}" />
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.Total_Material_Sell__c.Label}" />
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.Total_Plant_Sell__c.Label}" />
+              <!--          <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.Overall_Sell__c.Label}"/>  -->
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.Total_Client_Contribution__c.Label}" />
+                        <apex:outputField value="{!theOpp.Total_Kit_Sell__c}" id="Total_Kit_Sell__c"/>
+                        <apex:outputField value="{!theOpp.Total_Labour_Cost__c}" id="Total_Labour_Cost__c"/> 
+                        <apex:outputField value="{!theOpp.Total_Material_Cost__c}" id="Total_Material_Cost__c"/>
+                        <apex:outputField value="{!theOpp.Total_Plant_Cost__c}" id="Total_Plant_Cost__c"/>
+                        <apex:outputField value="{!theOpp.Overall_Cost__c}" id="Overall_Cost__c"/>
+                        <apex:outputField value="{!theOpp.Total_Labour_Sell__c}" id="Total_Labour_Sell__c"/>
+                        <apex:outputField value="{!theOpp.Total_Material_Sell__c}" id="Total_Material_Sell__c"/>
+                        <apex:outputField value="{!theOpp.Total_Plant_Sell__c}" id="Total_Plant_Sell__c"/>
+               <!--         <apex:outputField value="{!theOpp.Overall_Sell__c}" id="Overall_Sell__c"/>  -->
+                        <apex:outputField value="{!theOpp.Total_Client_Contribution__c}" id="Total_Client_Contribution__c"/>
+                    </apex:panelGrid>
+                    <apex:panelGrid columns="5" id="totals_hide_costs" width="100%" style="text-align: center" rendered="{!NOT(showCosts)}">
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.Total_Kit_Sell__c.Label}" />
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.Total_Labour_Sell__c.Label}" />
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.Total_Material_Sell__c.Label}" />
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.Total_Plant_Sell__c.Label}" />
+                    <!--    <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.Overall_Sell__c.Label}" />          -->              
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.Total_Client_Contribution__c.Label}" />
+                        <apex:outputField value="{!theOpp.Total_Kit_Sell__c}" id="Total_Kit_Sell__c2"/>
+                        <apex:outputField value="{!theOpp.Total_Labour_Sell__c}" id="Total_Labour_Sell__c2"/>
+                        <apex:outputField value="{!theOpp.Total_Material_Sell__c}" id="Total_Material_Sell__c2"/>
+                        <apex:outputField value="{!theOpp.Total_Plant_Sell__c}" id="Total_Plant_Sell__c2"/>
+           <!--             <apex:outputField value="{!theOpp.Overall_Sell__c}" id="Overall_Sell__c2"/>              -->
+                        <apex:outputField value="{!theOpp.Total_Client_Contribution__c}" id="Total_Client_Contribution__c2"/>
+                    </apex:panelGrid>
+                    
+                    <apex:pageblockTable value="{!rows}" var="row" onrowmouseover="this.classList.remove('highlight')">
+                        
+                        <apex:column >
+                            <apex:facet name="header">   
+                                <apex:commandLink action="{!ViewData}" value="No.{!IF(sortExpression=='Product2.Sort__c',IF(sortDirection='ASC','▼','▲'),'')}" >
+                                    <apex:param value="Product2.Sort__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outputField value="{!row.oli.Product2.Sort__c}" />
+                        </apex:column>
+                        
+                        <apex:column styleClass="{!SUBSTITUTE(row.oli.Product_Family__c, ' ', '')}">
+                            <apex:facet name="header">   
+                                <apex:commandLink action="{!ViewData}" value="Name{!IF(sortExpression=='Product_Text__c',IF(sortDirection='ASC','▼','▲'),'')}" >
+                                    <apex:param value="Product_Text__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outputLink value="{!IF(row.oli.id != null,URLFOR($Action.OpportunityLineItem.View,row.oli.id),'#')}" target="_parent">
+                                {!row.oli.Product_Text__c} 
+                            </apex:outputLink>
+                        </apex:column>
+                                                           
+                        <apex:column styleClass="{!SUBSTITUTE(row.oli.Product_Family__c, ' ', '')}">
+                            <apex:facet name="header">   
+                                <apex:commandLink action="{!ViewData}" value="{!$ObjectType.OpportunityLineItem.Fields.Product_Family__c.Label}{!IF(sortExpression=='Product_Family__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSort">
+                                    <apex:param value="Product_Family__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outputField value="{!row.oli.Product_Family__c}" />
+                        </apex:column>
+                        
+                       <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.ProductCode.Label}" styleClass="{!SUBSTITUTE(row.oli.Product_Family__c, ' ', '')}">
+                       <apex:outputField value="{!row.oli.Prod_Code__c}" /> 
+                       </apex:column>    
+                               
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Quantity__c.Label}" styleClass="{!SUBSTITUTE(row.oli.Product_Family__c, ' ', '')}">
+                        <apex:outputField value="{!row.oli.Quantity__c}" />
+                    </apex:column>
+
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Implementor__c.Label}" styleClass="{!SUBSTITUTE(row.oli.Product_Family__c, ' ', '')}">
+                        <apex:outputField value="{!row.oli.Implementor__c}" />
+                    </apex:column>
+
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Kit_Sell__c.Label}" styleClass="{!SUBSTITUTE(row.oli.Product_Family__c, ' ', '')}">
+                        <apex:outputField value="{!row.oli.Kit_Sell__c}" />
+                    </apex:column>
+
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Labour_Cost__c.Label}" styleClass="{!SUBSTITUTE(row.oli.Product_Family__c, ' ', '')}" rendered="{!showCosts}">
+                        <apex:outputField value="{!row.oli.Labour_Cost__c}" />
+                    </apex:column> 
+                    
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Material_Cost__c.Label}" styleClass="{!SUBSTITUTE(row.oli.Product_Family__c, ' ', '')}" rendered="{!showCosts}">
+                        <apex:outputField value="{!row.oli.Material_Cost__c}" />
+                    </apex:column> 
+
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Plant_Cost__c.Label}" styleClass="{!SUBSTITUTE(row.oli.Product_Family__c, ' ', '')}" rendered="{!showCosts}">
+                        <apex:outputField value="{!row.oli.Plant_Cost__c}" />
+                    </apex:column> 
+                       
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Total_Cost__c.Label}" styleClass="{!SUBSTITUTE(row.oli.Product_Family__c, ' ', '')}" rendered="{!showCosts}">
+                        <b><apex:outputField value="{!row.oli.Total_Cost__c}"/></b>
+                    </apex:column>
+
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.UnitPrice.Label}"  styleClass="{!SUBSTITUTE(row.oli.Product_Family__c, ' ', '')}">
+                        <apex:outputField value="{!row.oli.UnitPrice}" />
+                    </apex:column> 
+                    
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Material_Sell_calc__c.Label}" styleClass="{!SUBSTITUTE(row.oli.Product_Family__c, ' ', '')}">
+                        <apex:outputField value="{!row.oli.Material_Sell_calc__c}" />
+                    </apex:column> 
+
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Plant_Sell_calc__c.Label}" styleClass="{!SUBSTITUTE(row.oli.Product_Family__c, ' ', '')}">
+                        <apex:outputField value="{!row.oli.Plant_Sell_calc__c}" />
+                    </apex:column> 
+                    
+                    
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Sell_Rate__c.Label}" styleClass="{!SUBSTITUTE(row.oli.Product_Family__c, ' ', '')}">
+                        <apex:outputField value="{!row.oli.Sell_Rate__c}" />
+                    </apex:column>  
+                                                  
+                    <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Total_Sell_Rate__c.Label}" styleClass="{!SUBSTITUTE(row.oli.Product_Family__c, ' ', '')}">
+                        <b><apex:outputField value="{!row.oli.Total_Sell_Rate__c}" /></b>
+                    </apex:column>
+                        
+                </apex:pageblockTable>           
+ 
+                <apex:pageBlockButtons >
+                    <apex:commandButton action="{!hideCostsMode}" value="Hide Costs" rendered="{!showCosts}" />                    
+                    <apex:commandButton action="{!showCostsMode}" value="Show Costs" rendered="{!NOT(showCosts)}" />                    
+                    <apex:commandButton action="{!displayEditMode}" value="Edit"/>                    
+                </apex:pageBlockButtons>
+                    
+            </apex:pageBlock>
+            </apex:outputPanel>
+            
+            <apex:outputPanel id="EditMode" >
+                <apex:pageBlock id="selected" rendered="{!showEditPanel}" > 
+                    <apex:pageblockTable value="{!rows}" var="row" onrowmouseover="this.classList.remove('highlight')">
+
+                        <apex:column styleClass="{!SUBSTITUTE(row.family, ' ', '')}">
+                            <apex:commandLink value="Del" action="{!deleteRow}" reRender="selected,searchResults" immediate="true">
+                                <!-- this param is how we send an argument to the controller, so it knows which row we clicked 'remove' on -->
+                                <apex:param value="{!row.rowId}" assignTo="{!selectedRowId}" name="toUnselect"/>
+                            </apex:commandLink>
+                        </apex:column>
+                        
+                        <!--<apex:column headerValue="Items" styleClass="{!SUBSTITUTE(row.family, ' ', '')}">
+                            <apex:outputLink value="{!IF(row.oli.id != null,URLFOR($Action.OpportunityLineItem.View,row.oli.id),'#')}" target="_parent">
+                                {!row.oli.PriceBookEntry.Product2.Name} 
+                            </apex:outputLink>
+                        </apex:column>-->
+
+                        <apex:column headerValue="Items" styleClass="{!SUBSTITUTE(row.family, ' ', '')}">
+                            <apex:inputField value="{!row.oli.Product_Text__c}" rendered="{!row.multiple == True}" style="width:400px;" />
+                            <apex:outputField value="{!row.oli.Product_Text__c}" rendered="{!row.multiple == False}" style="width:400px;" />
+                        </apex:column>
+                        
+                        <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Product_Family__c.Label}" styleClass="{!SUBSTITUTE(row.family, ' ', '')}">
+                            <apex:inputField value="{!row.oli.Product_Family__c}" style="width:100px;" />
+                        </apex:column>
+                        
+                       <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.ProductCode.Label}" styleClass="{!SUBSTITUTE(row.family, ' ', '')}">
+                            <apex:inputField value="{!row.oli.Prod_Code__c}" style="width:80px;" />
+                        </apex:column>  
+                        
+                        <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Quantity__c.Label}" styleClass="{!SUBSTITUTE(row.family, ' ', '')}">
+                            <apex:inputField value="{!row.oli.Quantity__c}" style="width:80px;" />
+                        </apex:column>
+
+                        <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Implementor__c.Label}" styleClass="{!SUBSTITUTE(row.family, ' ', '')}">
+                            <apex:inputField value="{!row.oli.Implementor__c}" style="width:110px;" >
+                                <apex:actionSupport event="onchange" action="{!updateCostValue}" reRender="selected" >
+                                    <apex:param value="{!row.rowId}" assignTo="{!selectedRowId}" name="toUpdateLabourCost"/>
+                                </apex:actionSupport>
+                            </apex:inputField>
+                        </apex:column>
+                                      
+                        <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Kit_Sell__c.Label}" styleClass="{!SUBSTITUTE(row.family, ' ', '')}">
+                            <apex:inputField value="{!row.oli.Kit_Sell__c}" style="width:110px;" >
+                          <!--       <apex:actionSupport event="onchange" action="{!updateCostValue}" reRender="selected" >
+                                     <apex:param value="{!row.rowId}" assignTo="{!selectedRowId}" name="toUpdateLabourCost"/>  
+                                </apex:actionSupport> -->
+                            </apex:inputField>
+                        </apex:column>   
+                                                                     
+                        <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Labour_Cost__c.Label}" styleClass="{!SUBSTITUTE(row.family, ' ', '')}" rendered="{!showCosts}">
+                            <apex:inputField value="{!row.oli.Labour_Cost__c}" style="width:100px;" >
+                                <!--<apex:actionSupport event="onchange" action="{!updateToLabourCostValue}" reRender="selected" status="status">
+                                    <apex:param value="{!row.rowId}" assignTo="{!selectedRowId}" name="updateToLabourCostValue"/>
+                                </apex:actionSupport>-->
+                            </apex:inputField>
+                        </apex:column> 
+                        
+                        <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Material_Cost__c.Label}" styleClass="{!SUBSTITUTE(row.family, ' ', '')}" rendered="{!showCosts}">
+                            <apex:inputField value="{!row.oli.Material_Cost__c}" style="width:100px;" >
+                                <!--<apex:actionSupport event="onchange" action="{!updateToMaterialCostValue}" reRender="selected" status="status">
+                                    <apex:param value="{!row.rowId}" assignTo="{!selectedRowId}" name="updateToMaterialCostValue"/>
+                                </apex:actionSupport>-->
+                            </apex:inputField>
+                        </apex:column> 
+                                              
+                        <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Plant_Cost__c.Label}" styleClass="{!SUBSTITUTE(row.family, ' ', '')}" rendered="{!showCosts}">
+                            <apex:inputField value="{!row.oli.Plant_Cost__c}" style="width:100px;" >
+                                <!--<apex:actionSupport event="onchange" action="{!updateToPlantCostValue}" reRender="selected" status="status">
+                                    <apex:param value="{!row.rowId}" assignTo="{!selectedRowId}" name="updateToPlantCostValue"/>
+                                </apex:actionSupport>-->
+                            </apex:inputField>
+                        </apex:column> 
+                        
+                        <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.UnitPrice.Label}" styleClass="{!SUBSTITUTE(row.family, ' ', '')}">
+                            <apex:inputField value="{!row.oli.UnitPrice}" style="width:100px;" >
+                                <!--<apex:actionSupport event="onchange" action="{!updateToLabourSellValue}" reRender="selected" status="status">
+                                    <apex:param value="{!row.rowId}" assignTo="{!selectedRowId}" name="updateToLabourSellValue"/>
+                                </apex:actionSupport>-->
+                            </apex:inputField>
+                        </apex:column>                                        
+               
+                       <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Material_Sell_calc__c.Label}" styleClass="{!SUBSTITUTE(row.family, ' ', '')}">
+                            <apex:outputField value="{!row.oli.Material_Sell_calc__c}" style="width:100px;" >
+                                <!--<apex:actionSupport event="onchange" action="{!updateToMaterialSellValue}" reRender="selected" status="status">
+                                    <apex:param value="{!row.rowId}" assignTo="{!selectedRowId}" name="updateToMaterialSellValue"/>
+                                </apex:actionSupport>-->
+                            </apex:outputField>
+                        </apex:column> 
+                        
+                        <apex:column headerValue="{!$ObjectType.OpportunityLineItem.Fields.Plant_Sell_calc__c.Label}" styleClass="{!SUBSTITUTE(row.family, ' ', '')}">
+                            <apex:inputField value="{!row.oli.Plant_Sell_calc__c}" style="width:100px;" >
+                                <!--<apex:actionSupport event="onchange" action="{!updateToPlantSellValue}" reRender="selected" status="status">
+                                    <apex:param value="{!row.rowId}" assignTo="{!selectedRowId}" name="updateToPlantSellValue"/>
+                                </apex:actionSupport>-->
+                            </apex:inputField>
+                        </apex:column> 
+                        
+                         
+                </apex:pageblockTable>
+                      
+                <apex:pageBlockButtons id="editButtons" >
+                    <apex:actionStatus id="status">
+                        <apex:facet name="stop">
+                            <apex:outputPanel >
+                                <apex:commandButton action="{!addThirdPartyCosts}" value="Add Costs" rendered="{!showEditPanel}" reRender="EditMode,editButtons" status="status" />
+                                <apex:commandButton action="{!addCivils}" value="Add Civils" rendered="{!showEditPanel}" reRender="EditMode,editButtons" status="status" />
+                                <apex:commandButton action="{!addElectric}" value="Add Electric" rendered="{!showEditPanel}" reRender="EditMode,editButtons" status="status" />
+                                <apex:commandButton action="{!addGas}" value="Add Gas" rendered="{!showEditPanel}" reRender="EditMode,editButtons" status="status" />
+                                <apex:commandButton action="{!addWater}" value="Add Water" rendered="{!showEditPanel}" reRender="EditMode,editButtons" status="status" />
+                                <apex:commandButton action="{!addStreetLighting}" value="Add Street Lighting" rendered="{!showEditPanel}" reRender="EditMode,editButtons" status="status" />
+                                <apex:commandButton action="{!addChargePoints}" value="Add Charge Points" rendered="{!showEditPanel}" reRender="EditMode,editButtons" status="status" />   
+                                <apex:commandButton action="{!hideCostsMode}" value="Hide Costs" rendered="{!showCosts}" status="status" />                    
+                                <apex:commandButton action="{!showCostsMode}" value="Show Costs" rendered="{!NOT(showCosts)}" status="status" />   
+                                <apex:commandButton action="{!onSave}" value="Save" rerender="editButtons" rendered="{!showEditPanel}" status="status" />
+                                <apex:commandButton action="{!onCancel}" value="Cancel" immediate="true" rendered="{!showEditPanel}" />
+                     <!--      <apex:commandButton action="{!addChargePoints}" value="Add Charge Points" rendered="{!AND(showEditPanel,chargerSiteScheme.Charger_Provider__c != null)}" reRender="EditMode,editButtons" status="status" />      -->
+                            </apex:outputPanel>
+                        </apex:facet>
+                        <apex:facet name="start">
+                            <apex:outputPanel >
+                                <apex:commandButton action="{!addThirdPartyCosts}" value="Add Costs" rendered="{!showEditPanel}" reRender="EditMode,editButtons" disabled="true" />
+                                <apex:commandButton action="{!addCivils}" value="Add Civils" rendered="{!showEditPanel}" reRender="EditMode,editButtons" disabled="true"/>
+                                <apex:commandButton action="{!addElectric}" value="Add Electric" rendered="{!showEditPanel}" reRender="EditMode,editButtons" disabled="true"/>
+                                <apex:commandButton action="{!addGas}" value="Add Gas" rendered="{!showEditPanel}" reRender="EditMode,editButtons" disabled="true"/>
+                                <apex:commandButton action="{!addStreetLighting}" value="Add Street Lighting" rendered="{!showEditPanel}" reRender="EditMode,editButtons" disabled="true"/>
+                                <apex:commandButton action="{!addWater}" value="Add Water" rendered="{!showEditPanel}" reRender="EditMode,editButtons" disabled="true"/>
+                                <apex:commandButton action="{!addChargePoints}" value="Add Charge Points" rendered="{!showEditPanel}" reRender="EditMode,editButtons" disabled="true" />   
+                                <apex:commandButton action="{!hideCostsMode}" value="Hide Costs" rendered="{!showCosts}" disabled="true"/>                    
+                                <apex:commandButton action="{!showCostsMode}" value="Show Costs" rendered="{!NOT(showCosts)}" disabled="true"/>   
+                                <apex:commandButton action="{!onSave}" value="Save" rendered="{!showEditPanel}" disabled="true"/>
+                                <apex:commandButton action="{!onCancel}" value="Cancel" immediate="true" rendered="{!showEditPanel}" />
+                                <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+                                    &nbsp;
+                                </div>
+                                <div style="position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin: 15% 50%">
+                                    <div style="display: inline-block; padding: 2px; background-color: #fff; width: 125px;">
+                                        <img src="/img/loading.gif" style="float: left; margin: 8px;" />
+                                        <span style="display: inline-block; padding: 10px 0px;">Please Wait...</span>
+                                    </div>
+                                </div>
+                            </apex:outputPanel>
+                        </apex:facet>
+                    </apex:actionStatus>
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+            
+            <!-- this is the lower table: search bar and search results rerender="selected"-->
+    
+            <apex:pageBlock rendered="{!showEditPanel}" >
+                <apex:pageBlockButtons location="top">
+                    <apex:outputPanel id="myButtons" >
+                        <apex:commandButton action="{!Beginning}" title="Beginning" value="<<" disabled="{!disablePrevious}" reRender="searchResults,myButtons"/>
+                        <apex:commandButton action="{!Previous}" title="Previous" value="<" disabled="{!disablePrevious}" reRender="searchResults,myButtons"/>        
+                        <apex:commandButton action="{!Next}" title="Next" value=">" disabled="{!disableNext}" reRender="searchResults,myButtons"/>
+                        <apex:commandButton action="{!End}" title="End" value=">>" disabled="{!disableNext}" reRender="searchResults,myButtons"/> 
+                    </apex:outputPanel>   
+                </apex:pageBlockButtons>
+
+                <apex:outputPanel styleClass="search">
+                    Search for Items:
+                </apex:outputPanel>
+
+                <apex:actionRegion renderRegionOnly="false" immediate="true">
+                    <apex:actionFunction name="fetchResults" action="{!Beginning}" reRender="searchResults,myButtons" status="searchStatus"/>                    
+                    <!-- here we invoke the scripting to get out fancy 'no button' search bar to work -->
+                    <apex:inputText value="{!searchString}" onkeydown="if(event.keyCode==13){this.blur();}else{resetTimer();}" style="width:300px"/>
+                    &nbsp;&nbsp;
+                    <i>
+                        <!-- actionStatus component makes it easy to let the user know when a search is underway -->
+                        <apex:actionStatus id="searchStatus" startText="searching..." stopText=" "/>
+                    </i>                    
+                </apex:actionRegion>
+            
+                <br/>
+                <br/>
+            
+                <apex:outputPanel id="searchResults">
+                    <apex:pageBlockTable value="{!AvailableProducts}" var="a">
+                        
+                        <apex:column >
+                            <apex:facet name="header">        
+                                <apex:commandLink value="Item Name{!IF(sortField=='Product2.Name',IF(sortDir='ASC','▼','▲'),'')}"  action="{!toggleSort}" >
+                                    <apex:param name="sortField" value="Product2.Name" assignTo="{!sortField}"/>
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outputText value="{!a.Product2.Name}"/>
+                        </apex:column>
+
+                        <apex:column >
+                            <!-- command button in a column... neato -->
+                            <apex:commandButton value="Add" action="{!addToShoppingCart}" reRender="selected,searchResults" immediate="true">
+                                <!-- again we use apex:param to be able to tell the controller which row we are working with -->
+                                <apex:param value="{!a.Id}" assignTo="{!toSelect}" name="toSelect"/>
+                            </apex:commandButton>
+                        </apex:column>
+
+                        <apex:column >
+                            <apex:facet name="header">  
+                                <apex:commandLink value="{!$ObjectType.Product2.Fields.Family.Label}{!IF(sortField=='Product2.Family',IF(sortDir='ASC','▼','▲'),'')}"  action="{!toggleSort}" >
+                                    <apex:param name="sortField" value="Product2.Family" assignTo="{!sortField}"/>
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outputText value="{!a.Product2.Family}"/>
+                        </apex:column>
+                        <apex:column headerValue="{!$ObjectType.Product2.Fields.ProductCode.Label}" value="{!a.Product2.ProductCode}"/>
+                        <apex:column headerValue="{!$ObjectType.PriceBookEntry.Fields.Kit_Sell__c.Label}" value="{!a.Kit_Sell__c}"/>
+                        <apex:column headerValue="{!$ObjectType.PriceBookEntry.Fields.Labour_Sell_del__c.Label}" value="{!a.Labour_Sell_del__c}"/>
+                        <apex:column headerValue="{!$ObjectType.PriceBookEntry.Fields.Labour_Cost__c.Label}" value="{!a.Labour_Cost__c}"/>
+                        <apex:column headerValue="{!$ObjectType.PriceBookEntry.Fields.Material_Sell_del__c.Label}" value="{!a.Material_Sell_del__c}"/>
+                        <apex:column headerValue="{!$ObjectType.PriceBookEntry.Fields.Material_Cost_del__c.Label}" value="{!a.Material_Cost_del__c}"/>
+                        <apex:column headerValue="{!$ObjectType.PriceBookEntry.Fields.Plant_Sell_del__c.Label}" value="{!a.Plant_Sell_del__c}"/>                        
+                        <apex:column headerValue="{!$ObjectType.PriceBookEntry.Fields.Plant_Cost_del__c.Label}" value="{!a.Plant_Cost_del__c}"/>
+
+                        
+
+                        
+                    </apex:pageBlockTable>
+                    
+                    <!-- We put up a warning if results exceed 100 rows -->
+                    <apex:outputPanel styleClass="fyi" rendered="{!overLimit}">
+                        <br/>
+                        Your search returned over 100 results, use a more specific search string if you do not see the desired {!$ObjectType.Product2.Label}.
+                        <br/>
+                    </apex:outputPanel>
+                    Showing Page # {!pageNumber} of {!totalPages}
+
+                </apex:outputPanel>
+            
+            </apex:pageBlock>
+            </apex:outputPanel><!--End of EditMode Panel-->
+        </apex:outputPanel>
+
+    </apex:form>
+    
+    <!-- delay save until onchange action has completed -->
+    <apex:actionStatus id="status">
+        <apex:facet name="start">
+            <div class="outerCls"></div>
+            <div class="innerCls">
+                Processing...
+            </div>
+        </apex:facet>
+    </apex:actionStatus>                
+    <style>
+        .innerCls{
+        left:50%;
+        top:50%;
+        position:fixed;
+        }
+        .outerCls{
+        top: 0px;
+        left: 0px;
+        position: absolute;
+        background-color: #CCC;
+        opacity: 0.40;
+        width: 100%;
+        height: 100%;
+        }
+    </style>  
+    
+</apex:page>

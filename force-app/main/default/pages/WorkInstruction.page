@@ -1,0 +1,190 @@
+<apex:page standardController="Opportunity" extensions="opportunityControllercustomExtension" showHeader="false" renderAs="pdf" contenttype="application/pdf" applyBodyTag="false">
+ <head>
+
+<style type="text/css" media="print">
+
+            @page
+            {
+            size: 8.27in 11.69in;  <!-- A4 -->
+            margin: 0in 0in 0in 0in;
+             
+            @top-center
+            {
+            content: element(header);
+            }
+            
+            @bottom-center
+            {
+            content: element(footer);
+            }  
+                        
+            div.header
+            {
+            position: running(header);
+            }
+            
+            div.footer 
+            { 
+             display:block; 
+             height:30px; 
+             position: running(footer); 
+            } 
+             
+            }
+            
+            .pagenumber:before
+            {
+            content: counter(page);
+            }
+            
+            .pagecount:before
+            {
+            content: counter(pages);
+            }
+            
+                        
+            .my-nowrap 
+            {
+            white-space: nowrap;
+            }
+
+           .pagebreak 
+            { 
+            page-break-after: always; 
+            } 
+
+            
+          <div class="Add CSS">
+            <c:PDFQuotecss />
+          </div>        
+       
+    </style>
+
+    </head>      
+    
+   <div class="body">
+   <!------------------------------------------------------------>
+   <!---------   Validate Fields Set-up in Quote       ---------->
+   <!------------------------------------------------------------>     
+
+    <div class="ValidationDispErr">  
+          <apex:outputText rendered="{!AND(Opportunity.Type == '', Opportunity.Type == null)}">
+             <h>The Estimate Type is not known - Enter an estimate Type</h>
+          </apex:outputText>
+    </div>
+   
+    
+    <!------------------------------------------------------------>
+    <!---------               Opportunity Type blank    ---------->
+    <!------------------------------------------------------------>                        
+    <div class="ValidationNoErr">  
+        <apex:outputText rendered="{!AND(Opportunity.Type != '', Opportunity.Type != null )}">
+        </apex:outputText>  
+    </div>   
+     
+<!------------------------------------------------------------>    
+<!--------- Charge Point                               ------ >    
+<!------------------------------------------------------------>       
+ 
+   <div class="ChargerPoint">  
+       <apex:outputText rendered="{!CONTAINS(Opportunity.Type,'Electric Car Charger Tender')}">
+         <c:WorkInstruction opportunityId="{!Opportunity.id}"/>
+       </apex:outputText>  
+  </div>        
+ 
+<!------------------------------------------------------------->
+<!----------        Self-Lay Water Tender        ------------>
+<!------------------------------------------------------------->     
+ <div class="Instavolt">  
+    <apex:outputText rendered="{!CONTAINS(Opportunity.Type,'Self-Lay Water Tender')}">
+       <c:WorkInstruction opportunityId="{!Opportunity.id}"/>
+    </apex:outputText> 
+ </div> 
+  
+<!------------------------------------------------------------->
+<!----------       Electricity, Gas Tender         ------------>
+<!------------------------------------------------------------->     
+ <div class="Instavolt">  
+    <apex:outputText rendered="{!CONTAINS(Opportunity.Type,'Electricity, Gas Tender')}">
+       <c:WorkInstruction opportunityId="{!Opportunity.id}"/>
+    </apex:outputText> 
+ </div> 
+     
+<!------------------------------------------------------------->
+<!----------       Gas Tender                      ------------>
+<!------------------------------------------------------------->     
+ <div class="Instavolt">  
+    <apex:outputText rendered="{!CONTAINS(Opportunity.Type,'Gas Tender')}">
+             <c:WorkInstruction opportunityId="{!Opportunity.id}"/>
+    </apex:outputText> 
+ </div>     
+        
+     
+<!------------------------------------------------------------->
+<!----------       Electric Tender                 ------------>
+<!------------------------------------------------------------->     
+ <div class="Instavolt">  
+    <apex:outputText rendered="{!CONTAINS(Opportunity.Type,'Electric Tender')}">
+             <c:WorkInstruction opportunityId="{!Opportunity.id}"/>
+    </apex:outputText> 
+ </div>     
+       
+<!------------------------------------------------------------>
+<!---------             Streetlighting              ---------->
+<!------------------------------------------------------------>     
+ <div class="Street Lighting">  
+    <apex:outputText rendered="{!CONTAINS(Opportunity.Type,'Streetlighting')}">
+            <c:WorkInstruction opportunityId="{!Opportunity.id}"/>
+    </apex:outputText>  
+ </div>    
+
+<!------------------------------------------------------------>
+<!---------             Multi Utility               ---------->
+<!------------------------------------------------------------>     
+ <div class="Multi Utility">  
+    <apex:outputText rendered="{!CONTAINS(Opportunity.Type,'Multi Utility Tender')}">
+            <c:WorkInstruction opportunityId="{!Opportunity.id}"/>
+    </apex:outputText>  
+ </div>  
+          
+          
+<!------------------------------------------------------------>    
+<!--------- SSEN Connections                           ------ >    
+<!------------------------------------------------------------>       
+ <div class="SSE Utilities"> 
+    <apex:outputText rendered="{!CONTAINS(Opportunity.Type,'SSEN Connections')}">
+            <c:quote_sse_connections opportunityId="{!Opportunity.id}"/>
+    </apex:outputText>
+ </div>  
+ 
+<!------------------------------------------------------------>    
+<!--------- SSEN Minor Works                           ------ >    
+<!------------------------------------------------------------>       
+ <div class="SSE Utilities"> 
+    <apex:outputText rendered="{!CONTAINS(Opportunity.Type,'SSEN Minor Works')}">
+            <c:quote_sse_connections opportunityId="{!Opportunity.id}"/>
+    </apex:outputText>
+ </div>  
+
+
+<!------------------------------------------------------------>    
+<!--------- SSEN Service Alterations                   ------ >    
+<!------------------------------------------------------------>       
+ <div class="SSE Utilities"> 
+    <apex:outputText rendered="{!CONTAINS(Opportunity.Type,'SSEN Service Alterations')}">
+            <c:quote_sse_connections opportunityId="{!Opportunity.id}"/>
+    </apex:outputText>
+ </div>  
+ 
+<!------------------------------------------------------------>    
+<!--------- SSEN Major Works                           ------ >    
+<!------------------------------------------------------------>       
+ <div class="SSE Utilities"> 
+    <apex:outputText rendered="{!CONTAINS(Opportunity.Type,'SSEN Major Works')}">
+            <c:quote_sse_connections opportunityId="{!Opportunity.id}"/>
+    </apex:outputText>
+ </div>  
+ 
+</div>    
+ 
+ </apex:page>

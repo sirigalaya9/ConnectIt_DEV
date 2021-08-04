@@ -1,0 +1,17 @@
+<apex:page standardController="Purchase_Order_Line__c" extensions="r3PurchaseOrderLineSetController" recordSetVar="pols" action="{!getItemsWithFreeStock}" lightningStylesheets="true">
+   <apex:messages />
+   <apex:form >
+       <apex:pageBlock title="Allocate Stock">
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!cancel}" value="Cancel"/>
+                <apex:commandButton action="{!allocateStock}" value="Confirm"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockTable value="{!selected}" var="pol">
+                <apex:column value="{!pol.Milestone_Project__c}"/> 
+                <apex:column value="{!pol.Product__c}"/>
+                <apex:column value="{!pol.Quantity__c}"/>
+                <apex:column value="{!pol.Total_Stock__c}"/>
+            </apex:pageBlockTable> 
+        </apex:pageBlock>
+    </apex:form>    
+</apex:page>

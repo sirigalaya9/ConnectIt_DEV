@@ -1,0 +1,383 @@
+<apex:page standardController="Invoice__c" applyHTMLTag="false" applyBodyTag="false" showHeader="false" sidebar="false" renderAs="pdf">
+    
+    <head>
+        <style type="text/css" media="print">
+            @page 
+            {
+             margin-bottom:1.6cm;
+             margin-top:0cm;
+             @bottom-center 
+             {
+              content: element(footer);
+             }
+            }
+                                              
+            div.footer 
+            {
+            display:block;
+            height:250px;
+            position: running(footer);              
+            }
+                         
+            table 
+            {
+             font-family: verdana,arial,sans-serif;
+             width: 100%;
+             border: 0.1px;
+             border-spacing:0px;
+            }  
+            
+            th 
+            {
+            border: 0.2px solid black;
+            padding:5px;
+            font-size: 13px;
+            }         
+           
+            th2 
+            {
+            border: 0.2px solid black;
+            padding:5px;
+            font-size: 15px;
+            font-weight: bold;
+            text-align: center;
+            }      
+               
+            td 
+            {
+            border: 0.2px solid black;    
+            padding:5px;        
+            font-size: 12px;
+            font-weight: normal;
+            }
+           
+            td.header2 
+            {
+            border: 0.2px solid black;  
+            font-weight:bold;
+            }
+         
+            tr.header 
+            {
+            text-align:center;
+            font-size: 14px;
+            font-weight:bold;
+            }
+           
+            tr.other 
+            {
+            font-size: 12px;
+            }    
+            
+            table.lines 
+            {
+            text-align: center;
+            border-spacing: 0px;
+            }
+            
+            table.total 
+            {
+            text-align: center;
+            width: 50%;
+            margin-right: 0px;
+            margin-left: auto;
+            }      
+                       
+            table.footer 
+            {
+            border: 0px;
+            font-family: verdana,arial,sans-serif;
+            color: #37383a;
+            padding:0px;
+            margin:0px;
+            border-collapse: collapse;            
+            }
+           
+            div.address
+            {
+            margin-top:-120px; 
+            margin-left:500px;  
+            position:absolute;
+            width:200px;
+            }
+           
+            div.invdets
+            { 
+            margin-top:-94px;
+            margin-left:410px;  
+            position:absolute;
+            width:41%;
+            }
+           
+            div paymentterms
+            {
+            width:600px;
+            }
+            
+            div.address td
+            {
+            border: none;
+            padding: 0px;
+            font-size: 14px;
+            font-weight:bold;
+            text-align:center;
+            }
+            
+            div.customer
+            { 
+            border: none;
+            padding: 0px;
+            font-size: 12px;
+            font-weight:normal;
+            text-align:left;
+            width:57%;
+            }
+
+            div.customer tr
+            {
+            border: none;
+            }
+
+            
+            div.address tr
+            {
+
+            }
+            
+            div.address table
+            {
+
+            }
+
+            div.customer table
+            {
+            border:none;
+            }
+            
+            p
+            { 
+            font-family: calibri; 
+            font-size: 10px; color : black; 
+            font-weight : normal; 
+            text-align: center; 
+            } 
+        
+        
+            p1 
+            { 
+            font-family: calibri; 
+            font-size: 20px; 
+            color : #ff8c00; 
+            font-weight : bold; 
+            text-align: center; 
+            }
+            
+            h
+            {
+            text-align:center;
+            font-weight:bold;
+            }
+            
+            h2
+            {
+             font-family: verdana,arial,sans-serif;
+             text-align:center;
+            }
+            
+            h3
+            {
+             font-family: verdana,arial,sans-serif;
+             text-align:center;
+            }
+                
+           .pagenumber:before 
+           { 
+             content: counter(page); 
+           }
+        
+           .pagecount:before  
+           { 
+             content: counter(pages); 
+           }
+           }
+           
+           td.footer
+           {
+               border: 0px;
+               cell-spacing:0px;
+               padding:0px;
+               margin:0px;
+               border-collapse: collapse;
+               text-align:left;
+               font-size: 10px;
+            }
+           
+            td.footer2
+            {
+                border: 0px;
+                cell-spacing:0px;
+                padding:0px;
+                margin:0px;
+                border-collapse: collapse;
+                text-align:right;
+                font-size: 10px;
+            }
+            
+      </style> 
+     </head> 
+        
+        
+     <apex:form >   
+
+        <div class="header" style="margin-top: 30px;">
+           <apex:image id="logo" value="{!$Resource.ConnectITLogo2}" height="130px" width="440px" /> 
+        </div>
+        
+        <div class="address">
+          <table>
+            <tr><td>Foundation House Unit C (West) Hamilton Business Park</td></tr>
+            <tr><td>Hamilton Way</td></tr>
+            <tr><td>Hedge End</td></tr>
+            <tr><td>Southampton</td></tr>
+            <tr><td>SO30 2JR</td></tr>
+         </table>   
+        </div>
+        
+        <div class="title" align="center">
+                 <h2 >Invoice</h2>
+        </div>     
+           
+       <div class="customer" align="left">
+         <table>
+           <tr class="other">
+             <td>FAO: <apex:outputText value="{!Invoice__c.Invoice_Recipient__r.Name}"/><br/>
+             <apex:outputText value="{!Invoice__c.Customer_Account__r.Name}"/><br/>
+             <apex:outputText value="{!Invoice__c.Customer_Account__r.BillingStreet}"/><br/>
+             <apex:outputText value="{!Invoice__c.Customer_Account__r.BillingCity}"/><br/>
+             <apex:outputText value="{!Invoice__c.Customer_Account__r.BillingPostalCode}"/><br/>
+             <apex:outputText value="{!Invoice__c.Customer_Account__r.BillingCountry}"/> </td>
+           </tr>
+         </table>
+      </div>
+      
+      <div class="invdets">
+         <table>
+           <tr>
+             <th>Invoice Date</th>
+             <th>Invoice No</th>
+           </tr>
+           <tr>
+             <td><apex:outputField value="{!Invoice__c.Invoice_Date__c}"/></td>
+             <td><apex:outputText value="{!Invoice__c.Name}"/></td>
+           </tr>
+            
+           <tr class="other">
+            <th>P.O No</th>
+            <th>Terms</th>
+           </tr>
+           
+          
+           <tr class="other">
+            <td><apex:outputfield value="{!Invoice__c.Customer_PO__c}"/></td>
+            <td><apex:outputField value="{!Invoice__c.Payment_terms__c}"/></td> 
+           </tr>
+           <!--   Can use for notes>          <td><apex:outputField value="{!Invoice__c.Customer_Invoice_Notes__c}"/></td>  -->
+         </table>    
+      </div>
+        
+        
+        <div class="footer">
+          <div style="text-align:center">
+              <p1>Let&#39;s get connected</p1>
+              <p>Page <span class="pagenumber" /> of <span class="pagecount" /></p>
+           </div>
+       </div>  
+       
+           
+    
+        <apex:pageBlock >
+          <apex:variable value="{!1}" var="num" />
+         <br/>
+         
+         <apex:repeat value="{!Invoice__c.Invoice_Line_Items__r}" var="ili" id="list"> 
+         
+         <!-- -------------FOR PAGINATION START--------------- -->
+               <apex:outputpanel rendered="{!num == 1  || num == 23 || num == 53 || num == 83 || num == 113 || num == 143 || num == 173 || num == 203}"><br></br>
+               
+          <table class="lines" style="{!IF(Invoice__c.Invoice_Line_Items__r.size > 0,'','display: none;')} -fs-table-paginate: paginate;">
+            <tr>
+              <th style="text-align:left" width="48%">Description</th>
+              <th style="text-align:center" width="6%">Qty</th>
+              <th style="text-align:center" width="14%">Unit Cost</th>
+              <th style="text-align:center" width="6%">VAT %</th>
+              <th style="text-align:center" width="13%">VAT Amt</th>
+              <th style="text-align:center" width="13%">Amount</th>
+            </tr>
+            
+         </table>
+         
+          <table>
+            <tr>
+              <td style="text-align:left" width="48%">Site: <apex:outputField value="{!Invoice__c.Customer_Account__c}"/></td>  
+            <!--  <td style="text-align:left" width="48%">Site: <apex:outputField value="{!Invoice__c.Site__c}"/></td>    -->         
+              <td style="text-align:center" width="6%">&nbsp;</td>
+              <td style="text-align:center" width="14%">&nbsp;</td>
+              <td style="text-align:center" width="6%">&nbsp;</td>
+              <td style="text-align:center" width="13%">&nbsp;</td>
+              <td style="text-align:center" width="13%">&nbsp;</td>
+            </tr>
+         </table>
+        
+         </apex:outputpanel>     
+         <table>
+            <tr>
+              <td style="text-align:left" width="48%">{!ili.Invoice_Line_Description__c}</td>
+              <td style="text-align:center" width="6%"><apex:outputText value="{0, number, ###,###.##}"><apex:param value="{!ili.Quantity__c}"/></apex:outputText></td>
+              <td style="text-align:center" width="14%"><apex:outputText value="{0, number, ###,###.00}"><apex:param value="{!ili.Cost__c}"/></apex:outputText></td>
+              <td style="text-align:center" width="6%">{!ili.VAT_rate__c}</td>
+              <td style="text-align:center" width="13%">{!ili.VAT_Amount__c}</td>
+              <td style="text-align:center" width="13%"><apex:outputText value="{0, number, ###,###.00}"><apex:param value="{!ili.Total_Cost__c}"/></apex:outputText></td>
+            </tr>
+         </table>
+
+              
+            <apex:outputpanel rendered="{!num == 22 || num == 52  || num == 82 || num == 112 || num == 142 || num == 172 || num == 202 || num == 232}">
+            <!-- ----PAGENATION END -->
+
+           <div style="page-break-after: always; ">&nbsp; 
+           </div>
+                
+           </apex:outputpanel>
+                 <apex:variable value="{!num+1}" var="num" />
+            </apex:repeat> 
+    
+         
+         <div>
+         <table> 
+          <tr>
+           <th width="16%">Bank: <br/>Sort Code:<br/>Account No: <br/>Name:</th>
+           <td width="32%">HSBC, 165 High St, Southampton<br/>40-42-18<br/>72355698<br/>Connect It Utility Services Ltd</td>
+           <th style="text-align:right" width="26%">Subtotal<br/><br/>VAT Total</th>
+           <td style="text-align:right" width="26%">
+           £<apex:outputText value="{0, number, ###,###.00}"><apex:param value="{!Invoice__c.Total_Cost__c}"/></apex:outputText><br/><br/>
+           £<apex:outputText value="{0, number, ###,###.00}"><apex:param value="{!ROUND((Invoice__c.VAT_Amount__c),2)}"/></apex:outputText></td>
+          </tr>
+
+          <tr>
+           <th width="16%">Registered No : VAT No :</th>
+           <td width="32%">4143738 <br/> 768802687</td>
+           <th style="text-align:right" width="26%">TOTAL DUE</th>
+           <td style="text-align:right" width="26%">£<apex:outputText value="{0, number, ###,###.00}"><apex:param value="{!Invoice__c.Grand_Total__c}"/></apex:outputText><br/><br/></td>
+          </tr>
+          
+           <tr>
+            <td style="text-align:center" colspan="4"><h>Payment is due under the agreed terms.</h></td>
+           </tr>
+         
+        </table>
+       </div>
+ 
+
+    </apex:pageBlock>
+     </apex:form> 
+</apex:page>

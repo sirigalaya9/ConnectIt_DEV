@@ -1,0 +1,73 @@
+<aura:component controller="SupplierSearchController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,force:hasRecordId" access="global" >
+<!-- CREATE ATTRIBUTE/VARIABLE-->
+<aura:attribute name="recordId" type="Id" />
+<aura:attribute name="searchResult" type="SupplierProductWrapper[]" description="for store and display prduct list returned from server"/>
+<aura:attribute name="searchKeyword" type="String" description="for store user search input"/>
+<aura:attribute name="Message" type="boolean" default="false" description="for display no record found message"/>
+
+<!-- SHOW LOADING SPINNER--> 
+<lightning:spinner variant="brand" size="large" aura:id="Id_spinner" class="slds-hide" />
+
+<div class="slds-m-around_medium">
+   <!-- SEARCH INPUT --> 
+    <lightning:layout>
+        <lightning:layoutItem size="5" padding="around-small">
+            <div onkeyup="{!c.onChangeSearchText}">
+            <lightning:input value="{!v.searchKeyword}"
+                             required="true"
+                             placeholder="search products.."
+                             aura:id="searchField"
+                             type="search"
+                             label="Supplier Product Name"/>
+            </div>
+        </lightning:layoutItem>
+    </lightning:layout>
+
+    <!-- ERROR MESSAGE IF NOT RECORDS FOUND--> 
+    <aura:if isTrue="{!v.Message}">
+        <div class="slds-notify_container slds-is-relative">
+            <div class="slds-notify slds-notify_toast slds-theme_error" role="alert">
+                <div class="slds-notify__content">
+                    <h2 class="slds-text-heading_small">no records found...</h2>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+
+    <!-- TABLE CONTENT--> 
+    <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+        <thead>
+            <tr class="slds-text-title_caps">
+                <th scope="col">
+                    <div class="slds-truncate" title="Select">Select</div>
+                </th>
+                <th scope="col">
+                    <div class="slds-truncate" title="Product Name">Product Name</div>
+                </th>
+                <th scope="col">
+                    <div class="slds-truncate" title="Supplier Name">Supplier Name</div>
+                </th>
+            </tr>
+        </thead>
+        <tbody> 
+            <!--### display all records of searchResult attribute by aura:iteration ###-->
+            <aura:iteration items="{!v.searchResult}" var="p" indexVar="count">
+                <tr>
+                    <td>
+                        <ui:inputCheckbox value="{!p.isSelected}"/>
+                    </td>
+                    <td>
+                        <div class="slds-truncate">{!p.SupplierProductName}</div>
+                    </td>
+                    <td>
+                        <div class="slds-truncate">{!p.SupplierName}</div>
+                    </td>
+                </tr>
+            </aura:iteration>
+        </tbody>
+    </table>
+</div>
+<div class="slds-m-around_medium">
+    <lightning:button variant="brand" label="Save" onclick="{! c.handleSubmit }" />
+</div>	
+</aura:component>

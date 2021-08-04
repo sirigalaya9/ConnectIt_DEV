@@ -1,0 +1,67 @@
+<apex:component controller="quote_sse_connections_controller" >
+    <apex:attribute name="opportunityId" description="Opportunity Record Id" type="String" required="required" assignTo="{!oppId}"/>
+
+    
+    <!------------------------------------------------------------>
+    <!---------       SSE Utilities                     ---------->
+    <!------------------------------------------------------------>    
+    <div class="SSEUtilities"> 
+        
+ <!--   <div class="header" style="text-align:center">
+            <p>&nbsp;</p>
+            <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%"/>
+            <BR/><BR/>
+    </div>  -->
+        
+        <table class="SSEUtilities center">
+            <tr><th align="left" width="100%" colspan="1" font-size="60px">Account : {! theOpp.Account.Name} </th></tr>
+            <tr><th align="left" width="100%" colspan="1" font-size="60px">Project : {! theOpp.Name} </th></tr>
+            <tr><th align="left" width="60%" colspan="1" font-size="60px">Job No : {! theOpp.Job_Number__c}</th></tr>
+            <tr><th align="left" width="40%" colspan="1" font-size="60px">Version : {! theOpp.Version__c} </th></tr>
+        </table>
+  
+        
+        <!---------------------------------------------------------------------------------------------------------------------------->           
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:left" width="13%">Code</th>
+                <th style="text-align:center" width="77%">Descriptions</th>
+ <!--               <th style="text-align:center" width="38%">Additional Descriptions</th>   -->
+                <th style="text-align:center" width="10%">Qty</th>    
+            </tr>
+        </table>   
+                 
+        <apex:dataTable value="{!SSEConnectionsOLIs}" var="line" columnClasses="center,center" styleclass="SSEUtilities">
+            <apex:column value="{!line.BORIS_Code__c}" style="text-align:left" width="13%"></apex:column>
+            <apex:column value="{!line.Product_Name__c}" style="text-align:left" width="77%"></apex:column>  
+        <!--    <apex:column value="{!line.Additional_Description__c}" style="text-align:left" width="38%"></apex:column>  -->
+            <apex:column value="{!line.Quantity__c}" style="text-align:center" width="10%"></apex:column>
+
+        </apex:dataTable>
+        
+ <!--       <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:right" width="88%" colspan="4">Connections Total</th>
+                <th style="text-align:center" width="12%">£{!SSEConnectionsTotal}</th>
+            </tr>
+            <tr>
+                <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+            </tr>
+        </table>   
+        
+
+       
+        <table class="SSEUtilities center">
+            <tr>
+                <th align="right" width="88%" colspan="4" >Total PO Value</th>
+                <th style="text-align:center" width="12%">£{!SSEConnectionsEstimateTotal}</th>
+            </tr>
+        </table>
+        
+        <div class="footer" style="text-align:left">
+            <p>Page <span class="pagenumber" /> of <span class="pagecount" /></p>
+        </div> -->
+    </div>    
+    
+      
+    </apex:component>

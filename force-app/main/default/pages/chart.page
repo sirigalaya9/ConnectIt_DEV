@@ -1,0 +1,10 @@
+<apex:page >
+        <BR></BR>
+         <BR></BR>
+          <BR></BR>
+           <BR></BR>
+            <BR></BR>
+            
+        <analytics:reportChart reportId="00O4J000002kHebUAE" size="small"></analytics:reportChart>
+  
+</apex:page>

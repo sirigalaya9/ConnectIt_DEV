@@ -1,0 +1,9 @@
+<aura:component
+    implements="flexipage:availableForRecordHome,force:hasRecordId,lightning:actionOverride,lightning:isUrlAddressable"
+    access="global">
+    <aura:handler event="force:showToast" action="{!c.handleRecordChange}" />
+    <aura:handler event="force:refreshView" action="{!c.handleRecordChange}" />
+    
+    <c:ruleQuery recordId="{!v.recordId}" aura:id="lwc"></c:ruleQuery>
+
+</aura:component>

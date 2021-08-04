@@ -1,0 +1,627 @@
+<apex:component controller="quote_sse_utilities_controller" >
+    <apex:attribute name="opportunityId" description="Opportunity Record Id" type="String" required="required" assignTo="{!oppId}"/>
+
+    
+    <!------------------------------------------------------------>
+    <!---------       SSE Utilities                     ---------->
+    <!------------------------------------------------------------>    
+    <div class="SSEUtilities"> 
+        
+    <div class="header" style="text-align:center">
+            <p>&nbsp;</p>
+            <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%"/>
+            <BR/><BR/>
+    </div> 
+        
+        <table class="SSEUtilities center">
+            <tr>
+                <th align="left" width="58%" colspan="1" >Project Ref - {! theOpp.Name} - {! theOpp.Account.Name} </th>
+                <th style="text-align:center" width="42%" colspan="4">SSE Utilities</th>
+            </tr>
+        </table>
+        
+        <!---------------------------------------------------------------------------------------------------------------------------->           
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:left" width="58%">Unmade/Building Site: incl Excv, surround, Tape, backfill and reinstatement</th>
+                <th style="text-align:center" width="9%">UOM</th>
+                <th style="text-align:center" width="9%">Qty</th>                      
+                <th style="text-align:center" width="12%">Rate</th>
+                <th style="text-align:center" width="12%">Total</th>
+            </tr>
+        </table>   
+                 
+        <apex:dataTable value="{!SSEUtilitiesUnmadeElectricOLIs}" var="line" columnClasses="centre,centre" styleclass="SSEUtilities">
+            <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+            <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>            
+            <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column> 
+        </apex:dataTable>
+        
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:right" width="88%" colspan="4">Unmade Total</th>
+                <th style="text-align:center" width="12%">£{!SSEUtilitiesUnmadeElectricTotal}</th>
+            </tr>
+            <tr>
+                <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+            </tr>
+        </table>
+        
+        <!---------------------------------------------------------------------------------------------------------------------------->        
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:left" width="58%">FOOTPATH; incl Excv, surround, Tape, b/fill and r/state</th>
+                <th style="text-align:center" width="9%">UOM</th>
+                <th style="text-align:center" width="9%">Qty</th>                       
+                <th style="text-align:center" width="12%">Rate</th>
+                <th style="text-align:center" width="12%">Total</th>
+            </tr>
+        </table>
+        
+        <apex:dataTable value="{!SSEUtilitiesFootpathOLIs}" var="line" columnClasses="centre,centre" styleclass="SSEUtilities">
+            <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+            <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>            
+            <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column> 
+        </apex:dataTable>
+        
+        <table class="SSEUtilities">
+            <tr>
+                <th style="text-align:right" width="88%" colspan="4">Footpath Total</th>
+                <th style="text-align:center" width="12%">£{!SSEUtilitiesFootpathTotal}</th>
+            </tr>
+            <tr>
+                <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+            </tr>       
+        </table>  
+        
+        <!---------------------------------------------------------------------------------------------------------------------------->  
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:left" width="58%">ROAD CLASS 1/2; incl Excv, surround, Tape, b/fill and r/state</th>
+                <th style="text-align:center" width="9%">UOM</th>
+                <th style="text-align:center" width="9%">Qty</th>                      
+                <th style="text-align:center" width="12%">Rate</th>
+                <th style="text-align:center" width="12%">Total</th>
+            </tr>
+        </table>
+        
+        <apex:dataTable value="{!SSEUtilitiesRoadclass1_2OLIs}" var="line" columnClasses="centre,centre" styleclass="SSEUtilities">
+            <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+            <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>            
+            <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column> 
+        </apex:dataTable>
+        
+        <table class="SSEUtilities">
+            <tr>
+                <th style="text-align:right" width="88%" colspan="4">Road Class 1/2 Total</th>
+                <th style="text-align:center" width="12%">£{!SSEUtilitiesRoadclass1_2Total}</th>
+            </tr>
+            <tr>
+                <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+            </tr>       
+        </table>  
+        
+        <div class="footer" style="text-align:left">
+            <p>Page <span class="pagenumber" /> of <span class="pagecount" /></p>
+        </div>              
+        
+        <div class="pagebreak"></div>
+        
+        <!---------------------------------------------------------------------------------------------------------------------------->
+    <div class="header" style="text-align:center">
+            <p>&nbsp;</p>
+            <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%"/>
+            <BR/><BR/>
+    </div> 
+        
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:left" width="58%">ROAD CLASS 3/4; incl Excv, surround, Tape, b/fill and r/state</th>
+                <th style="text-align:center" width="9%">UOM</th>
+                <th style="text-align:center" width="9%">Qty</th>                      
+                <th style="text-align:center" width="12%">Rate</th>
+                <th style="text-align:center" width="12%">Total</th>
+            </tr>
+        </table>
+        
+        <apex:dataTable value="{!SSEUtilitiesRoadclass3_4OLIs}" var="line" columnClasses="centre,centre" styleclass="SSEUtilities">
+            <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+            <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>            
+            <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column> 
+        </apex:dataTable>
+        
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:right" width="88%" colspan="4">Road Class 3/4 Total</th>
+                <th style="text-align:center" width="12%">£{!SSEUtilitiesRoadclass3_4Total}</th>
+            </tr>
+            <tr>
+                <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+            </tr>       
+        </table> 
+        
+        <!----------------------------------------------------------------------------------------------------------------------------------------->      
+          
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:left" width="58%">Jointing Installation LV</th>
+                <th style="text-align:center" width="9%">UOM</th>
+                <th style="text-align:center" width="9%">Qty</th>                      
+                <th style="text-align:center" width="12%">Rate</th>
+                <th style="text-align:center" width="12%">Total</th>
+            </tr>
+            
+        </table>
+        <apex:dataTable value="{!SSEUtilitiesJointingInstallationOLIs}" var="line" columnClasses="centre,centre" styleclass="SSEUtilities">
+            <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+            <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>            
+            <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column> 
+        </apex:dataTable>
+        
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:right" width="88%" colspan="4">Jointing Installation Total</th>
+                <th style="text-align:center" width="12%">£{!SSEUtilitiesJointingInstallationTotal}</th>
+            </tr>
+            <tr>
+                <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+            </tr>
+            
+            <div class="footer" style="text-align:left">
+                <p>Page <span class="pagenumber" /> of <span class="pagecount" /></p>
+            </div>     
+        </table> 
+        
+        <div class="pagebreak"></div>
+        
+    <div class="header" style="text-align:center">
+            <p>&nbsp;</p>
+            <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%"/>
+            <BR/><BR/>
+    </div> 
+        
+        <!--------------------------------------------------------------------------------------------------------------------------->      
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:left" width="58%">Breech Joints</th>
+                <th style="text-align:center" width="9%">UOM</th>
+                <th style="text-align:center" width="9%">Qty</th>                      
+                <th style="text-align:center" width="12%">Rate</th>
+                <th style="text-align:center" width="12%">Total</th>
+            </tr>
+        </table>
+        
+        <apex:dataTable value="{!SSEUtilitiesBreechJointsOLIs}" var="line" columnClasses="centre,centre" styleclass="SSEUtilities">
+            <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+            <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>            
+            <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column> 
+        </apex:dataTable>
+        
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:right" width="88%" colspan="4">Breech Joints Total</th>
+                <th style="text-align:center" width="12%">£{!SSEUtilitiesBreechJointsTotal}</th>
+            </tr>
+            <tr>
+                <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+            </tr>       
+        </table>  
+        
+        
+        <!---------------------------------------------------------------------------------------------------------------------------------------------->
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:left" width="58%">Breech Joints for flats</th>
+                <th style="text-align:center" width="9%">UOM</th>
+                <th style="text-align:center" width="9%">Qty</th>                      
+                <th style="text-align:center" width="12%">Rate</th>
+                <th style="text-align:center" width="12%">Total</th>
+            </tr>
+        </table>
+        
+        <apex:dataTable value="{!SSEUtilitiesBreachJointsForFlatsOLIs}" var="line" columnClasses="centre,centre" styleclass="SSEUtilities">
+            <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+            <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>            
+            <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column> 
+        </apex:dataTable>
+        
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:right" width="88%" colspan="4">Breech Joints for flats Total</th>
+                <th style="text-align:center" width="12%">£{!SSEUtilitiesBreachJointsForFlatsTotal}</th>
+            </tr>
+            <tr>
+                <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+            </tr>       
+        </table>  
+        
+        <div class="footer" style="text-align:left">
+            <p>Page <span class="pagenumber" /> of <span class="pagecount" /></p>
+        </div>           
+        
+        <div class="pagebreak"></div>
+        
+        <!----------------------------------------------------------------------------------------------------------------------------------------->
+        
+    <div class="header" style="text-align:center">
+            <p>&nbsp;</p>
+            <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%"/>
+            <BR/><BR/>
+    </div> 
+        
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:left" width="58%">Termination at Distribution Board in Risers</th>
+                <th style="text-align:center" width="9%">UOM</th>
+                <th style="text-align:center" width="9%">Qty</th>                      
+                <th style="text-align:center" width="12%">Rate</th>
+                <th style="text-align:center" width="12%">Total</th>
+            </tr>
+        </table>
+        
+        <apex:dataTable value="{!SSEUtilitiesTerminationOLIs}" var="line" columnClasses="centre,centre" styleclass="SSEUtilities">
+            <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+            <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>            
+            <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column> 
+        </apex:dataTable>
+        
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:right" width="88%" colspan="4">Termination Total</th>
+                <th style="text-align:center" width="12%">£{!SSEUtilitiesTerminationTotal}</th>
+            </tr>
+            <tr>
+                <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+            </tr>       
+        </table>  
+        
+        
+        
+        <!----------------------------------------------------------------------------------------------------------------------------------------->
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:left" width="58%">Pot Ends</th>
+                <th style="text-align:center" width="9%">UOM</th>
+                <th style="text-align:center" width="9%">Qty</th>                      
+                <th style="text-align:center" width="12%">Rate</th>
+                <th style="text-align:center" width="12%">Total</th>
+            </tr>
+        </table>
+        
+        <apex:dataTable value="{!SSEUtilitiesPotEndsOLIs}" var="line" columnClasses="centre,centre" styleclass="SSEUtilities">
+            <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+            <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>            
+            <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column> 
+        </apex:dataTable>
+        
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:right" width="88%" colspan="4">Pot Ends Total</th>
+                <th style="text-align:center" width="12%">£{!SSEUtilitiesPotEndsTotal}</th>
+            </tr>
+            <tr>
+                <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+            </tr>       
+        </table>  
+        
+        <!----------------------------------------------------------------------------------------------------------------------------------------->
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:left" width="58%">Services</th>
+                <th style="text-align:center" width="9%">UOM</th>
+                <th style="text-align:center" width="9%">Qty</th>                      
+                <th style="text-align:center" width="12%">Rate</th>
+                <th style="text-align:center" width="12%">Total</th>
+            </tr>
+        </table>
+        
+        <apex:dataTable value="{!SSEUtilitiesServicesOLIs}" var="line" columnClasses="centre,centre" styleclass="SSEUtilities">
+            <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+            <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>            
+            <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column> 
+        </apex:dataTable>
+        
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:right" width="88%" colspan="4">Services Total</th>
+                <th style="text-align:center" width="12%">£{!SSEUtilitiesServicesTotal}</th>
+            </tr>
+            <tr>
+                <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+            </tr>       
+        </table>  
+        
+        <!----------------------------------------------------------------------------------------------------------------------------------------->
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:left" width="58%">Jointing Installation HV</th>
+                <th style="text-align:center" width="9%">UOM</th>
+                <th style="text-align:center" width="9%">Qty</th>                      
+                <th style="text-align:center" width="12%">Rate</th>
+                <th style="text-align:center" width="12%">Total</th>
+            </tr>
+        </table>
+        
+        <apex:dataTable value="{!SSEUtilitiesJointingHVOLIs}" var="line" columnClasses="centre,centre" styleclass="SSEUtilities">
+            <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+            <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>            
+            <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column> 
+        </apex:dataTable>
+        
+        <table class="SSEUtilities">
+            <tr>
+                <th style="text-align:right" width="88%" colspan="4">Jointing Installation HV Total</th>
+                <th style="text-align:center" width="12%">£{!SSEUtilitiesJointingHVTotal}</th>
+            </tr>
+            <tr>
+                <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+            </tr>       
+        </table>
+        
+        <div class="footer" style="text-align:left">
+             <p>Page <span class="pagenumber" /> of <span class="pagecount" /></p>
+        </div>               
+        
+        <div class="pagebreak"></div>
+        
+        <!----------------------------------------------------------------------------------------------------------------------------------------->
+    <div class="header" style="text-align:center">
+            <p>&nbsp;</p>
+            <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%"/>
+            <BR/><BR/>
+    </div> 
+        
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:left" width="58%">Electric Cable Installation</th>
+                <th style="text-align:center" width="9%">UOM</th>
+                <th style="text-align:center" width="9%">Qty</th>                      
+                <th style="text-align:center" width="12%">Rate</th>
+                <th style="text-align:center" width="12%">Total</th>
+            </tr>
+        </table>
+        
+        <apex:dataTable value="{!SSEUtilitiesElectricCableInstallOLIs}" var="line" columnClasses="centre,centre" styleclass="SSEUtilities">
+            <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+            <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column>
+            <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>            
+            <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column> 
+        </apex:dataTable>
+        
+        <table class="SSEUtilities center">
+            <tr>
+                <th style="text-align:right" width="88%" colspan="4">Electric Cable Installation Total</th>
+                <th style="text-align:center" width="12%">£{!SSEUtilitiesElectricCableInstallTotal}</th>
+            </tr>
+            <tr>
+                <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+            </tr>       
+        </table>  
+        
+        <!-------------------------------------------------------------------------------------------------------------------------------------->
+       <div>        
+            <table class="SSEUtilities center">
+                <tr>
+                    <th style="text-align:left" width="58%">Ducts in trench</th>
+                    <th style="text-align:center" width="9%">UOM</th>
+                    <th style="text-align:center" width="9%">Qty</th>                      
+                    <th style="text-align:center" width="12%">Rate</th>
+                    <th style="text-align:center" width="12%">Total</th>
+                </tr>
+            </table>
+            
+            <apex:dataTable value="{!SSEUtilitiesDuctsInTrenchOLIs}" var="line" columnClasses="centre,centre" styleclass="SSEUtilities">
+                <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+                <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+                <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column>
+                <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>            
+                <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column> 
+            </apex:dataTable>
+            
+            <table class="SSEUtilities center">
+                <tr>
+                    <th style="text-align:right" width="88%" colspan="4">Ducts in trench Total</th>
+                    <th style="text-align:center" width="12%">£{!SSEUtilitiesDuctsInTrenchTotal}</th>
+                </tr>
+                <tr>
+                    <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+                </tr>       
+            </table>  
+        </div>
+        
+        <!-------------------------------------------------------------------------------------------------------------------------------------->
+        
+        <div>
+            <table class="SSEUtilities center">
+                <tr>
+                    <th style="text-align:left" width="58%">Sub-Stations Specification</th>
+                    <th style="text-align:center" width="9%">UOM</th>
+                    <th style="text-align:center" width="9%">Qty</th>                      
+                    <th style="text-align:center" width="12%">Rate</th>
+                    <th style="text-align:center" width="12%">Total</th>
+                </tr>
+            </table>
+            
+            <apex:dataTable value="{!SSEUtilitiesSubStationOLIs}" var="line" columnClasses="centre,centre" styleclass="SSEUtilities">
+                <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+                <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+                <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column>
+                <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>            
+                <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column> 
+            </apex:dataTable>
+            
+            <table class="SSEUtilities center">  
+                <tr>
+                    <th style="text-align:right" width="88%" colspan="4">Sub Stations Total</th>
+                    <th style="text-align:center" width="12%">£{!SSEUtilitiesSubStationTotal}</th>
+                </tr>
+                <tr>
+                    <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+                </tr>       
+            </table>  
+        </div>
+        
+        <!-------------------------------------------------------------------------------------------------------------------------------------->
+        
+        <div>
+            <table class="SSEUtilities center">
+                <tr>
+                    <th style="text-align:left" width="58%">Supply of meter boxes (including installation)</th>
+                    <th style="text-align:center" width="9%">UOM</th>
+                    <th style="text-align:center" width="9%">Qty</th>                      
+                    <th style="text-align:center" width="12%">Rate</th>
+                    <th style="text-align:center" width="12%">Total</th>
+                </tr>
+            </table>
+            
+            <apex:dataTable value="{!SSEUtilitiesMeterBoxesOLIs}" var="line" columnClasses="centre,centre" styleclass="SSEUtilities">
+                <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+                <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+                <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column>
+                <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>            
+                <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column> 
+            </apex:dataTable>
+            
+            <table class="SSEUtilities center">  
+                <tr>
+                    <th style="text-align:right" width="88%" colspan="4">Meter Boxes Total</th>
+                    <th style="text-align:center" width="12%">£{!SSEUtilitiesMeterBoxesTotal}</th>
+                </tr>
+                <tr>
+                    <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+                </tr>       
+            </table>  
+        </div>
+        
+        <!-------------------------------------------------------------------------------------------------------------------------------------->
+        
+        <div>
+            <table class="SSEUtilities center">
+                <tr>
+                    <th style="text-align:left" width="58%">Street Lights</th>
+                    <th style="text-align:center" width="9%">UOM</th>
+                    <th style="text-align:center" width="9%">Qty</th>                      
+                    <th style="text-align:center" width="12%">Rate</th>
+                    <th style="text-align:center" width="12%">Total</th>
+                </tr>
+            </table>
+            
+            <apex:dataTable value="{!SSEUtilitiesStreetLightsOLIs}" var="line" columnClasses="centre,centre" styleclass="SSEUtilities">
+                <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+                <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+                <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column>
+                <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>            
+                <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column> 
+                
+            </apex:dataTable>
+            <table class="SSEUtilities center">  
+                <tr>
+                    <th style="text-align:right" width="88%" colspan="4">Street Lights Total</th>
+                    <th style="text-align:center" width="12%">£{!SSEUtilitiesStreetLightsTotal}</th>
+                </tr>
+                <tr>
+                    <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+                </tr>       
+            </table>  
+
+            <!-------------------------------------------------------------------------------------------------------------------------------------->
+            <table class="SSEUtilities center">
+                <tr>
+                    <th style="text-align:left" width="58%">Day Works</th>
+                    <th style="text-align:center" width="9%">UOM</th>
+                    <th style="text-align:center" width="9%">Qty</th>                      
+                    <th style="text-align:center" width="12%">Rate</th>
+                    <th style="text-align:center" width="12%">Total</th>
+                </tr>
+            </table>
+            
+            <apex:dataTable value="{!SSEUtilitiesDayWorkOLIs}" var="line" columnClasses="centre,centre" styleclass="SSEUtilities">
+                <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+                <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+                <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column>
+                <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>            
+                <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column> 
+            </apex:dataTable>
+            
+            <table class="SSEUtilities center">  
+                <tr>
+                    <th style="text-align:right" width="88%" colspan="4">Day Works Total</th>
+                    <th style="text-align:center" width="12%">£{!SSEUtilitiesDayWorkTotal}</th>
+                </tr>
+                <tr>
+                    <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+                </tr>       
+            </table>  
+        </div>
+        
+        <!-------------------------------------------------------------------------------------------------------------------------------------->
+        
+        <div>
+            <table class="SSEUtilities center">
+                <tr>
+                    <th style="text-align:left" width="58%">Trade Team</th>
+                    <th style="text-align:center" width="9%">UOM</th>
+                    <th style="text-align:center" width="9%">Qty</th>                      
+                    <th style="text-align:center" width="12%">Rate</th>
+                    <th style="text-align:center" width="12%">Total</th>
+                </tr>
+            </table>
+            
+            <apex:dataTable value="{!SSEUtilitiesTradeTeamOLIs}" var="line" columnClasses="centre,centre" styleclass="SSEUtilities">
+                <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+                <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+                <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column>
+                <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>            
+                <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column> 
+            </apex:dataTable>
+            
+            <table class="SSEUtilities center">  
+                <tr>
+                    <th style="text-align:right" width="88%" colspan="4">Trade Team Total</th>
+                    <th style="text-align:center" width="12%">£{!SSEUtilitiesTradeTeamTotal}</th>
+                </tr>
+                <tr>
+                    <th style="text-align:left" width="100%" colspan="5">&nbsp;</th>
+                </tr>       
+            </table>  
+        </div>
+        
+        <!-------------------------------------------------------------------------------------------------------------------------------------->     
+        
+        <table class="SSEUtilities center">
+            <tr>
+                <th align="right" width="88%" colspan="4" >Total PO Value</th>
+                <th style="text-align:center" width="12%">£{!SSEUtilitiesEstimateTotal}</th>
+            </tr>
+        </table>
+        
+        <div class="footer" style="text-align:left">
+            <p>Page <span class="pagenumber" /> of <span class="pagecount" /></p>
+        </div>
+    </div>
+    
+      
+    </apex:component>

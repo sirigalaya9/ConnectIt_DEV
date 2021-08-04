@@ -1,0 +1,128 @@
+<aura:component controller="r3ProductTakeOffController"
+    implements="force:hasRecordId,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+    access="global">
+
+    <lightning:quickActionAPI aura:id="quickActionAPI" />
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <aura:attribute name="gridColumns" type="List" access="PRIVATE" />
+    <aura:attribute name="gridData" type="Object" access="PRIVATE" />
+    <aura:attribute name="listColumns" type="List" access="PRIVATE" />
+    <aura:attribute name="listData" type="Object" access="PUBLIC" />
+    <aura:attribute name="draftValues" type="Object" default="[]" />
+    <aura:attribute name="gridExpandedRows" type="List" access="PRIVATE" />
+    <aura:attribute name="gridSelectedRows" type="List" access="PRIVATE" />
+    <aura:attribute name="currentlySelectedRows" type="List" access="PRIVATE" />
+    <aura:attribute name="materialRequestId" type="Id" default="" />
+    <aura:attribute name="recordId" type="Id" />
+
+    <div class="slds">
+        <lightning:card class="slds-text-small slds-card_boundary" iconName="standard:account" title="Take Off">
+            <aura:set attribute="actions">
+                <lightning:button label="Create Order" onclick="{!c.handleCreate}" />
+            </aura:set>
+            <p>
+                <lightning:treeGrid aura:id="treeGrid" columns="{!v.gridColumns }" data="{!v.gridData }"
+                    expandedRows="{!v.gridExpandedRows }" keyField="Key" selectedRows="{!v.gridSelectedRows }"
+                    class="slds-border_top" onrowselection="{!c.onSelected}" ontoggle="{!c.onToggle}" />
+                <!-- onrowselection="{!c.onGridRowSelected}" -->
+            </p>
+        </lightning:card>
+    </div>
+
+    <div class="slds">
+        <section aria-hidden="true" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+            aria-describedby="modal-content-id-1" role="dialog" class="slds-modal slds-modal_large slds-fade-in-hide"
+            aura:id="modaldialog">
+            <div class="slds-modal__container">
+
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close"
+                        onclick="{!c.hidePopup}">
+                        X
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 class="slds-text-heading_medium">Place Order</h2>
+                </header>
+
+                <div id="modal-content-id-1" class="slds-modal__content slds-p-around--medium">
+
+                    <div class="slds-p-bottom_large slds-p-left_large" style="width:1200px">
+                        <lightning:recordEditForm aura:id="recordViewForm" recordId="{!v.recordId}"
+                            objectApiName="CCMI__Milestone_Project__c">
+                            <lightning:messages />
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <lightning:inputField aura:id="MaterialsRequest" fieldName="Materials_Request__c"
+                                        value="{!v.materialRequestId}" required="true" />
+                                </div>
+                                <div class="slds-form__item" role="listitem">
+                                    <lightning:button label="New" onclick="{!c.showNewMaterialsRequestPopup}" />
+                                </div>
+                            </div>
+                        </lightning:recordEditForm>
+
+                    </div>
+
+                    <div>
+                        <div style="height: 600px">
+                            <lightning:datatable aura:id="dtTable" columns="{!v.listColumns}" data="{!v.listData}"
+                                keyField="Id" onsave="{!c.handleSaveOrder}" oncancel="{!c.hidePopup}"
+                                draftValues="{!v.draftValues}" hideCheckboxColumn="true" />
+                        </div>
+                        <!--<lightning:button label="Place Take off order" onclick="{!c.placeTakeOffOrder}"/>-->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="slds-backdrop slds-backdrop--hide" aura:id="backdrop">
+    </div>
+
+
+    <div class="slds">
+        <section aria-hidden="true" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+            aria-describedby="modal-content-id-1" role="dialog" class="slds-modal slds-modal_small slds-fade-in-hide"
+            aura:id="modaldialogCreateMaterialsRequest">
+
+            <lightning:recordEditForm aura:id="newMaterialsRequestForm" objectApiName="Order_Request__c"
+                onsubmit="{!c.handleSubmitNewMaterialsRequestForm}"
+                onsuccess="{!c.handleSubmitNewMaterialsRequestFormSuccess}">
+
+                <div class="slds-modal__container">
+
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close"
+                            onclick="{!c.hideCreateMatPopup}">
+                            X
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 class="slds-text-heading_medium">New Materials Request</h2>
+                    </header>
+                    <div id="modal-content-id-1" class="slds-modal__content slds-p-around--medium">
+                        <div class="slds-p-bottom_large slds-p-left_large">
+                            <lightning:messages />
+                            <div class="slds-grid slds-gutters">
+                                <!--<div class="slds-col">
+                                    <lightning:inputField aura:id="name" required="true" fieldName="Name" />
+                                </div>-->
+                                <div class="slds-col">
+                                    <lightning:inputField aura:id="deliveryToSiteDate" required="true"
+                                        fieldName="Delivery_To_Site_Date__c" />
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <!--<lightning:button label="Place Take off order" onclick="{!c.placeTakeOffOrder}"/>-->
+                        </div>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <button class="slds-button slds-button_neutral"
+                            onclick="{!c.hideCreateMatPopup}">Cancel</button>
+                        <lightning:button class="slds-button slds-button_brand" type="submit" label="Save" />
+                    </footer>
+                </div>
+            </lightning:recordEditForm>
+        </section>
+    </div>
+    <div class="slds-backdrop slds-backdrop--hide" aura:id="backdrop2"></div>
+</aura:component>

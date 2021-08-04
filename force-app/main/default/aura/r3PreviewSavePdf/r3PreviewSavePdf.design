@@ -1,0 +1,7 @@
+<design:component>
+	<design:attribute name="ButtonName" label="Button Name" description="Name to be used for button." />
+	<design:attribute name="VisualForcePage" label="Visualforce Page Name" description="Name of the Visualforce page to render as PDF." />
+	<design:attribute name="Filename" label="File Name" description="Filename to use when saving file to record (versioning is used for successive saves)." />
+	<design:attribute name="Type" label="File Type" description="File type to use when saving file to record (ref Type__c picklist on ContentVersion)." />
+	<design:attribute name="Group" label="File Group" description="File group to use when saving file to record (ref Group__c picklist on ContentVersion)." />
+</design:component>

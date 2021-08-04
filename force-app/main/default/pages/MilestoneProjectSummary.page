@@ -1,0 +1,5 @@
+<apex:page showHeader="false" showChat="false" standardController="CCMI__Milestone_Project__c" sidebar="false" lightningStylesheets="true">
+Project: &nbsp;{!CCMI__Milestone_Project__c.Name} &nbsp;&nbsp; 
+Scheduled Start Date: &nbsp;<apex:outputText value="{0,date,dd/MM/yy}"> <apex:param value="{!CCMI__Milestone_Project__c.CCMI__Start__c}" /> </apex:outputText> &nbsp;&nbsp;
+Schedule End Date: &nbsp;<apex:outputText value="{0,date,dd/MM/yy}"> <apex:param value="{!CCMI__Milestone_Project__c.CCMI__End__c}" /> </apex:outputText> 
+</apex:page>

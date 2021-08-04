@@ -1,0 +1,12 @@
+<aura:component extends="c:r3PreviewSavePdf">
+    // configurable settings
+    <aura:attribute name="VisualForcePage" type="String" default="ConnectITInvoice"/>
+    <aura:attribute name="Filename" type="String" default="Invoice" />
+    <aura:attribute name="ButtonName" type="String" default="Invoice PDF" />
+    <aura:attribute name="Group" type="String" default="Invoice" />
+    <aura:attribute name="Type" type="String" default="	Invoice" />
+    
+    // leave as is for any action
+    <aura:attribute name="isOpen" type="boolean" default="false" />
+    <aura:attribute name="showButton" type="boolean" default="false" />
+</aura:component>

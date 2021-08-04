@@ -1,0 +1,28 @@
+.slds-modal__container {
+    max-width: 100% ;
+    width: 100% ;
+    padding-top: 30px;
+}
+.slds-modal__content {
+    overflow-x: scroll !important;
+    overflow-y: scroll !important;
+    height: 100% ;
+}
+
+.delete-content
+{
+    height: 100px !important;
+    overflow-x: hidden!important;
+    overflow-y: hidden!important;
+}
+
+.selectRule-content
+{
+    height: 300px !important;
+    overflow-y: scroll !important;
+}
+
+.slds-modal__header
+{
+    padding-bottom:0px
+}

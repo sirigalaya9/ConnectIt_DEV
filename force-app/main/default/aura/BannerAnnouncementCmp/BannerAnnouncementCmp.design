@@ -1,0 +1,183 @@
+<design:component label="Community Banner">
+    
+    <design:attribute
+                      name="iconColor"
+                      label="Icon Color"
+                      datasource="Velvet Red,White,Black,Blue,Red,Green,Brown,Violet,Orange,Grey,Yellow,Pink,BlueViolet,
+                                  Coral,DarkBlue,DarkRed,DarkGreen,DarCyan,DarGrey,DarkOliveGreen,DarkMagenta,
+                                  DarkOrange,DarkViolet,DimGray,Firebrick,Gold,IndianRed,Indigo,LightBlue,
+                                  LightCyan,LightGray,LightPink,LightSkyBlue,LightSteelBlue,LightSlateGray,Maroon,
+                                  OrangeRed,RoyalBlue,Purple,Silver,Teal,Tomato"
+                      description="Select Predefined Icon Color Values"
+                      />
+    
+    <design:attribute
+                      name="iconType"
+                      label="Icon Type"
+                      datasource="announcement,web_link,preview,map"
+                      description="Select Predefined Icon Type Values"
+                      />
+    
+    <design:attribute
+                      name="iconSize"
+                      label="Icon Size"
+                      datasource="small,medium,large"
+                      description="Select Predefined Icon Size Values"
+                      />
+    
+    <design:attribute
+                      name="header"
+                      label="Header"
+                      description="Text you want to appear in the header"
+                      />
+    
+    <design:attribute name="headerBackgroundColor"
+                      label="Header Background Color"
+                      datasource="Velvet Red,White,Black,Blue,Red,Green,Brown,Violet,Orange,Grey,Yellow,Pink,BlueViolet,
+                                  Coral,DarkBlue,DarkRed,DarkGreen,DarCyan,DarGrey,DarkOliveGreen,DarkMagenta,
+                                  DarkOrange,DarkViolet,DimGray,Firebrick,Gold,IndianRed,Indigo,LightBlue,
+                                  LightCyan,LightGray,LightPink,LightSkyBlue,LightSteelBlue,LightSlateGray,Maroon,
+                                  OrangeRed,RoyalBlue,Purple,Silver,Teal,Tomato"
+                      description="Select Predefined Background Color Values"/> 
+    
+    <design:attribute
+                      name="textHeaderColor"
+                      label="Text Color (Header)"
+                      datasource="White,Velvet Red,Black,Blue,Red,Green,Brown,Violet,Orange,Grey,Yellow,Pink,BlueViolet,
+                                  Coral,DarkBlue,DarkRed,DarkGreen,DarCyan,DarGrey,DarkOliveGreen,DarkMagenta,
+                                  DarkOrange,DarkViolet,DimGray,Firebrick,Gold,IndianRed,Indigo,LightBlue,
+                                  LightCyan,LightGray,LightPink,LightSkyBlue,LightSteelBlue,LightSlateGray,Maroon,
+                                  OrangeRed,RoyalBlue,Purple,Silver,Teal,Tomato"
+                      description="Select Predefined Font Color Values"
+                      />
+    
+    <design:attribute
+                      name="textFontSize"
+                      label="Font Size(Header)"
+                      datasource="5,5.5,6.5,7.5,8,9,10,10.5,11,12,14,16,18,20,22,24,26,28,36,48,72"
+                      description="Select Predefined Font Size Values"
+                      />
+    
+    <design:attribute
+                      name="headerMessage"
+                      label="Header Message"
+                      description="Text you want to appear in the HeaderMessage"
+                      />
+    
+    <design:attribute
+                      name="textHeaderMessageColor"
+                      label="Text Color(HeaderMessage)"
+                      datasource="White,Velvet Red,Black,Blue,Red,Green,Brown,Violet,Orange,Grey,Yellow,Pink,BlueViolet,
+                                  Coral,DarkBlue,DarkRed,DarkGreen,DarCyan,DarGrey,DarkOliveGreen,DarkMagenta,
+                                  DarkOrange,DarkViolet,DimGray,Firebrick,Gold,IndianRed,Indigo,LightBlue,
+                                  LightCyan,LightGray,LightPink,LightSkyBlue,LightSteelBlue,LightSlateGray,Maroon,
+                                  OrangeRed,RoyalBlue,Purple,Silver,Teal,Tomato"
+                      description="Select Predefined Color Values"
+                      />
+    
+    <design:attribute
+                      name="headerMessageLearnMoreDisplay"
+                      label="Hide Learn More link"
+                      description="Enable/Disable"
+                      />
+    
+    <design:attribute
+                      name="headerCDCLink"
+                      label="Learn More URL"
+                      description="Insert link to CDC website "
+                      />
+    
+    <!--<design:attribute
+                      name="headerArticleLink"
+                      label="Article Url"
+                      description="Insert link to the public KB article containing the company response"
+                      />-->
+    
+    <design:attribute
+                      name="textHeaderMessageFontSize"
+                      label="Font Size (Header Message)"
+                      datasource="5,5.5,6.5,7.5,8,9,10,10.5,11,12,14,16,18,20,22,24,26,28,36,48,72"
+                      description="Select predefined Font Size Values"
+                      />
+    
+    <design:attribute
+                      name="headerYear"
+                      label="@Copyright Year"
+                      description="Year you want to appear in the copyright info"
+                      />
+
+    
+    <design:attribute
+                      name="headerYearDisplay"
+                      label="Display Copyright Info?"
+                      description="Enable/Disable"
+                      
+                      />
+    
+    <design:attribute name="colorVariant"
+                      label="Banner Background Color"
+                      datasource="Velvet Red,White,Black,Blue,Red,Green,Brown,Violet,Orange,Grey,Yellow,Pink,BlueViolet,
+                                  Coral,DarkBlue,DarkRed,DarkGreen,DarCyan,DarGrey,DarkOliveGreen,DarkMagenta,
+                                  DarkOrange,DarkViolet,DimGray,Firebrick,Gold,IndianRed,Indigo,LightBlue,
+                                  LightCyan,LightGray,LightPink,LightSkyBlue,LightSteelBlue,LightSlateGray,Maroon,
+                                  OrangeRed,RoyalBlue,Purple,Silver,Teal,Tomato"
+                      description="Select Predefined Background Color Values"/> 
+    
+    <design:attribute name="linkColor"
+                      label="Link Color"
+                      datasource="LightBlue,LightSteelBlue,LightSkyBlue,White,Black,Blue,Red,Green,Brown,Violet,Orange,Grey,Yellow,Pink,BlueViolet,
+                                  Coral,Velvet Red,DarkBlue,DarkRed,DarkGreen,DarCyan,DarGrey,DarkOliveGreen,DarkMagenta,
+                                  DarkOrange,DarkViolet,DimGray,Firebrick,Gold,IndianRed,Indigo,
+                                  LightCyan,LightGray,LightPink,LightSkyBlue,LightSlateGray,Maroon,
+                                  OrangeRed,RoyalBlue,Purple,Silver,Teal,Tomato"
+                      description="Select Predefined Background Colors for Url/Links"/>
+    
+    <design:attribute
+                      name="boxPadding"
+                      label="Padding"
+                      datasource="0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15"
+                      description="Select Predefine Padding Values"
+                      />
+    <design:attribute
+                      name="paddingRadius"
+                      label="Padding Radius"
+                      datasource="0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15"
+                      description="Select Predefine Radius Values"
+                      />
+    <design:attribute
+                      name="boxBorder"
+                      label="Border Size"
+                      datasource="0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15"
+                      description="Select Predefine Border Size Values"
+                      />
+    <design:attribute
+                      name="boxWidth"
+                      label="Border Width"
+                      datasource="none,medium,thin,thick,length,initial,inherit"
+                      description="Select Predefined Border Width Values"
+                      />
+    <design:attribute
+                      name="borderColor"
+                      label="Border Color"
+                      datasource="White,Velvet Red,Black,Blue,Red,Green,Brown,Violet,Orange,Grey,Yellow,Pink,BlueViolet,
+                                  Coral,DarkBlue,DarkRed,DarkGreen,DarCyan,DarGrey,DarkOliveGreen,DarkMagenta,
+                                  DarkOrange,DarkViolet,DimGray,Firebrick,Gold,IndianRed,Indigo,LightBlue,
+                                  LightCyan,LightGray,LightPink,LightSkyBlue,LightSteelBlue,LightSlateGray,Maroon,
+                                  OrangeRed,RoyalBlue,Purple,Silver,Teal,Tomato"
+                      description="Select Predefined Border Color Values"
+                      />
+    <design:attribute
+                      name="borderStyle"
+                      label="Border Style"
+                      datasource="hidden,dotted,dashed,solid,double,groove,ridge,inset,outset,initialinherit"
+                      description="Select Predefined Border Style Values"
+                      />
+    <design:attribute
+                      name="borderRadius"
+                      label="Border Radius"
+                      datasource="0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15"
+                      description="Select Predefined Border Radius Values"
+                      />
+    
+    
+</design:component>

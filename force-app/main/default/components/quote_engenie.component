@@ -1,0 +1,142 @@
+<apex:component controller="quote_engenie_controller" >
+    <apex:attribute name="opportunityId" description="Opportunity Record Id" type="String" required="required" assignTo="{!oppId}"/>
+
+      
+<!------------------------------------------------------------>
+<!---------       Car Charger - Engenie             ---------->
+<!------------------------------------------------------------>     
+<div class="Charger">  
+     <div class="header" style="text-align:center">
+        <p>&nbsp;</p>
+        <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%"/>
+        <BR/><BR/>
+     </div>  
+
+     <table class="chargepoint centre">
+       <tr>
+         <th align="left" width="56%" colspan="1" >Project Ref - {! theOpp.Name} - {! theOpp.Account.Name} </th>
+         <th style="text-align:center" width="44%" colspan="4">Engenie</th>
+       </tr>
+       <tr>
+          <th style="text-align:left" width="58%">Survey and Produce Initial Design and Estimate</th>
+          <th style="text-align:center" width="9%">UOM</th>
+          <th style="text-align:center" width="9%">Qty</th>                       
+          <th style="text-align:center" width="12%">Rate</th>
+          <th style="text-align:center" width="12%">Total</th>
+        </tr>
+     </table>             
+
+     <apex:dataTable value="{!EngenieSurveyDesignOLIs}" var="line" columnClasses="centre,centre" styleclass="chargepoint">
+          <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+          <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+          <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column> 
+          <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>             
+          <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>  
+     </apex:dataTable> 
+
+     <table class="chargepoint centre">
+       <tr>
+         <th style="text-align:right" width="88%" colspan="4">Survey and Produce Initial Design and Estimate Total</th>
+         <th style="text-align:center" width="12%">£{!EngenieSurveyDesignTotal}</th>
+       </tr>
+       <tr>
+         <th style="text-align:left" width="58%">DNO Connection Costs</th>
+         <th style="text-align:center" width="9%">UOM</th>
+         <th style="text-align:center" width="9%">Qty</th>                       
+         <th style="text-align:center" width="12%">Rate</th>
+         <th style="text-align:center" width="12%">Total</th>
+       </tr>
+     </table>
+
+     <apex:dataTable value="{!EngenieDNOConnectionOLIs}" var="line" columnClasses="centre,centre" styleclass="chargepoint">
+        <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+        <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+        <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column> 
+        <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>             
+        <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>  
+     </apex:dataTable> 
+            
+     <table class="chargepoint centre"> 
+      <tr>
+        <th style="text-align:right" width="88%" colspan="4">DNO Connection Costs Total</th>
+        <th style="text-align:center" width="12%">£{!EngenieDNOConnectionTotal}</th>
+      </tr>
+      </table>
+      
+     <div class="footer" style="text-align:left">
+            <p>Page <span class="pagenumber" /> of <span class="pagecount" /></p>
+     </div>               
+        
+     <div class="pagebreak"></div>
+     
+     <div class="header" style="text-align:center">
+            <p>&nbsp;</p>
+            <apex:image value="{!URLFOR($Resource.ConnectITLogo2)}" width="80%" height="25%"/>
+            <BR/><BR/>
+     </div>
+     
+     <table class="chargepoint centre">
+       <tr>
+         <th style="text-align:left" width="58%">Charger installation Costs</th>
+         <th style="text-align:center" width="9%">UOM</th>
+         <th style="text-align:center" width="9%">Qty</th>                       
+         <th style="text-align:center" width="12%">Rate</th>
+         <th style="text-align:center" width="12%">Total</th>
+       </tr>
+     </table>
+
+     <apex:dataTable value="{!EngenieInstallOLIs}" var="line" columnClasses="centre,centre" styleclass="chargepoint">
+        <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+        <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+        <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column> 
+        <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>             
+        <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>  
+     </apex:dataTable> 
+            
+     <table class="chargepoint centre"> 
+      <tr>
+        <th style="text-align:right" width="88%" colspan="4">Charger installation Costs Total</th>
+        <th style="text-align:center" width="12%">£{!EngenieInstallTotal}</th>
+      </tr>
+    </table>
+    
+
+ 
+     <table class="chargepoint centre">
+      <tr>
+         <th style="text-align:left" width="58%">Travel and Accommodation Costs</th>
+         <th style="text-align:center" width="9%">UOM</th>
+         <th style="text-align:center" width="9%">Qty</th>                       
+         <th style="text-align:center" width="12%">Rate</th>
+         <th style="text-align:center" width="12%">Total</th>
+       </tr>
+     </table>
+
+     <apex:dataTable value="{!EngenieTravelAccomOLIs}" var="line" columnClasses="centre,centre" styleclass="chargepoint">
+        <apex:column value="{!line.Product_Text__c}" style="text-align:left" width="58%"></apex:column>
+        <apex:column value="{!line.Unit_Of_Measure__c}" style="text-align:center" width="9%"></apex:column>
+        <apex:column value="{!line.Quantity__c}" style="text-align:center" width="9%"></apex:column> 
+        <apex:column value="{!line.Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>             
+        <apex:column value="{!line.Total_Sell_Rate__c}" style="text-align:center" width="12%"></apex:column>  
+     </apex:dataTable> 
+     
+
+            
+     <table class="chargepoint centre"> 
+      <tr>
+        <th style="text-align:right" width="88%" colspan="4">Travel and Accommodation Costs Total</th>
+        <th style="text-align:center" width="12%">£{!EngenieTravelAccomTotal}</th>
+      </tr>
+      <tr>
+        <th align="right" width="88%" colspan="4" >Project Total</th>
+        <th style="text-align:center" width="12%">£{!EngenieEstimateTotal}</th>   
+      </tr>
+    </table>
+
+    <div class="footer" style="text-align:left">
+       <p>Page <span class="pagenumber" /> of <span class="pagecount" /></p>
+    </div>               
+ 
+     
+</div>
+</apex:component>

@@ -1,0 +1,291 @@
+<apex:page standardController="Opportunity" extensions="opportunityControllerExtension" showHeader="false" renderAs="pdf" contenttype="application/pdf" applyBodyTag="false">
+ <head>
+
+<style type="text/css" media="print">
+
+            @page
+            {
+            size: 8.27in 11.69in;  <!-- A4 -->
+            margin: 0in 0in 0in 0in;
+             
+            @top-center
+            {
+            content: element(header);
+            }
+            
+            @bottom-center
+            {
+            content: element(footer);
+            }  
+                        
+            div.header
+            {
+            position: running(header);
+            }
+            
+            div.footer 
+            { 
+             display:block; 
+             height:30px; 
+             position: running(footer); 
+            } 
+             
+            }
+            
+            .pagenumber:before
+            {
+            content: counter(page);
+            }
+            
+            .pagecount:before
+            {
+            content: counter(pages);
+            }
+            
+                        
+            .my-nowrap 
+            {
+            white-space: nowrap;
+            }
+
+           .pagebreak 
+            { 
+            page-break-after: always; 
+            } 
+
+            
+          <div class="Add CSS">
+            <c:PDFQuotecss />
+          </div>        
+       
+    </style>
+
+    </head>      
+    
+   <div class="body">
+   <!------------------------------------------------------------>
+   <!---------   Validate Fields Set-up in Quote       ---------->
+   <!------------------------------------------------------------>     
+
+    <div class="ValidationDispErr">  
+          <apex:outputText rendered="{!AND(Opportunity.Type == '', Opportunity.Type == null)}">
+             <h>The Estimate Type is not known - Enter an estimate Type</h>
+          </apex:outputText>
+    </div>
+    
+    <!------------------------------------------------------------>
+    <!---------               First Page                ---------->
+    <!------------------------------------------------------------>                        
+    <div class="ValidationNoErr">  
+        <apex:outputText rendered="{!AND(Opportunity.Type != '', Opportunity.Type != null)}">
+
+          
+    <div class="header">
+            <apex:image value="{!URLFOR($Resource.ConnectITQuoteFrontPage)}" width="100%" height="100%" />
+    </div>
+        
+    <div class="Frontpagetxt">
+
+       <table class="tablebox">
+            <tr>        
+              <th style="text-align:left" colspan="3">  {!Opportunity.Account.Name} </th>
+            </tr>
+            <tr>
+              <td style="text-align:left" width="85px">&nbsp;</td>
+              <td style="text-align:left" width="10px">&nbsp;</td>
+              <td style="text-align:left" width="300px">&nbsp;</td>
+            </tr>
+             <tr>
+              <th2 style="text-align:left" width="85px">Project:&nbsp; </th2>
+              <td style="text-align:left" width="10px">&nbsp;</td>
+              <td style="text-align:left" width="300px"> {!Opportunity.Name} </td>
+            </tr>
+            <tr>
+              <td style="text-align:left" width="85px">&nbsp;</td>
+              <td style="text-align:left" width="10px">&nbsp;</td>
+              <td style="text-align:left" width="300px"> {!oppSite.BillingStreet} </td>
+            </tr>
+            <tr>
+              <td style="text-align:left" width="85px">&nbsp;</td>
+              <td style="text-align:left" width="10px">&nbsp;</td>
+              <td style="text-align:left" width="300px"> {!oppSite.BillingCity}  </td>
+            </tr>
+            <tr>
+              <td style="text-align:left" width="85px">&nbsp;</td>
+              <td style="text-align:left" width="10px">&nbsp;</td>
+              <td style="text-align:left" width="300px"> {!oppSite.BillingPostalCode} </td>
+            </tr>
+            <tr>
+              <td style="text-align:left" width="85px">&nbsp;</td>
+              <td style="text-align:left" width="10px">&nbsp;</td>
+              <td style="text-align:left" width="300px"> {!oppSite.BillingCountry} </td>
+            </tr>
+          </table>        
+          
+              
+       <table class="tablebox2">
+            <tr>
+               <th></th>
+               <th></th>
+               <th>{! Opportunity.Type}</th>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>{! Opportunity.Owner.Title} </td>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>                
+               <td>&nbsp;</td>
+               <td>{! Opportunity.Owner.FirstName} {! Opportunity.Owner.LastName}</td>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>Date &nbsp;<apex:outputText value="{0,date,dd'.'MM'.'yyyy}"><apex:param value="{! Opportunity.Estimate_date__c }" /></apex:outputText></td>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+             </tr>
+             <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>Connect IT Utility Services</td>
+              </tr>                               
+              <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>Unit 1&nbsp;&amp;&nbsp;2</td>
+              </tr>
+              <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>Berrywood Business Village</td>
+              </tr>
+              <tr>
+               <td>&nbsp;</td>                
+               <td>&nbsp;</td>
+               <td>Hedge End</td>
+              </tr>
+              <tr>
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td>Southampton</td>
+              </tr>
+              <tr>
+               <td>&nbsp;</td>                
+               <td>&nbsp;</td>
+               <td>SO30 2UN</td>
+              </tr>
+              <tr>
+               <td>&nbsp;</td>                
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               </tr>
+               <tr>
+                <td>&nbsp;</td>
+                <td>T:&nbsp;</td>
+                <td>{! Opportunity.Owner.Phone}</td>
+               </tr>
+               <tr>
+                <td>&nbsp;</td>                
+                <td>E:&nbsp;</td>
+                <td>{! Opportunity.Owner.Email}</td>
+               </tr>
+               <tr>
+                <td>&nbsp;</td>
+                <td>W:&nbsp;</td>
+                <td>www.cius.co.uk</td>
+               </tr>                 
+           </table>
+
+</div>
+
+    <div class="footer" style="text-align:left">
+       <p1>Let&#39;s get connected</p1>
+       <hr></hr>
+       <p>Page <span class="pagenumber" /> of <span class="pagecount" /></p>
+    </div>     
+    
+ 
+<!------------------------------------------------------------>    
+<!--------- Charge Point                               ------ >    
+<!------------------------------------------------------------>       
+ <div class="ChargerPoint">  
+    <apex:outputText rendered="{!CONTAINS(Opportunity.Type,'Charger')}">
+      <apex:outputText rendered="{!CONTAINS(Opportunity.Charger_Point_Provider__c,'Charge Point')}">
+           <c:quote_charge_points opportunityId="{!Opportunity.id}"/>
+      </apex:outputText>  
+    </apex:outputText> 
+ </div>        
+  
+<!------------------------------------------------------------->
+<!----------       Car Charger - Instavolt         ------------>
+<!------------------------------------------------------------->     
+ <div class="Instavolt">  
+    <apex:outputText rendered="{!CONTAINS(Opportunity.Type,'Charger')}">
+      <apex:outputText rendered="{!CONTAINS(Opportunity.Charger_Point_Provider__c,'Instavolt')}">
+           <c:quote_instavolt opportunityId="{!Opportunity.id}"/>
+      </apex:outputText>  
+    </apex:outputText> 
+ </div> 
+     
+<!------------------------------------------------------------->
+<!----------       Car Charger - Engenie           ------------>
+<!------------------------------------------------------------->     
+ <div class="Instavolt">  
+    <apex:outputText rendered="{!CONTAINS(Opportunity.Type,'Charger')}">
+      <apex:outputText rendered="{!CONTAINS(Opportunity.Charger_Point_Provider__c,'Engenie')}">
+           <c:quote_engenie opportunityId="{!Opportunity.id}"/>
+      </apex:outputText>  
+    </apex:outputText> 
+ </div>     
+       
+<!------------------------------------------------------------>
+<!---------             Streetlighting              ---------->
+<!------------------------------------------------------------>     
+ <div class="Street Lighting">  
+    <apex:outputText rendered="{!CONTAINS(Opportunity.Type,'Streetlighting')}">
+         <c:quote_streetlights opportunityId="{!Opportunity.id}"/>
+    </apex:outputText>  
+ </div>    
+
+<!------------------------------------------------------------>
+<!---------             Multi Utility               ---------->
+<!------------------------------------------------------------>     
+ <div class="Multi Utility">  
+    <apex:outputText rendered="{!CONTAINS(Opportunity.Type,'MU')}">
+      <!--       <c:quote_MultiUtility opportunityId="{!Opportunity.id}"/>          -->
+    </apex:outputText>  
+ </div>  
+          
+<!------------------------------------------------------------>    
+<!--------- SSE Connections                            ------ >    
+<!------------------------------------------------------------>       
+ <div class="SSE Utilities"> 
+    <apex:outputText rendered="{!CONTAINS(Opportunity.Type,'SSEN Connections')}">
+            <c:quote_sse_connections opportunityId="{!Opportunity.id}"/>
+    </apex:outputText>
+ </div>  
+ 
+<!------------------------------------------------------------>    
+<!--------- SSE Utilities                              ------ >    
+<!------------------------------------------------------------>       
+ <div class="SSE Utilities"> 
+    <apex:outputText rendered="{!CONTAINS(Opportunity.Type,'SSE Utilities')}">
+            <c:quote_sse_utilities opportunityId="{!Opportunity.id}"/>
+    </apex:outputText>
+ </div>  
+          </apex:outputText>  
+    </div>   
+ 
+</div>    
+    
+ </apex:page>

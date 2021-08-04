@@ -1,0 +1,66 @@
+<template>
+    <div>
+
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+            <thead>
+                <tr class="slds-line-height_reset">
+                    <th class="col-0" scope="col">
+                        <div class="slds-truncate"></div>
+                    </th>
+                    <th class="col-1" scope="col">
+                        <div class="slds-truncate" title="Payment Terms">Payment Terms</div>
+                    </th>
+                    <th class="col-2" scope="col">
+                        <div class="slds-truncate" title="Amount to Allocate">Amount to Allocate 
+                            (<lightning-formatted-number value={total} format-style="currency"
+                            currency-code="GBP" currency-display-as="symbol" minimum-fraction-digits="2"
+                            maximum-fraction-digits="2"></lightning-formatted-number>)
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <template for:each={items} for:item="item">
+                    <tr key={item.Id}>
+                        <td>
+                            <lightning-icon icon-name="action:close" size="xx-small" alternative-text="Remove"
+                                title="Remove" style="cursor:pointer" onclick={removeItem} data-id={item.Id}>
+                            </lightning-icon>
+                        </td>
+                        <td>
+                            <lightning-input variant="label-hidden" type="text" value={item.Trigger__c} data-id={item.Id}
+                                onchange={handleTriggerChanged}>
+                            </lightning-input>
+                        </td>
+                        <td>
+                            <lightning-input variant="label-hidden" type="number" step="0.01" value={item.Payment__c} data-id={item.Id}
+                                onchange={handlePaymentChanged}>
+                            </lightning-input>
+                        </td>
+                    </tr>
+                </template>
+                <tr>
+                    <td colspan="3">
+                        <lightning-button label="Add Payment Schedule" onclick={addItem}>
+                        </lightning-button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="slds-align_absolute-center slds-p-around_small">
+            <lightning-button label="Reset" onclick={resetItems}>
+            </lightning-button>
+            &nbsp;
+            <lightning-button label="Save" onclick={saveItems} variant="brand">
+            </lightning-button>
+        </div>
+
+        <template if:true={showSpinner}>
+            <lightning-spinner alternative-text="Loading" size="large" variant="brand"></lightning-spinner>
+        </template>
+
+    </div>
+
+</template>

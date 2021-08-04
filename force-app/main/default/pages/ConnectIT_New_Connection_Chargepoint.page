@@ -1,0 +1,175 @@
+<apex:page applyHtmlTag="true" showHeader="true" contenttype="application/msword" cache="true" applyBodyTag="false">
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+
+        <style type="text/css" media="print">
+                      
+            @page Section1{
+                    size:8.5in 11.0in; 
+                    margin:0.0in 0.0in 0.0in 0.0in;
+                    mso-header-margin:0.0in;
+                    mso-header:h1;
+                    mso-title-page: yes;
+                    mso-footer:f1; 
+                    mso-footer-margin:0.5in;
+                    mso-paper-source:0;                    
+            }
+            div.Section1{
+                    page:Section1;
+            }
+
+            }
+            
+             p.MsoHeader, li.MsoHeader, div.MsoHeader{
+                    margin:0in;
+                    margin-top:.0000pt;
+                    mso-pagination:widow-orphan;
+                    tab-stops:center 3.0in right 6.0in;
+            }
+            p.MsoFooter, li.MsoFooter, div.MsoFooter{
+                    margin:0in;
+                    margin-bottom:.0001pt;
+                    mso-pagination:widow-orphan;
+                    tab-stops:center 3.0in right 6.0in;
+                    font-family: calibri;
+                    font-size: 20px;
+                    color : #ff8c00;
+                    font-weight : bold;
+            }
+
+            
+            footer
+            {
+            position: relative; 
+            margin-top: 300px; 
+            height: 40px; 
+            clear: both;
+            }
+                 
+            h
+            { 
+            font-family:helvetica;
+            font-size: 30px;
+            font-weight : bold;
+            color : darkblue;
+            }
+            
+            p.detail
+            {
+            font-family: calibri;
+            font-size: 16px;
+            }
+            
+            .alignright { text-align: right; }
+            .alignleft { text-align: left; }
+                     
+            p.heading 
+            {
+            font-family: calibri;
+            font-size: 24px;
+            color : black;
+            font-weight : bold;
+            text-align: center;
+            }
+
+            span.chg
+            {
+            font-family: calibri;
+            font-size: 16px;
+            color : red;
+            text-decoration : underline;
+            }
+            
+            span.chg2
+            {
+            font-family: calibri;
+            font-size: 16px;
+            color : red;
+            text-decoration : normal;
+            }
+
+            hr 
+            {
+            display: block;
+            height: 1px;
+            border: 0;
+            border-top: 1.5px solid #ff8c00;
+            padding: 0;
+            }
+           
+            th
+            {
+            font-family: calibri;
+            font-size: 14px;
+            color : darkblue;
+            font-weight : bold;
+            }
+
+
+            .footer
+            {
+            position: fixed;
+            bottom: -10px;
+            width: 80%;
+            clear: both;
+            text-align:right;
+            }
+
+             .boxed {
+            border: 1px solid black ;
+            padding: 12px;
+            width: 1000px;
+            font-family:helvetica;
+            font-size: 14px;
+            font:weight :bold;
+            margin-bottom: 5px;
+            }
+
+    </style>
+    </head>    
+    <body>  
+    <!------------------------------------------------------------>
+    <!---------               First Page                ---------->
+    <!------------------------------------------------------------>            
+        
+ 
+    <div class="header" style="text-align:center" >
+      <img src="https://cius--c.documentforce.com/servlet/servlet.ImageServer?id=0154J000000cmK5&oid=00D4J000000D3J8" height="200px" width="1000px"/> 
+    </div> 
+                
+
+    <div class="body">
+     <p class="heading"><apex:outputLabel value="New Instruction Form - Chargepoint"/></p> 
+     <div class="boxed">Site Address and Contact Details:<br/><br/><br/><br/>
+     </div> 
+     <div class="boxed">Landowner Address and Contact Details:<br/><br/><br/><br/>
+     </div> 
+     <div class="boxed">Landowner Solicitor Address and Contact Details:<br/><br/><br/><br/></div> 
+     <div class="boxed">Third Party Landowner Address and Contact Details:<br/><br/><br/><br/></div> 
+     <div class="boxed">Third Party Landowner Solicitor Address and Contact Details:<br/><br/><br/><br/></div>     
+     <div class="boxed">Any Further Information:<br/><br/><br/><br/><br/><br/></div> 
+    </div>
+ 
+    <div class="body" style="width:100%" >
+         <p>Please attach the following to this form:</p>
+      <table>
+       <tr>
+         <td>- Site Layout (pdf &amp; dwg)or confirmation not available (additional cost)</td>
+       </tr>
+       <tr>
+         <td>- Service plan showing proposed onsite service routes</td>
+       </tr>
+      </table>
+      <p>Once CIUS have received the above information they will be able to commence the pre-delivery programme. Until the above is received, 
+      CIUS are unable to progress and energisation will be delayed</p>
+      <p>For any queiries please contact <span class="chg">delivery@cius.co.uk</span></p>
+    </div>
+    
+    <div class="footer" style="text=align:right">
+     <p>New Site: Information Required v1 &nbsp;<apex:outputText value="{0,date,dd'/'MM'/'yyyy}">
+     <apex:param value="{!NOW()}" />     </apex:outputText></p>
+    </div>   
+    </body>                         
+    </apex:page>

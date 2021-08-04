@@ -1,0 +1,6 @@
+<aura:component implements="lightning:actionOverride,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+	<lightning:quickActionAPI aura:id="quickActionAPI" />
+    <!--<aura:handler name="init" value="{!this}" action="{!c.fireGlobal}" />-->
+    <lightning:button label="New" onclick="{!c.fireGlobal }" />
+
+</aura:component>

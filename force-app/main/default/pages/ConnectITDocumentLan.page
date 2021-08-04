@@ -1,0 +1,722 @@
+<apex:page standardController="Task" showHeader="false" renderAs="pdf" contenttype="application/pdf" applyBodyTag="false">
+ <head>
+        <style type="text/css" media="print">
+            @page
+            {
+            size: 11.69in 8.27in;  <!-- A4 Landscape -->
+            margin: 0in 0in 0in 0in;
+             
+            @top-center
+            {
+            content: element(header);
+            }
+            
+            @bottom-center
+            {
+            content: element(footer);
+            }
+            
+            div.header
+            {
+            position: running(header);
+            }
+
+            div.footer
+            {
+            position: running(footer);
+            }            
+            }
+            
+            .pagenumber:before
+            {
+            content: counter(page);
+            }
+            
+            .pagecount:before
+            {
+            content: counter(pages);
+            }
+            
+            .my-nowrap 
+            {
+            white-space: nowrap;
+            }
+
+           .pagebreak 
+            { 
+            page-break-after: always; 
+            } 
+
+  
+
+            thead
+            {
+            font-family: calibri;
+            font-size: 14px;
+            font-weight : bold;
+            background-color: darkblue;
+            border-style: solid;
+            border-color: darkblue;
+            color : red;
+            }
+            
+            .footer
+            {
+            position: fixed;
+            bottom: -75px;
+            width: 80%;
+            clear: both;
+            margin:80px; 
+
+            }
+                 
+            h
+            { 
+            font-family:helvetica;
+            font-size: 30px;
+            font-weight : bold;
+            color : darkblue;
+            }
+            
+            p
+            {
+            font-family: calibri;
+            font-size: 16px;
+            }
+            
+            p1 
+            {
+            font-family: calibri;
+            font-size: 20px;
+            color : #ff8c00;
+            font-weight : bold;
+            }
+
+            p2
+            {
+            font-family: calibri;
+            font-size: 16px;
+            color : black;
+            margin : 250px;
+            }
+
+            hr 
+            {
+            display: block;
+            height: 1px;
+            border: 0;
+            border-top: 1.5px solid #ff8c00;
+            padding: 0;
+            }
+           
+            th
+            {
+            font-family: calibri;
+            font-size: 14px;
+            color : darkblue;
+            font-weight : bold;
+            }
+
+            td
+            {
+            font-family: calibri;
+            font-size: 12px;
+            color : darkblue;
+            font-weight : normal;
+            }
+
+
+            .tablebox 
+            { 
+            position: absolute; 
+            top: 185px; 
+            left: 50px; 
+            width: 230px;
+            height: 180px; 
+            background-color: white; 
+            border-style: solid;
+            border-color: #000057;
+            }
+            
+            .tablebox1
+            { 
+            position: absolute; 
+            top: 185px; 
+            left: 295px; 
+            width: 230px; 
+            height: 180px; 
+            background-color: white; 
+            border-style: solid;
+            border-color: #000057;
+            }
+            
+            .tablebox2
+            { 
+            position: absolute; 
+            top: 185px; 
+            left: 540px; 
+            width: 230px; 
+            height: 180px; 
+            background-color: white; 
+            border-style: solid;
+            border-color: #000057;
+            }
+            
+            .tablebox3
+            {
+            position: absolute; 
+            top: 185px; 
+            left: 790px; 
+            width: 265px; 
+            height: 400px; 
+            backgroundcolor: white; 
+            border-style: solid;
+            border-color: #000057;
+            }
+            
+            .tablebox4
+            {
+            position: absolute; 
+            top: 380px; 
+            left: 50px; 
+            width: 230px; 
+            height: 130px; 
+            background-color: red; 
+            border-style: solid;
+            border-color: #000057;
+            color : white;
+            }
+     
+     
+            .tablebox5
+            {
+            position: absolute; 
+            top: 380px; 
+            left: 295px; 
+            width: 230px; 
+            height: 130px; 
+            backgroundcolor: white; 
+            border-style: solid;
+            border-color: #000057;
+            }
+     
+            .tablebox6
+            {
+            position: absolute; 
+            top: 380px; 
+            left: 540px; 
+            width: 230px; 
+            height: 130px; 
+            backgroundcolor: white; 
+            border-style: solid;
+            border-color: #000057;
+            }
+     
+           .ninetytwo 
+           {
+           width: 92%
+           } 
+     
+           .eighty 
+           {
+           width: 80%
+           } 
+            
+          .sixty 
+          {
+          width: 60%
+          }
+
+         .forty 
+         {
+         width: 40%
+         }
+         
+         .fifty 
+         {
+         width: 50%
+         }
+
+         .twenty 
+         {
+         width: 20%;
+         }
+         
+         .ten 
+         {
+         width: 10%;
+         }
+
+         .four 
+         {
+         width: 4%;
+         }
+
+             th
+            {
+            font-family: calibri;
+            font-size: 14px;
+            color : #000057;
+            font-weight : bold;
+            text-decoration: underline;
+            } 
+           
+           
+           
+             th2
+            {
+            font-family: calibri;
+            font-size: 14px;
+            color : white;
+            font-weight : bold;
+            text-decoration: underline;
+            } 
+
+            }
+
+
+    </style>
+    </head>   
+
+ 
+    <!------------------------------------------------------------>
+    <!---------               Page 1                    ---------->
+    <!------------------------------------------------------------>     
+    <div class="header" style="text-align:center;">
+            <p>&nbsp;</p>
+            <apex:image value="{!URLFOR($Resource.ConnectITLogo)}" />
+
+    </div>
+    
+    <div class="body">
+                <p2><u><b>Monthly Report Example - Scottish &amp; Southern Electricity Networks</b></u></p2>
+         <div class="tablebox">
+            <tablebox>
+              <tr>        
+                <th colspan="3">Safety</th>
+              </tr>
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">&nbsp;</td>
+                <td class="four">&nbsp;</td>
+              </tr>
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">RIDDOR Reportable Injury</td>
+                <td class="four">0</td>
+              </tr>
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">Lost Time Incident</td>
+                <td class="four">1</td>
+              </tr>
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">Incidents Requiring First Aid</td>
+                <td class="four">0</td>
+              </tr>
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">No Treatment Incidents</td>
+                <td class="four">2</td>
+              </tr>
+              <tr>
+                 <td class="four">&nbsp;</td>
+                <td class="ninetytwo">Near Hits / Dangerous Occurance</td>
+                 <td class="four">1</td>
+              </tr>
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">Emergency Exercises Carried Out</td>
+                <td class="four">3</td>
+              </tr>
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">Investigations In Progress</td>
+                <td class="four">1</td>
+              </tr>
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">Investigations Completed</td>
+                <td class="four">1</td>
+              </tr>
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">Licensed To Stop Used</td>
+                <td class="four">0</td>
+              </tr>
+               </tablebox>
+            </div>
+            
+            <div class="tablebox1">
+            <tablebox1>
+              <tr>        
+                <th colspan="2">Environmental</th>
+              </tr>
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">&nbsp;</td>
+                <td class="four">&nbsp;</td>
+              </tr>
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">Reportable Environment Incidents</td>
+                <td class="four">1</td>
+              </tr>
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">&nbsp;</td>
+                <td class="four">&nbsp;</td>
+              </tr>
+              
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">Non Reportable Environmental</td>
+                <td class="four">1</td>
+              </tr>
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">Incidents</td>
+                <td class="four">&nbsp;</td>
+              </tr>
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">&nbsp;</td>
+                <td class="four">&nbsp;</td>
+              </tr>
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">Formal Environmental</td>
+                <td class="four">1</td>
+              </tr>
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">Warnings/Enforcement Actions</td>
+                <td class="four">&nbsp;</td>
+              </tr>
+              
+               </tablebox1>
+            </div>
+
+
+            <div class="tablebox2">
+            <tablebox2>
+              <tr>        
+                <th colspan="3">Quality</th>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">Utility Strike</td>
+                <td class="four">0</td>
+              </tr>
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">Defects</td>
+                <td class="four">0</td>
+              </tr>
+          
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">Damage to 3rd Parties</td>
+                <td class="four">0</td>
+              </tr>
+              
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">Customer Complaints</td>
+                <td class="four">0</td>
+              </tr>
+              
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">Over PSIs</td>
+                <td class="four">0</td>
+              </tr>
+              
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo">Street Work Over Runs</td>
+                <td class="four">1</td>
+              </tr>
+                </tablebox2>
+            </div>
+            
+            <div class="tablebox3" >
+              <tablebox3 >
+                <tr>
+                  <th></th>
+                  <th></th>
+                  <th>Key Performance Indicators</th>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td class="twenty"><u>RAG</u></td>
+                  <td class="eighty">&nbsp;</td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td class="twenty" bgcolor="green">&nbsp;</td>
+                  <td class="eighty">Site Safety</td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>                
+                  <td class="twenty" bgcolor="orange">&nbsp;</td>
+                  <td class="eighty">Authorisations</td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td class ="twenty" bgcolor="green">&nbsp;</td>
+                  <td class="eighty">Audits</td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td class="twenty" bgcolor="green">&nbsp;</td>
+                  <td class="eighty">Acceptance Quotations</td>
+                 </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td class="twenty" bgcolor="orange">&nbsp;</td>
+                  <td class="eighty">Total Value vs Quotation Value</td>
+                </tr>                               
+                <tr>
+                  <td>&nbsp;</td>
+                  <td class="twenty" bgcolor="green">&nbsp;</td>
+                  <td class="eighty">Quality Management</td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td class="sixty"><u>Supply Chain</u></td>
+                  <td class="forty"><u>Last 30 Days</u></td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td class="sixty">No. of Suppliers</td>
+                  <td class="forty">3</td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>                
+                  <td class="sixty">No.of Gateways Approved</td>
+                  <td class="forty">1</td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td class ="sixty">Audits</td>
+                  <td class="forty">3</td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td class ="sixty">Audit Performance</td>
+                  <td class="forty">100%</td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td class="sixty"><u>Value Plus</u></td>
+                  <td class="forty"><u>Last 30 Days</u></td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td class="sixty">New Ideas</td>
+                  <td class="forty">2</td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td class="sixty">Implemented Ideas</td>
+                  <td class="forty">1</td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>  
+                <tr>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>  
+                <tr>         
+                  <td>&nbsp;</td>
+                  <td class="sixty"><u>LAST LESSON LEARNT</u></td>
+                  <td class="forty"></td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td class="sixty">Planning Materials</td>
+                  <td class="forty"></td>
+                </tr>
+            </tablebox3>
+            </div>
+   
+   
+            <div class="tablebox4">
+            <tablebox4>
+              <tr>        
+                <th2 colspan="3">Risk Status</th2>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td class="fifty">Identified in Month</td>
+                <td class="fifty">4 New Risks</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td class="fifty">Mitigated in Month</td>
+                <td class="fifty">6 Managed Risks</td>
+              </tr>
+          
+              <tr>
+                <td>&nbsp;</td>
+                <td class="fifty">Realised</td>
+                <td class="fifty">1 Impacting</td>
+              </tr>
+              
+              <tr>
+                <td>&nbsp;</td>
+                <td class="fifty">Potential Cost impact</td>
+                <td class="fifty">350 k</td>
+              </tr>
+              
+              <tr>
+                <td>&nbsp;</td>
+                <td class="fifty">Potential time impact</td>
+                <td class="fifty">40 Team Days</td>
+              </tr>
+
+                </tablebox4>
+            </div>
+            
+            <div class="tablebox5">
+            <tablebox5>
+              <tr>        
+                <th colspan="3">Resource</th>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td class="eighty">Total Man Hours this month</td>
+                <td class="twenty">4356</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td class="eighty">Planned Man Hours next month</td>
+                <td class="twenty">4450</td>
+              </tr>
+          
+              <tr>
+                <td>&nbsp;</td>
+                <td class="eighty">No of Inductions Attended</td>
+                <td class="twenty">2</td>
+              </tr>
+              
+              <tr>
+                <td>&nbsp;</td>
+                <td class="eighty">No of Trainining courses attended</td>
+                <td class="twenty">4</td>
+              </tr>
+              
+              <tr>
+                <td>&nbsp;</td>
+                <td class="eighty">Staff Joiners</td>
+                <td class="twenty">2</td>
+              </tr>
+              
+              <tr>
+                <td>&nbsp;</td>
+                <td class="eighty">Staff Leavers</td>
+                <td class="twenty">2</td>
+              </tr>
+                </tablebox5>
+            </div>    
+            
+            <div class="tablebox6">
+            <tablebox6>
+              <tr>        
+                <th class="forty">Performance</th>
+                <th></th>
+                <th></th>
+              </tr>
+              <tr>
+                <td class="four">&nbsp;</td>
+                <td class="four">&nbsp;</td>
+                <td class="ninetytwo"></td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td class="eighty">Number of sites</td>
+                <td class="twenty">14</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td class="eighty">Value of Quotations</td>
+                <td class="twenty">£127,000</td>
+              </tr>
+          
+              <tr>
+                <td>&nbsp;</td>
+                <td class="eighty">Value of Change</td>
+                <td class="twenty">£25,000</td>
+              </tr>
+              
+              <tr>
+                <td>&nbsp;</td>
+                <td class="eighty">Number of Disputes</td>
+                <td class="twenty">0</td>
+              </tr>
+              
+                 </tablebox6>
+            </div>     
+            
+            
+            <div class="tablebox6">
+            <tablebox6>
+            <analytics:reportChart reportId="00O4J000002kHebUAE" size="small"></analytics:reportChart>
+            </tablebox6>
+            </div>
+            
+
+    </div>
+      
+    <div class="footer">
+           <p1>Let&#39;s get connected</p1>
+           <hr></hr>
+    </div>               
+                  
+</apex:page>

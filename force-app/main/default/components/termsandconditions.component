@@ -1,0 +1,26 @@
+<apex:component >
+   
+    <div class="TermsandConditions" style="margin:80px; margin-top: 0px;">
+      <p1>Terms and Conditions</p1><BR/>
+      <p1>Payment Terms</p1>
+      <p>Payment is required on written acceptance. On receipt of payment Connect It Utility Services Ltd shall provide a VAT Receipt.</p><BR/><BR/>
+
+      <p><b>Electronic Payments</b></p>
+      <p>The following information is provided to facilitate BACS Payments</p> 
+      <p>Connect It Utility Services Ltd</p>  
+      <p>SC : 404218</p>  
+      <p>AC : 72355698</p> 
+      <p>Ref: </p><BR/><BR/> 
+        <!--   <p>Ref: {! oppSite.BillingStreet }</p><BR/><BR/> -->
+    
+      <p1>Company Verification</p1><BR/>
+      <p>Company registration number: 4143738 UTR Number: 6320217108 VAT: 768802687</p><BR/>
+
+
+      <p1>Programme</p1><BR/>
+      <p>Our standard working hours are Mon- Fri 07:30- 17:30 including travelling time. If we are requested to work additional hours then these will attract a premium charge.</p><BR/><BR/>
+      <p>If, due to any third party legal or construction issue, there is a requirement to provide temporary generation on site the supply, installation, hire, fuel and removal of all equipment will be charged at cost plus 20%</p>
+    
+    </div>
+    
+</apex:component>

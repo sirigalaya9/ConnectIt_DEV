@@ -1,0 +1,339 @@
+<apex:page standardController="Purchase_Order__c" applyHTMLTag="false" applyBodyTag="false" showHeader="false" sidebar="false" renderAs="pdf">
+    <head>
+       <style type="text/css" media="print">
+        @page 
+        { 
+        margin-bottom:3cm; 
+        margin-top:0cm; 
+        @bottom-center 
+        { 
+        content: element(footer); 
+        } 
+        }
+                                              
+        div.footer 
+        { 
+        display:block; 
+        height:100px; 
+        position: running(footer); 
+        }
+         
+        footer
+        {
+        left-margin: -250px;
+        } 
+         
+        table 
+        {
+        font-family: verdana,arial,sans-serif; 
+        width: 100%; 
+        border: 0.1px solid black; 
+        border-spacing:0px; 
+        }  
+        
+        table.lines 
+        { 
+        text-align: center; 
+        border-spacing: 0px; 
+        border: 0.1px solid black; 
+
+        }
+          
+        table.total 
+        { 
+        text-align: center; 
+        width: 50%; 
+        margin-right: 0px; 
+        margin-left: auto; 
+        }
+              
+        table.footer 
+        { 
+        border: 0px; 
+        font-family: verdana,arial,sans-serif; 
+        color: #37383a; 
+        padding:0px;
+        margin:0px; border-collapse: collapse; 
+        }            
+        
+        th 
+        { 
+        border: 0.1px solid black; 
+        padding:5px; 
+        font-size: 13px; 
+        }        
+        
+        td 
+        { 
+        border: 0.1px solid black; 
+        padding:5px; 
+        font-size: 12px; 
+        }
+        
+        td.header2 
+        { 
+        border: 0.1px solid black; 
+        font-weight:bold;
+        }
+       
+        td.footer  
+        {
+        border: 0.1px solid black;  
+        cell-spacing:0px; 
+        padding:0px; 
+        margin:0px; 
+        border-collapse: collapse; 
+        text-align:center; 
+        font-size: 10px; 
+        color: #000956; 
+        }
+        
+        td.footer2  
+        { 
+        border: 0px ;  
+        cell-spacing:0px; 
+        padding:0px; 
+        margin:0px; 
+        border-collapse: collapse; 
+        text-align:right;  
+        font-size: 10px; 
+        }
+        
+        tr.header 
+        { 
+        text-align:center; 
+        font-size: 14px; 
+        font-weight:bold; 
+        border: 0.1px solid black; 
+        }
+        
+        tr.footer 
+        { 
+        border: none; 
+        }
+        
+        td.footer
+        { 
+        border: none; 
+        }
+        
+        tr.other
+        { 
+        font-size: 12px; 
+        }   
+
+        h  
+        { 
+        font-family: helvetica; 
+        font-size: 16px; 
+        font-weight : bold; 
+        color : #000956 ; 
+        }            
+        
+        h2 
+        { 
+        font-family: verdana,arial,sans-serif; 
+        text-align:center; 
+        color: #000956; 
+        font-size : 30px; 
+        font-weight : 1900; 
+        }
+        
+        h3 
+        { 
+        font-family: verdana,arial,sans-serif; 
+        text-align:center; 
+        }
+                        
+            
+        .pagenumber:before 
+        { 
+        content: counter(page); 
+        }
+        
+        .pagecount:before  
+        { 
+        content: counter(pages); 
+        }
+
+        p  
+        { font-family: calibri; 
+        font-size: 10px; color : black; 
+        font-weight : normal; 
+        text-align: center; 
+        } 
+        
+        p1 
+        { font-family: calibri; 
+        font-size: 20px; 
+        color : #ff8c00; 
+        font-weight : bold; 
+        text-align: center; 
+        }
+            
+        hr 
+        { 
+        display: block; 
+        height: 1px; 
+        border: 0; 
+        border-top: 1.5px 
+        solid #ff8c00; 
+        padding: 0; 
+        }
+                 
+        fulldoc 
+        { margin:0px; 
+        left-margin:0px; 
+        right-margin 0px; 
+        <!-- background-color: #4e8975;-->
+        background-color: red;
+        }
+                
+      </style> 
+    </head> 
+    
+   <apex:form >
+   
+   <div class="fulldoc">
+              
+    <div class="header" style="text-align:center; margin-top: 30px;">
+        <apex:image id="logo" value="{!$Resource.ConnectITLogo2}" width="100%" height="25%"/> 
+        <h>Foundation House Unit C (West) Hamilton Business Park, Hamilton Way, Hedge End,Southampton, SO30 2JR</h><br/>
+        <h class="centre">T: 01489 346444  &nbsp; E: sales@cius.co.uk </h>
+        <br/> <br/>
+    </div>
+    
+
+    
+    <div>
+        <table>
+           <tr>
+             <th colspan="3"><b><h2>Purchase Order</h2></b></th>
+             <td width="24%"><apex:outputText value="{!Purchase_Order__c.Name}"/></td>
+           </tr>
+        </table>
+        
+        <table>
+           <tr class="other">
+             <td width="50%">
+                To Seller:<br/>
+                FAO: {!Purchase_Order__c.Supplier_Contact__r.Name}<br/>
+                <apex:outputText value="{!Purchase_Order__c.Supplier__r.Name}"/><br/>
+                <apex:outputText value="{!Purchase_Order__c.Supplier__r.BillingStreet}"/><br/>
+                <apex:outputText value="{!Purchase_Order__c.Supplier__r.BillingCity}"/><br/>
+                <apex:outputText value="{!Purchase_Order__c.Supplier__r.BillingPostalCode}"/><br/>
+             </td>
+             <td width="50%">
+                 Deliver to:<br/><br/>
+                 <apex:outputText value="{!Purchase_Order__c.Delivery_Address_Name__c}"/><br/>
+                 <apex:outputText value="{!Purchase_Order__c.Delivery_Address_Street__c}"/><br/>
+                 <apex:outputText value="{!Purchase_Order__c.Delivery_Address_City__c}"/><br/>
+                 <apex:outputText value="{!Purchase_Order__c.Delivery_Address_Postal_Code__c}"/><br/>
+             </td>
+            </tr>
+
+            <tr>
+              <td colspan="2">Date of Order:&nbsp;<apex:outputField value="{!Purchase_Order__c.Date__c}"/></td>
+            </tr>
+            
+            <tr>
+              <td colspan="2">Notes:&nbsp;<apex:outputField value="{!Purchase_Order__c.Notes__c}"/></td>
+            </tr>
+        </table>    
+      </div>
+
+
+      <div class="footer">
+          <div style="text-align:center">
+              <br/>
+              <p1>Let&#39;s get connected</p1>
+              <hr></hr>
+              <p>Page <span class="pagenumber" /> of <span class="pagecount" /></p>
+           </div>
+       </div>  
+       
+   
+       
+       <apex:pageBlock >
+            <apex:variable value="{!1}" var="num" />
+
+            <apex:repeat value="{!Purchase_Order__c.Purchase_Order_Line_Items__r}" var="poli" id="list">
+
+               <!-- -------------FOR PAGINATION START--------------- -->
+               <apex:outputpanel rendered="{!num == 1   || num == 13 || num == 34 || num == 55 || num == 76 || num == 97 || num == 118 || num == 139 || num == 160 || num == 181 || 
+                                             num == 202 || num == 223  || num == 244 || num == 265 || num == 286 || num == 307 || num == 328 || num == 349 || num == 370 || num == 391 || 
+                                             num == 412 || num == 433 || num == 454 || num == 475 || num == 496 || num == 517  || num == 538 || num == 559 || num == 580 || num == 601 || 
+                                             num == 622 || num == 643 || num == 664 || num == 685 || num == 706  || num == 727 || num == 748 || num == 769 || num == 790 || num == 811 || 
+                                             num == 822 || num == 843 || num == 864 || num == 885 || num == 906 || num == 927 || num == 948 || num == 969 || num == 990 || num == 1012}"><br></br>               
+                  <table class="lines" style="{!IF(Purchase_Order__c.Purchase_Order_Line_Items__r.size > 0,'','display: none;')} -fs-table-paginate: paginate;">
+                     <tr>
+                         <th style="text-align:center" width="7%">Qty</th>
+                         <th style="text-align:center" width="15%">Part No</th>
+                         <th style="text-align:center" width="58%">Description of Goods or Services</th>
+                         <th style="text-align:center" width="8%">Cost Each</th>
+                         <th style="text-align:center" width="12%">TOTAL</th>
+                     </tr>
+                  </table>
+                          
+                  
+                 </apex:outputpanel>                  
+                 <table>
+                     <tr>
+                       <td style="text-align:center" width="7%"><apex:outputText value="{0, number, ###,###.##}"><apex:param value="{!poli.Quantity__c}"/></apex:outputText></td>
+                       <td style="text-align:left"   width="15%">{!poli.Supplier_Part_No__c}</td>
+                       <td style="text-align:left"   width="58%">{!poli.Product_Description__c}</td>
+                       <td style="text-align:center" width="8%"><apex:outputText value="{0, number, ###,##0.00}"><apex:param value="{!poli.Unit_Cost__c}"/></apex:outputText></td>
+                       <td style="text-align:center" width="12%"><apex:outputText value="{0, number, ###,##0.00}"><apex:param value="{!poli.Total_Cost__c}"/></apex:outputText></td>
+                    </tr>
+                 </table>     
+
+
+                  <apex:outputpanel rendered="{!num == 12 || num == 33  || num == 54 || num == 75 || num == 96 || num == 117 || num == 138 || num == 159 || num == 180 || 
+                                               num == 201 || num == 222 || num == 243 || num == 264 || num == 285 || num == 306 || num == 327 || num == 348 || num == 369 || num == 390 || 
+                                               num == 411 || num == 432 || num == 453 || num == 474 || num == 495 || num == 516 || num == 537 || num == 558 || num == 579 || num == 600 || 
+                                               num == 621 || num == 642 || num == 663 || num == 684 || num == 705 || num == 726 || num == 747 || num == 768 || num == 789 || num == 810 || 
+                                               num == 821 || num == 842 || num == 863 || num == 884 || num == 905 || num == 926 || num == 947 || num == 968 || num == 989 || num == 1011 }">
+                    <!-- ----PAGENATION END -->
+
+                 <div style="page-break-after: always; ">&nbsp; 
+                  </div>
+                  
+                 <div class="header" style="text-align:center; margin-top: 30px;">
+                   <apex:image id="logo2" value="{!$Resource.ConnectITLogo2}" width="100%" height="25%"/> 
+                   <h>Foundation House Unit C (West) Hamilton Business Park, Hamilton Way, Hedge End,Southampton, SO30 2JR</h><br/>
+                   <h class="centre">T: 01489 346444  &nbsp; E: sales@cius.co.uk </h>
+                   <br/> <br/>
+                 </div>
+                
+                  </apex:outputpanel>
+                 <apex:variable value="{!num+1}" var="num" />
+   
+            </apex:repeat>
+               <table>                       
+                    <tr>
+                       <td width="27%">&nbsp;</td>
+                       <td width="22%">&nbsp;</td>
+                       <td width="39%" style="text-align:right" >Delivery/Collection Cost</td>
+                       <td width="12%" style="text-align:center"><apex:outputField value="{!Purchase_Order__c.Delivery_Collection_Charge__c}"/></td>
+                    </tr>
+               </table>
+            
+            
+               <table>                       
+                    <tr>
+                       <td width="27%">Delivery or <br/>Service Due Date:</td>
+                       <td width="22%" style="text-align:left"><apex:outputField value="{!Purchase_Order__c.Date_Expected_Delivery__c}"/></td>
+                       <td width="39%" style="text-align:right" ><h>Order Total</h></td>
+                       <td width="12%" style="text-align:center"><apex:outputField value="{!Purchase_Order__c.POTotalplusDelivery__c}"/></td>
+                    </tr>
+               </table>
+               <table>
+                    <tr>
+                      <td width="49%" style="text-align:left color:black" >Requested by:<br/><br/> {!Purchase_Order__c.Owner.Name}</td>
+                      <td width="51%" style="text-align:left">Authorised by:<br/><br/> <apex:outputField value="{!Purchase_Order__c.Authorised_By__c}"/>&nbsp;</td>   
+                   </tr>
+              </table> 
+       </apex:pageBlock>
+          </div>
+     </apex:form> 
+</apex:page>

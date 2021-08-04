@@ -1,0 +1,108 @@
+<template>
+    <div class="slds-form-element">
+        <div class="slds-form-element__control">
+            <div class="slds-combobox_container">
+                <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open"
+                     aria-expanded="true" aria-haspopup="listbox" role="combobox">
+                    <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_left-right" role="none">
+                        
+                        <!-- Selected Option (hide this by default)-->
+                        <div class="selectedOption slds-hide">
+                            <span if:true={iconName} class="slds-media__figure slds-input__icon slds-input__icon_left">
+                                <lightning-icon icon-name={iconName} size="x-small">
+                                </lightning-icon>
+                            </span>
+                            <input type="text"
+                                class="slds-input slds-combobox__input slds-combobox__input-value"
+                                id="combobox-id-5" aria-controls="listbox-id-5" autocomplete="off" role="textbox"
+                                placeholder="Select an Option" value={selectedRecord} readonly/>
+                            <button class="slds-button slds-button_icon slds-input__icon slds-input__icon_right"
+                                title="Remove selected option">
+                                <lightning-icon icon-name="utility:close" alternative-text="close" size="x-small"
+                                    onclick={handleRemoveSelectedOption}></lightning-icon>
+                                <span class="slds-assistive-text">Remove selected option</span>
+                            </button>
+                        </div>
+                        <!-- end Selected Option (hide this by default)-->
+
+                        <!-- Search input -->
+                        <div class="defaultClass">
+                            <span class="slds-media__figure slds-input__icon slds-input__icon_left">
+                                <lightning-icon icon-name="utility:search" size="x-small">
+                                </lightning-icon>
+                            </span>
+                            <input type="search" class="slds-input slds-combobox__input searchvalue" id="combobox-id-3" value={searchValue}
+                                aria-activedescendant="option1" aria-autocomplete="list" list="listbox-id-3" aria-controls="listbox-id-3"
+                                autocomplete="off" role="textbox" placeholder="Search..." onblur={handleBlur}  onclick={handleClick} onkeyup={handleKeyUp} onchange={handleSearch} />
+                            
+                            <!-- <lightning-input type="search" class="slds-input slds-combobox__input searchvalue" id="combobox-id-3"
+                                aria-activedescendant="option1" aria-autocomplete="list" aria-controls="listbox-id-3"
+                                autocomplete="off" role="textbox" placeholder="Search..." onblur={handleBlur}  onclick={handleClick} onkeyup={handleKeyUp}>
+                            </lightning-input> -->
+                            <span class="slds-icon_container">
+                                <lightning-icon icon-name="utility:search" class="slds-icon-utility-search slds-input__icon slds-input__icon_right slds-searchIcon" alternative-text="Approved" size="x-small">
+                                </lightning-icon>
+                                <lightning-icon icon-name="utility:down" class="slds-icon-utility-down slds-input__icon slds-input__icon_right slds-hide" size="x-small">
+                                </lightning-icon>
+                            </span>
+                        </div>
+                        <!-- /Search input -->
+                    </div>
+
+                    <!-- Options panel -->
+                    <div id="listbox-id-3"
+                        class="slds-dropdown slds-dropdown_length-with-icon-7 slds-dropdown_fluid options-list slds-hide"
+                        role="listbox">
+                        <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                            <!-- Search icon and text -->
+                            <li role="presentation" class="slds-listbox__item">
+                                <div aria-selected="true" id="option0"
+                                    class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_term slds-has-focus"
+                                    role="option">
+                                    <span class="slds-media__figure slds-listbox__option-icon slds-m-top_none">
+                                        <span class="slds-icon_container slds-icon-utility-search" title="Search for term: ">
+                                            <lightning-icon icon-name="utility:search" alternative-text="search" size="x-small">
+                                            </lightning-icon>
+                                            <span class="slds-assistive-text">Search for term:</span>
+                                        </span>
+                                    </span>
+                                    <span class="slds-media__body">
+                                        <span class="slds-listbox__option-text slds-listbox__option-text_entity">{searchValue}</span>
+                                    </span>
+                                </div>
+                            </li>
+                            <!-- /Search icon and text -->
+                            <!-- Options list -->
+                            <template if:true={options}>
+                                <template for:each={options} for:item="item">
+                                    <li role="presentation" class="slds-listbox__item" key={item.key}
+                                        onmousedown={handleOptionSelect} data-id={item.key} data-name={item.value}>
+                                        <div aria-selected="true" id={item.key}
+                                            class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta slds-p-vertical_x-small"
+                                            role="option" tabindex="0" style="padding-top: var(--lwc-spacingXSmall,0.5rem); padding-bottom: var(--lwc-spacingXSmall,0.5rem);">
+                                            <span if:true={iconName} class="slds-media__figure slds-listbox__option-icon slds-m-top_none">
+                                                <span class="slds-icon_container">
+                                                    <lightning-icon icon-name={iconName} size="x-small">
+                                                    </lightning-icon>
+                                                    <!-- <span class="slds-assistive-text"></span> -->
+                                                </span>
+                                            </span>
+                                            <span class="slds-media__body">
+                                                <span class="slds-listbox__option-text slds-listbox__option-text_entity">{item.value}</span>
+                                            </span>
+                                        </div>
+                                    </li>
+                                </template>
+                            </template>
+                            <!-- /Options list -->
+                            <template if:false={options}>
+                                <div>Error</div>
+                            </template>
+                        </ul>
+                    </div>
+                    <!-- /Options panel -->
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

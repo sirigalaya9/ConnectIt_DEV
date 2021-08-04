@@ -1,0 +1,55 @@
+<apex:component >
+
+   <div class="attendance" style="margin:80px; margin-top: 0px;">
+      <p1>Attendance Requirements</p1><BR/>
+      <p class="detail">Site attendance must be booked through <span class="chg">booking@cius.co.uk </span> no later than <span class="chg2"> 10 working days</span> before site attendance is required.</p>
+
+      <table class="attendance">
+        <tr>
+          <th style="text-align:left" width="100%" colspan="3">Mains</th>
+        </tr>
+        <tr>
+          <td width="10%">&nbsp;</td>
+          <td style="text-align:left" width="80%">Minimum single utility length of open trench available for mains laying visit</td>
+          <td style="text-align:left" width="10%">250mm</td>
+        </tr>
+        <tr>
+          <td width="10%">&nbsp;</td>
+          <td style="text-align:left" width="80%">Minimum dual utility length of open trench available for mains laying per visit</td>
+          <td style="text-align:left" width="10%">200mm</td>
+        </tr>
+        <tr>
+          <td width="10%">&nbsp;</td>
+          <td style="text-align:left" width="80%">Minimum multi utility length of open trench available for mains laying per visit</td>
+          <td style="text-align:left" width="10%">150mm</td>
+        </tr>
+        <tr>
+          <th style="text-align:left" width="100%" colspan="3">Services</th>
+        </tr>
+        <tr>
+          <td width="10%">&nbsp;</td>
+          <td style="text-align:left" width="80%">Minimum single utility connection made available per visit</td>
+          <td style="text-align:left" width="10%">6 No</td>
+        </tr>
+        <tr>
+          <td width="10%">&nbsp;</td>
+          <td style="text-align:left" width="80%">Minimum dual utility connections made available per visit</td>
+          <td style="text-align:left" width="10%">5 No</td>
+        </tr>
+        <tr>
+          <td width="10%">&nbsp;</td>
+          <td style="text-align:left" width="80%">Minimum multi utility connections made available per visit</td>
+          <td style="text-align:left" width="10%">4 No</td>
+       </tr>
+   </table>
+
+    <BR/>
+    <BR/>
+  
+    <p class="detail">If there is a requirement for CIUS to attend site on an occasion where the above criteria have not been met, then a mobilisation fee of £800.00 will be raised.</p><BR/>
+    <p class="detail">If booked in works are aborted/cancelled 48hrs prior to CIUS site attendance, then a cancellation fee of £1200.00 will be raised.</p> <BR/>
+    <p class="detail">Please note separate show homes visits have already been accounted for in the price. If you require these please book this through <span class="chg"> booking@cius.co.uk </span> with 10 working days notice.</p> <BR/>
+    
+    </div>
+
+</apex:component>

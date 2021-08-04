@@ -1,0 +1,46 @@
+<apex:component >
+    <div class="Leadtimes" style="margin:80px; margin-top: 0px;">
+  
+       <p1>Leadtimes</p1><BR/>
+       <p>Lead in time to finalise designs is provisionally 8 weeks from receipt of acceptance payment and the below information stated in the “New Instruction Form”.</p>
+       <p><b>New Instruction Form</b></p>
+       <div class="boxed">Site Address and Contact Details:</div> 
+       <div class="boxed">Landowner Address and Contact Details:</div> 
+       <div class="boxed">Landowner Solicitor Address and Contact Details:</div> 
+       <div class="boxed">Third Party Landowner Address and Contact Details:</div> 
+       <div class="boxed">Third Party Landowner Solicitor Address and Contact Details:</div>     
+       <div class="boxed">Requested Power On Date:</div>    
+       <div class="boxed">Substation Construction: Brick Built/GRP</div>   
+       <div class="boxed">Nominated Supplier i.e. British Gas, Scottish Power etc.</div>    
+       <div class="boxed">Dumb or Smart Metered:</div>   
+       <div class="boxed">Gas Meter Box Type:</div>   
+       <div class="boxed">Any Further Information:</div> 
+       <BR/>
+       <p>Please attach the following to this form:</p>
+       </div>
+        
+       <div class="Site Layout" style="margin:80px; margin-top: -70px;" >
+         <tr>
+           <td2>- Site Layout (pdf &amp; dwg)</td2>
+         </tr>
+         <tr>
+           <td2>- Section 38 Plan (pdf &amp; dwg)</td2>
+         </tr>
+         <tr>
+           <td2>- Landcaping Plan (pdf &amp; dwg)</td2>
+         </tr>
+         <tr>
+           <td2>- Streetlighting Design (pdf &amp; dwg)</td2>
+         </tr>
+         <tr>
+           <td2>- Service plan showing service trench route, substation and meter box positions (pdf)</td2>
+         </tr>
+         <tr>
+           <td2>- Programme of works</td2>
+         </tr>
+         <tr>
+          <td2>- Location of show homes</td2>
+         </tr>
+       </div>
+   
+</apex:component>

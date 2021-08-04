@@ -1,0 +1,61 @@
+<template>
+  <div if:true={showModal} class="lwc-modal">
+    <section
+      role="dialog"
+      tabindex="-1"
+      aria-labelledby="modal-heading-01"
+      aria-modal="true"
+      aria-describedby="modal-content-id-1"
+      class="slds-modal slds-fade-in-open"
+    >
+      <div class="slds-modal__container" style="overscroll-behavior: none">
+        <!-- Modal Header -->
+        <header class="slds-modal__header">
+          <lightning-button-icon
+            icon-name="utility:close"
+            size="large"
+            variant="bare-inverse"
+            class="slds-modal__close"
+            onclick={hide}
+          ></lightning-button-icon>
+          <h2
+            id="modal-heading-01"
+            class="slds-text-heading_medium slds-hyphenate"
+          >
+            <slot name="title"></slot>
+          </h2>
+        </header>
+        <!-- /Modal Header -->
+
+        <!-- Modal Body -->
+        <div
+          class="slds-modal__content slds-p-around_medium"
+          id="modal-content-id-1"
+        >
+          <template if:true={isLoading}>
+            <div
+              class="spinner-holder"
+              style="position: relative; min-height: 100px"
+            >
+              <lightning-spinner
+                variant="brand"
+                alternative-text="Loading"
+              ></lightning-spinner>
+            </div>
+          </template>
+          <div class="modal-body slds-hide">
+            <slot name="body"></slot>
+          </div>
+        </div>
+        <!-- /Modal Body -->
+
+        <!-- Modal Footer -->
+        <footer class="slds-modal__footer">
+          <slot name="footer"></slot>
+        </footer>
+        <!-- /Modal Footer -->
+      </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+  </div>
+</template>

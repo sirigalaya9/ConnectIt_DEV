@@ -1,0 +1,656 @@
+<!--
+  @description       : 
+  @author            :
+  @group             : 
+  @last modified on  : 20-02-2021
+  @last modified by  : Jonny Harte
+  Modifications Log 
+  Ver   Date         Author        Modification
+  1.0   19-02-2021   Jonny Harte   Initial Version
+-->
+<template>
+  <div if:false={rowData.allocatedResource} class="slds-grid">
+    <!-- Resource Info -->
+    <!-- <div>{rowData.allocatedResource}</div> -->
+    <div
+      class="grid-col--fixed-left slds-col slds-size_1-of-6 slds-p-around_small slds-truncate lwc-resource"
+    >
+      <div class="slds-media slds-media_center">
+        <div if:true={isResource} class="slds-media__figure">
+          <lightning-icon
+            icon-name="action:user"
+            size="xx-small"
+          ></lightning-icon>
+        </div>
+        <div if:true={isProject} class="slds-media__figure">
+          <lightning-icon
+            icon-name="custom:custom85"
+            size="small"
+          ></lightning-icon>
+        </div>
+        <div class="slds-media__body slds-truncate">
+          <div if:false={isProject}>
+            <h3 class="slds-text-body_default">{rowData.name}</h3>
+          </div>
+          <div if:true={isProject}>
+            <a
+              href="#"
+              key={rowData.id}
+              data-id={rowData.id}
+              onclick={navigateToProjectHandler}
+            >
+              {rowData.name}</a
+            >
+          </div>
+          <h3 class="slds-text-body_small slds-text-color_weak">
+            {rowData.subtitle}
+          </h3>
+        </div>
+      </div>
+    </div>
+    <!-- Resource Info -->
+
+    <!-- Days -->
+    <div class="slds-col slds-is-relative">
+      <!-- Time Slots-->
+      <div class="slds-grid slds-is-absolute lwc-timeslots-container">
+        <template for:each={times} for:item="time" for:index="index">
+          <div
+            key={time.start}
+            class={time.class}
+            data-index={index}
+            data-start={time.start}
+            data-end={time.end}
+            ondblclick={handleTimeslotClick}
+            ondragenter={handleDragEnter}
+          >
+            <!-- nothing -->
+          </div>
+        </template>
+      </div>
+      <!-- /Time Slots-->
+
+      <!-- Allocations -->
+      <div class="lwc-allocations-container">
+        <template if:true={isLoading}>
+          <div class="spinner-holder">
+            <lightning-spinner
+              variant="brand"
+              alternative-text="Loading"
+            ></lightning-spinner>
+          </div>
+        </template>
+
+        <template
+          for:each={projects}
+          for:item="project"
+          for:index="projectIndex"
+        >
+          <!-- Project Container -->
+          <div
+            key={project.id}
+            class="slds-is-relative project-container slds-p-around_xx-small"
+          >
+            <template
+              for:each={project.allocations}
+              for:item="allocation"
+              for:index="allocationIndex"
+            >
+              <!-- Task Container -->
+              <div
+                key={allocation.id}
+                class="slds-is-relative project-container slds-p-around_xx-small"
+                onclick={handleTaskEditClick}
+                data-id={allocation.id}
+              >
+                &nbsp;
+                <div key={allocation.id} class={allocation.id}>
+                  <div
+                    title={allocation.name}
+                    class={allocation.class}
+                    style={allocation.style}
+                    data-id={allocation.id}
+                    data-project={projectIndex}
+                    data-allocation={allocationIndex}
+                    draggable="true"
+                    ondragstart={handleDragStart}
+                    ondragend={handleDragEnd}
+                  >
+                    <!-- Allocation Pop-Up -->
+                    <!--div class="slds-col slds-grow-none lwc-pop_up" draggable="false"-->
+
+                    <div class="slds-grid slds-grid_vertical-align-center">
+                      <!-- Allocation Left Handle -->
+                      <div
+                        class="slds-col slds-grow-none lwc-allocation_handle handle_left"
+                        draggable="true"
+                        ondragstart={handleLeftDragStart}
+                        data-id={allocation.id}
+                      >
+                        <lightning-icon
+                          icon-name="utility:drag_and_drop"
+                          variant="inverse"
+                          size="x-small"
+                        >
+                        </lightning-icon>
+                      </div>
+                      <!-- /Allocation Left Handle -->
+
+                      <!-- Resource assignment indicator icon -->
+                      <div class="slds-col slds-grow-none slds-col_bump-right">
+                        <!-- <div style="padding-left:2rem;padding-top:5rem;position:relative">
+                                                    <a href="javascript:void(0)" aria-describedby="help">
+                                                        <lightning-icon icon-name="utility:resource_capacity" variant="success" size="x-small"></lightning-icon>
+                                                    </a>
+                                                    <div class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left" role="tooltip" id={allocation.id} style="">
+                                                        <div class="slds-popover__body">
+                                                            Assigned Resources:<br/>1.<br/>2. 
+                                                        </div>
+                                                    </div>
+                                                </div> -->
+                        <!-- <span class="icon-success"> -->
+                        <lightning-helptext
+                          if:true={allocation.hasAssignments}
+                          content={allocation.assignmentString}
+                        >
+                        </lightning-helptext>
+                        <!-- </span> -->
+                        <lightning-helptext
+                          if:false={allocation.hasAssignments}
+                          content={allocation.assignmentString}
+                        >
+                        </lightning-helptext>
+                      </div>
+                      <!-- <div class="slds-truncate lwc-allocation-label slds-align_absolute-center"
+                                            style={allocation.labelStyle}>
+                                                <div if:true={allocation.taskName}>
+                                                    <div class="hasTooltip">{allocation.display}
+                                                        <span>{allocation.popup}</span>  </div>
+                                                </div>
+                                                <span if:false={allocation.taskName}>
+                                                    Unavailable
+                                                </span>
+                                            </div> -->
+                      <!-- Dropdown menu icon -->
+                      <div
+                        class="slds-col slds-grow-none lwc-allocation_actions"
+                      >
+                        <lightning-button-icon
+                          icon-name="utility:down"
+                          variant="bare-inverse"
+                          size="small"
+                          onclick={openAllocationMenu}
+                          data-id={allocation.id}
+                        >
+                        </lightning-button-icon>
+                      </div>
+
+                      <!-- info helptext -->
+                      <div class="lgc-bg">
+                        <lightning-helptext content={allocation.popup}>
+                        </lightning-helptext>
+                      </div>
+
+                      <!-- Allocation Right Handle -->
+                      <div
+                        class="slds-col slds-grow-none lwc-allocation_handle handle_right"
+                        draggable="true"
+                        ondragstart={handleRightDragStart}
+                        data-id={allocation.id}
+                      >
+                        <lightning-icon
+                          icon-name="utility:drag_and_drop"
+                          variant="inverse"
+                          size="x-small"
+                        >
+                        </lightning-icon>
+                      </div>
+                      <!-- /Allocation Right Handle -->
+                    </div>
+                  </div>
+                  <div
+                    class="slds-truncate slds-is-absolute lwc-allocation-label"
+                    style={allocation.labelStyle}
+                  >
+                    <div if:true={allocation.taskName}>
+                      <div class="hasTooltip">
+                        {allocation.display}
+                        <span>{allocation.popup}</span>
+                      </div>
+                    </div>
+                    <span if:false={allocation.taskName}> Unavailable </span>
+                  </div>
+                </div>
+                <!-- /Allocation -->
+              </div>
+            </template>
+          </div>
+          <!-- /Project Container -->
+        </template>
+        <!-- Extra Space -->
+        <div class="slds-is-relative project-container slds-p-around_xx-small">
+          &nbsp;
+        </div>
+        <!-- /Extra Space -->
+      </div>
+      <!-- /Allocations -->
+
+      <!-- Allocation Actions-->
+      <div if:true={menuData.show} class="lwc-allocation-actions-container">
+        <div
+          class="slds-dropdown slds-dropdown_left slds-is-absolute"
+          style={menuData.style}
+        >
+          <ul class="slds-dropdown__list" role="menu" aria-label="Show More">
+            <li
+              class="slds-dropdown__item"
+              role="presentation"
+              onclick={handleModalEditClick}
+              data-id={menuData.allocationId}
+            >
+              <a href="javascript:void(0);" role="menuitem" tabindex="0">
+                <span class="slds-truncate" title="Edit Task">Edit</span>
+              </a>
+            </li>
+            <li
+              class="slds-dropdown__item"
+              role="presentation"
+              data-id={menuData.allocationId}
+            >
+              <a
+                href={menuData.recordLink}
+                target="_blank"
+                role="menuitem"
+                tabindex="0"
+              >
+                <span class="slds-truncate" title="Open Task Record">Open</span>
+              </a>
+            </li>
+            <li
+              class="slds-dropdown__item"
+              role="presentation"
+              onclick={handleMenuDeleteClick}
+            >
+              <a href="javascript:void(0);" role="menuitem" tabindex="-1">
+                <span class="slds-truncate" title="Delete Task">Delete</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- /Allocation Actions-->
+    </div>
+    <!-- /Days -->
+  </div>
+
+  <!-- Add Allocation Modal -->
+  <!-- <c-gantt_chart_modal class="add-allocation-modal">
+        <span slot="title">Add Task Assignment</span>
+        <div slot="body" class="slds-form slds-form_stacked">
+            <lightning-combobox value={addAllocationData.projectId} label="Select Task"
+                placeholder="-- Select Task --" options={addAllocationData.projects}
+                onchange={handleAddAllocationDataChange} data-field="projectId"></lightning-combobox>
+            <lightning-input type="date" value={addAllocationData.startDate} label="Start Date"
+                onchange={handleAddAllocationDataChange} data-field="startDate"></lightning-input>
+            <lightning-input type="date" value={addAllocationData.endDate} label="End Date"
+                onchange={handleAddAllocationDataChange} data-field="endDate"></lightning-input>
+        </div>
+        <lightning-button slot="footer" variant="brand" label="Create Task" onclick={addAllocationModalSuccess}
+            class="slds-m-left_xx-small" disabled={addAllocationData.disabled}></lightning-button>
+    </c-gantt_chart_modal> -->
+  <!-- /Add Allocation Modal -->
+
+  <!-- Edit/Add Task Modal -->
+  <!-- <template if:true={showEditTaskModal}> -->
+  <c-gantt_chart_modal delay="1500" class="edit-allocation-modal">
+    <span slot="title">
+      <!-- {editAllocationData.resourceName} -->
+      <span if:true={editAllocationData.isNew}>Create New </span>
+      <span if:false={editAllocationData.isNew}>Edit </span>
+      Task
+      <!-- <span if:true={editAllocationData.isFullEdit}> {editAllocationData.taskName}</span>
+                <span if:false={editAllocationData.isFullEdit}> (Unavailable)</span> -->
+    </span>
+    <div slot="body" class="slds-form slds-form_stacked">
+      <lightning-record-edit-form
+        object-api-name="CCMI__Milestone_Task__c"
+        record-id={editAllocationData.id}
+      >
+        <!-- Project Name (for edit task)-->
+        <template if:false={editAllocationData.isNew}>
+          <lightning-input
+            type="text"
+            value={editAllocationData.projectName}
+            label="Project Name"
+            onchange={handleEditAllocationDataChange}
+            data-field="projectName"
+            read-only
+          ></lightning-input>
+          <!-- <lightning-output-field id="projectIdOutputField" variant="label-stacked" field-name="CCMI__Milestone_Project__c"
+                            data-field="projectId">
+                        </lightning-output-field> -->
+        </template>
+        <!-- /Project Name (for edit task)-->
+        <!-- Select Project (for new task) -->
+        <template if:true={editAllocationData.isNew}>
+          <!-- <lightning-record-edit-form object-api-name="CCMI__Milestone_Task__c"> -->
+          <!-- <label for="projectIdField">Select Project</label> -->
+          <lightning-input-field
+            id="projectIdField"
+            variant="standard"
+            field-name="CCMI__Milestone_Project__c"
+            value={editAllocationData.projectId}
+            onchange={handleEditAllocationDataChange}
+            data-field="projectId"
+          >
+          </lightning-input-field>
+          <!-- </lightning-record-edit-form> -->
+
+          <!-- <lightning-combobox value={editAllocationData.projectId} label="Select Project"
+                            placeholder="-- Select Project --" options={editAllocationData.projects}
+                            onchange={handleEditAllocationDataChange} data-field="projectId"></lightning-combobox> -->
+        </template>
+        <!-- /Select Project (for new task) -->
+        <!-- Task Name -->
+        <lightning-input
+          type="text"
+          value={editAllocationData.taskName}
+          label="Task Name"
+          onchange={handleEditAllocationDataChange}
+          data-field="taskName"
+          required
+        ></lightning-input>
+        <!-- /Task Name -->
+
+        <lightning-layout>
+          <lightning-layout-item size="6">
+            <!-- Status -->
+            <!-- <lightning-combobox value={editAllocationData.status} label="Status"
+                                options={statusOptions} onchange={handleEditAllocationDataChange} data-field="status">
+                            </lightning-combobox> -->
+            <lightning-input-field
+              id="statusField"
+              variant="label-stacked"
+              field-name="CCMI__Status__c"
+              value={editAllocationData.status}
+              onchange={handleEditAllocationDataChange}
+              data-field="status"
+            >
+            </lightning-input-field>
+            <!-- /Status -->
+          </lightning-layout-item>
+          <lightning-layout-item size="6">
+            <!-- Status -->
+            <!-- <lightning-combobox value={editAllocationData.status} label="Status"
+                                options={statusOptions} onchange={handleEditAllocationDataChange} data-field="status">
+                            </lightning-combobox> -->
+            <lightning-input-field
+              id="areaField"
+              variant="label-stacked"
+              field-name="Project_Area__c"
+              value={editAllocationData.area}
+              onchange={handleEditAllocationDataChange}
+              data-field="area"
+            >
+            </lightning-input-field>
+            <!-- /Status -->
+          </lightning-layout-item>
+        </lightning-layout>
+        <lightning-layout>
+          <lightning-layout-item size="6">
+            <!-- Boris Job? -->
+            <!-- <lightning-record-edit-form object-api-name="CCMI__Milestone_Task__c"> -->
+            <!-- <label for="borisJob">Select Project</label> -->
+            <lightning-input-field
+              id="borisJobField"
+              variant="label-stacked"
+              field-name="BORIS_job__c"
+              value={editAllocationData.borisJob}
+              onchange={handleEditAllocationDataChange}
+              data-field="borisJob"
+            >
+            </lightning-input-field>
+            <!-- </lightning-record-edit-form> -->
+            <!-- /Boris Job? -->
+          </lightning-layout-item>
+          <lightning-layout-item size="6">
+            <!-- Include Weekends? -->
+            <lightning-input-field
+              id="includeWeekendsField"
+              variant="label-stacked"
+              field-name="Include_Weekends__c"
+              value={editAllocationData.includeWeekends}
+              onchange={handleEditAllocationDataChange}
+              data-field="includeWeekends"
+            >
+            </lightning-input-field>
+            <!-- /Include Weekends? -->
+          </lightning-layout-item>
+        </lightning-layout>
+
+        <lightning-layout>
+          <lightning-layout-item size="6">
+            <!-- Start Date -->
+            <lightning-input
+              type="date"
+              value={editAllocationData.startDate}
+              label="Start Date"
+              onchange={handleEditAllocationDataChange}
+              data-field="startDate"
+              required
+            ></lightning-input>
+            <!-- /Start Date -->
+          </lightning-layout-item>
+          <lightning-layout-item size="6">
+            <!-- End Date -->
+            <lightning-input
+              type="date"
+              value={editAllocationData.endDate}
+              label="End Date"
+              onchange={handleEditAllocationDataChange}
+              data-field="endDate"
+              required
+            ></lightning-input>
+            <!-- /End Date -->
+          </lightning-layout-item>
+        </lightning-layout>
+        <lightning-layout>
+          <lightning-layout-item size="6">
+            <!-- Start Time -->
+            <lightning-input
+              type="time"
+              value={editAllocationData.startTime}
+              label="Start Time"
+              onchange={handleEditAllocationDataChange}
+              data-field="startTime"
+              required={editAllocationData.isNew}
+            >
+            </lightning-input>
+            <!-- <lightning-input-field id="startTimeField" variant="label-stacked" field-name="Start_Time__c"
+                                onchange={handleEditAllocationDataChange} data-field="startTime">
+                            </lightning-input-field> -->
+            <!-- /Start Time -->
+          </lightning-layout-item>
+          <lightning-layout-item size="6">
+            <!-- End Time -->
+            <lightning-input
+              type="time"
+              value={editAllocationData.endTime}
+              label="End Time"
+              onchange={handleEditAllocationDataChange}
+              data-field="endTime"
+              required={editAllocationData.isNew}
+            >
+            </lightning-input>
+            <!-- <lightning-input-field id="endTimeField" variant="label-stacked" field-name="End_Time__c"
+                                onchange={handleEditAllocationDataChange} data-field="endTime">
+                            </lightning-input-field> -->
+            <!-- /End Time -->
+          </lightning-layout-item>
+        </lightning-layout>
+
+        <lightning-layout>
+          <lightning-layout-item size="6">
+            <lightning-combobox
+              value={editAllocationData.parentTaskId}
+              label="Parent Task"
+              options={editAllocationData.parentTasks}
+              onchange={parentTaskChangeHandler}
+            >
+            </lightning-combobox>
+          </lightning-layout-item>
+        </lightning-layout>
+      </lightning-record-edit-form>
+
+      <!-- <br/><br/> -->
+      <div
+        class="slds-text-heading_small slds-has-divider_bottom slds-p-around_xx-small slds-m-top_large"
+      >
+        Assigned Resources
+      </div>
+      <template if:true={editAllocationData.hasAssignments}>
+        <ul class="slds-has-dividers_bottom-space">
+          <template
+            for:each={editAllocationData.assignments}
+            for:item="assignment"
+          >
+            <li key={assignment.ownerId} class="slds-item">
+              <div>
+                <lightning-icon
+                  icon-name="standard:user"
+                  size="x-small"
+                  style="vertical-align: bottom"
+                >
+                </lightning-icon>
+                <span style="padding-left: 5px">{assignment.ownerName}</span>
+                <a
+                  href="javascript:void(0);"
+                  style="float: right"
+                  title="Remove Assignment"
+                  onclick={handleRemoveAssignment}
+                  data-id={assignment.ownerId}
+                >
+                  <lightning-icon
+                    icon-name="utility:close"
+                    size="x-small"
+                  ></lightning-icon>
+                </a>
+              </div>
+            </li>
+          </template>
+        </ul>
+      </template>
+      <div
+        if:false={editAllocationData.hasAssignments}
+        class="slds-p-around_medium"
+      >
+        <span class="slds-text-color_weak">No resources assigned</span>
+      </div>
+
+      <!-- <br/> -->
+
+      <!-- <div class="slds-text-heading_small slds-has-divider_bottom slds-p-around_xx-small">Add New Resources</div>
+                <lightning-combobox value={editAllocationData.newResourceId} class="add-assignment-select"
+                    placeholder="-- Select Resource --" options={editAllocationData.availableResources}
+                    onchange={handleEditAllocationDataChange} data-field="newResourceId">
+                </lightning-combobox> -->
+
+      <div class="slds-m-top_small">
+        <label class="slds-form-element__label slds-p-left_xx-small"
+          >Select Resource</label
+        >
+        <c-custom-lookup
+          field-name="Name"
+          object-name="User"
+          criteria="Project_Resource__c = true"
+          order-by="Name"
+          icon-name="standard:user"
+          onselect={handleNewResourceSelection}
+          onremove={handleNewResourceRemoval}
+        >
+        </c-custom-lookup>
+      </div>
+
+      <!--Start  WI - 00500 -->
+      <div class="slds-m-top_small">
+        <label class="slds-form-element__label slds-p-left_xx-small"
+          >Select Team</label
+        >
+        <c-custom-lookup
+          field-name="Team_Label__c"
+          object-name="Team__c"
+          criteria=""
+          order-by="Name"
+          icon-name="standard:groups"
+          onselect={handleNewResourceSelection}
+          onremove={handleNewResourceRemoval}
+        >
+        </c-custom-lookup>
+      </div>
+      <!--End  WI - 00500 -->
+      <!-- <div>
+                    <lightning-record-edit-form object-api-name="CCMI__Milestone_Task__c">
+                        <label for="fieldid">Select Resource</label>
+                        <lightning-input-field id="fieldid" variant="label-hidden" required={required} field-name="Add_Assignee__c"
+                            value={editAllocationData.newResourceId} onchange={handleEditAllocationDataChange} data-field="newResourceId">
+                        </lightning-input-field>
+                    </lightning-record-edit-form>
+                </div> -->
+
+      <lightning-button
+        variant="brand"
+        label="Add Resource"
+        class="slds-m-around_xx-small slds-m-bottom_large"
+        onclick={handleAddAssignment}
+      >
+      </lightning-button>
+
+      <div class="slds-m-vertical_x-large slds-p-vertical_x-large"></div>
+    </div>
+    <!-- only for existing records -->
+    <template if:false={editAllocationData.isNew}>
+      <lightning-button
+        slot="footer"
+        variant="brand"
+        label="Open Record"
+        data-id={editAllocationData.id}
+        onclick={navigateToRecordClickHandler}
+        class="slds-m-left_xx-small"
+      >
+      </lightning-button>
+      <lightning-button
+        slot="footer"
+        variant="brand"
+        label="Delete"
+        onclick={deleteAllocationClickHanlder}
+        class="slds-m-left_xx-small"
+      >
+      </lightning-button>
+    </template>
+
+    <lightning-button
+      slot="footer"
+      variant="brand"
+      label="Save"
+      onclick={editAllocationModalSuccess}
+      class="slds-m-left_xx-small"
+      disabled={editAllocationData.disabled}
+    >
+    </lightning-button>
+  </c-gantt_chart_modal>
+  <!-- </template> -->
+  <!-- /Edit Modal -->
+
+  <!-- Delete Modal -->
+  <c-gantt_chart_modal class="delete-modal">
+    <span slot="title">Confirm Delete</span>
+    <p slot="body">Are you sure you want to delete this task?</p>
+    <lightning-button
+      slot="footer"
+      variant="destructive"
+      label="Delete"
+      class="slds-m-left_xx-small"
+      onclick={handleMenuDeleteSuccess}
+    ></lightning-button>
+  </c-gantt_chart_modal>
+</template>

@@ -1,0 +1,27 @@
+@isTest
+private class BorisPlannerOUTExportController_Test{
+  @testSetup
+  static void setupTestData(){
+    test.startTest();
+    BORIS_Planner_OUT__c boris_planner_out_Obj = new BORIS_Planner_OUT__c(CustomerId__c = 'Custo380', LocationId__c = 'Locat234', Job__c = 'Job__c682', Site__c = 'Site__c682', Team__c = 'Team__c904', UserId__c = 'UserI217', Integration_Status__c = 'New', Processed__c = false, Note__c = 'Note__c497', Material_Request_Id__c = 'Mater256', Job_Number__c = 'Job_N467', PO_Number__c = 'PO_Nu445', Project_Manager__c = 'Proje499', BORIS_Codes__c = '27', Status__c = 'Draft', WorkOrderId__c = 'WorkO668', DefinitionPK__c = 'Defin965', Operation__c = 'Opera320', End_Date__c = DateTime.now(), Start_Date__c = DateTime.now(), DurationMins__c = 34, Notes__c = 'Notes__c427', WorkOrderDateTime__c = 'WorkO400');
+    Insert boris_planner_out_Obj; 
+    test.stopTest();
+  }
+  static testMethod void test_doExport_UseCase1(){
+    List<BORIS_Planner_OUT__c> boris_planner_out_Obj  =  [SELECT Id,IsDeleted,Name,CreatedDate,CreatedById,LastModifiedDate,LastModifiedById,SystemModstamp,LastViewedDate,LastReferencedDate,CustomerId__c,LocationId__c,Job__c,Site__c,Team__c,UserId__c,Integration_Status__c,Processed__c,Note__c,Material_Request_Id__c,Job_Number__c,Project_Id__c,PO_Number__c,Project_Manager__c,Project_Task__c,BORIS_Codes__c,Status__c,WorkOrderId__c,DefinitionPK__c,Operation__c,End_Date__c,Start_Date__c,DurationMins__c,Notes__c,WorkOrderDateTime__c from BORIS_Planner_OUT__c];
+    System.assertEquals(true,boris_planner_out_Obj.size()>0);
+    BorisPlannerOUTExportController obj01 = new BorisPlannerOUTExportController();
+    string year = '2020';
+    string month = '12';
+    string day = '17';
+    string hour = '00';
+    string minute = '00';
+    string second = '00';
+    string startDate = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+    String filterStr = '{"disabled":false,"message":"","projects":[{"id":"a0s3H000000GpSbQAK","name":"Peter Test 9 Nov 2020"}],"resources":[],"roles":[],"status":"","type":"","area":"","projManager":{"id":"","name":""},"account":{"id":"","name":""},"projectOptions":[],"resourceOptions":[],"roleOptions":[],"statusOptions":[{"label":"--All--","value":""},{"attributes":null,"label":"Not Started","validFor":[],"value":"Not Started"},{"attributes":null,"label":"In Progress","validFor":[],"value":"In Progress"},{"attributes":null,"label":"Wayleaves Progress Up to POC","validFor":[],"value":"Wayleaves Progress Up to POC"},{"attributes":null,"label":"Awaiting Customer Call Back","validFor":[],"value":"Awaiting Customer Call Back"},{"attributes":null,"label":"On-hold","validFor":[],"value":"On-hold"},{"attributes":null,"label":"Wayleaves On Hold","validFor":[],"value":"Wayleaves On Hold"},{"attributes":null,"label":"On Planner","validFor":[],"value":"On Planner"},{"attributes":null,"label":"Cancelled","validFor":[],"value":"Cancelled"},{"attributes":null,"label":"Completed","validFor":[],"value":"Completed"}],"typeOptions":[{"label":"--All--","value":""},{"attributes":null,"label":"Charge Points","validFor":[],"value":"Charge Points"},{"attributes":null,"label":"Electric","validFor":[],"value":"Electric"},{"attributes":null,"label":"Gas","validFor":[],"value":"Gas"},{"attributes":null,"label":"MU","validFor":[],"value":"MU"},{"attributes":null,"label":"Street Lighting","validFor":[],"value":"Street Lighting"},{"attributes":null,"label":"Water","validFor":[],"value":"Water"},{"attributes":null,"label":"Dual Fuel","validFor":[],"value":"Dual Fuel"},{"attributes":null,"label":"Self-Lay Mains","validFor":[],"value":"Self-Lay Mains"},{"attributes":null,"label":"Temporary Building Supply","validFor":[],"value":"Temporary Building Supply"},{"attributes":null,"label":"SSE Connections","validFor":[],"value":"SSE Connections"},{"attributes":null,"label":"SSEN Minor Works","validFor":[],"value":"SSEN Minor Works"},{"attributes":null,"label":"SSEN Service Alterations","validFor":[],"value":"SSEN Service Alterations"}],"areaOptions":[{"label":"--All--","value":""},{"attributes":null,"label":"SSEN Connections","validFor":[],"value":"SSEN Connections"},{"attributes":null,"label":"SSEN Minor Works","validFor":[],"value":"SSEN Minor Works"},{"attributes":null,"label":"SSEN Service Alterations","validFor":[],"value":"SSEN Service Alterations"},{"attributes":null,"label":"SSE Depots","validFor":[],"value":"SSE Depots"},{"attributes":null,"label":"NON SSEN","validFor":[],"value":"NON SSEN"},{"attributes":null,"label":"Civils / Excavation","validFor":[],"value":"Civils / Excavation"},{"attributes":null,"label":"OHL","validFor":[],"value":"OHL"},{"attributes":null,"label":"Jointing","validFor":[],"value":"Jointing"},{"attributes":null,"label":"PM’s","validFor":[],"value":"PM’s"},{"attributes":null,"label":"Auditors","validFor":[],"value":"Auditors"},{"attributes":null,"label":"Surveyors","validFor":[],"value":"Surveyors"},{"attributes":null,"label":"Holiday / Not Available","validFor":[],"value":"Holiday / Not Available"},{"attributes":null,"label":"Sick","validFor":[],"value":"Sick"},{"attributes":null,"label":"Furlough","validFor":[],"value":"Furlough"}]}';
+
+ 
+
+    BorisPlannerOUTExportController.doExport(startDate,startDate, filterStr);
+  }
+}

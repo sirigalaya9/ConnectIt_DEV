@@ -1,0 +1,89 @@
+<apex:page >
+
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.js" integrity="sha512-FHa4dxvEkSR0LOFH/iFH0iSqlYHf/iTwLc5Ws/1Su1W90X0qnxFxciJimoue/zyOA/+Qz/XQmmKqjbubAAzpkA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.css" integrity="sha512-NCJ1O5tCMq4DK670CblvRiob3bb5PAxJ7MALAz2cV40T9RgNMrJSAwJKy0oz20Wu7TDn9Z2WnveirOeHmpaIlA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <style>
+            /* Ensure the size of the image fit the container perfectly */
+
+            img {
+                display: block;
+
+                /* This rule is very important, please don't ignore this */
+                max-width: 100%;
+            }
+        </style>
+
+    </head>
+
+    <body>
+
+        <div>
+            <img id="image" src="">
+            </img>
+            <img id="cropped" src=""></img>
+            <!--<button onclick="crop();">Crop</button>-->
+        </div>
+        <script>
+            /*const image = document.getElementById('image');
+            const cropper = new Cropper(image, {
+                aspectRatio: 16 / 9,
+                crop(event) {
+                    console.log(event.detail.x);
+                    console.log(event.detail.y);
+                    console.log(event.detail.width);
+                    console.log(event.detail.height);
+                    console.log(event.detail.rotate);
+                    console.log(event.detail.scaleX);
+                    console.log(event.detail.scaleY);
+                },
+            });*/
+            let cropper;
+            function crop() {
+                let imageData = cropper.getCroppedCanvas().toDataURL();
+                console.log(imageData);
+                document.getElementById('cropped').src = imageData;
+                var message = {image: imageData, type: '{!$CurrentPage.parameters.type}', id: '{!$CurrentPage.parameters.id}'};
+                window.parent.postMessage(message, "*");
+            }
+            window.addEventListener("message", function (event) {
+                if (event.data.type == '{!$CurrentPage.parameters.type}' && event.data.id == '{!$CurrentPage.parameters.id}') {
+                    console.log("VF");
+                    console.log(event.data.image);
+                    const image = document.getElementById('image');
+                    image.src = event.data.image;
+                    cropper = new Cropper(image, {
+                        //aspectRatio: 16 / 9,
+                        crop(event) {
+                            /*
+                            console.log(event.detail.x);
+                            console.log(event.detail.y);
+                            console.log(event.detail.width);
+                            console.log(event.detail.height);
+                            console.log(event.detail.rotate);
+                            console.log(event.detail.scaleX);
+                            console.log(event.detail.scaleY);
+                            */
+                            let imageData = cropper.getCroppedCanvas().toDataURL();
+                            //console.log(imageData);
+                            //document.getElementById('cropped').src = imageData;
+                            var message = {image: imageData, type: '{!$CurrentPage.parameters.type}', id: '{!$CurrentPage.parameters.id}'};
+                            window.parent.postMessage(message, "*");
+                            /*
+                            if (event.origin === lexOrigin) {
+                                var receivedfromLWC = event.data;
+                                var output = document.querySelector("#output");
+                                output.innerHTML = receivedfromLWC;
+                            }
+                            */
+                        },
+                    });
+                }
+
+
+            });                        
+        </script>
+    </body>
+</apex:page>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>52.0</apiVersion>
+    <availableInTouch>false</availableInTouch>
+    <confirmationTokenRequired>false</confirmationTokenRequired>
+    <description>Code provided by Lee Sadler. The old apex class &amp; vf page which will help with the various  checklists and other elements of the estimate.
+Some fields in this page no longer exists so they have been unmerged.</description>
+    <label>quote_pdf</label>
+</ApexPage>

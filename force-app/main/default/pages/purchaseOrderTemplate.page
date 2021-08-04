@@ -1,0 +1,170 @@
+<apex:page standardController="Purchase_Order__c" applyHTMLTag="false" applyBodyTag="false" showHeader="false" sidebar="false" renderAs="pdf">
+    
+    <head>
+        <style type="text/css" media="print">
+            @page {
+                   margin-bottom:5cm;
+                   @bottom-center {
+                                content: element(footer);
+                               }
+                  }
+                                              
+                div.footer {
+                    display:block;
+                    height:100px;
+                    position: running(footer);              
+                }
+       table {
+            font-family: verdana,arial,sans-serif;
+            width: 100%;
+            border: 1px solid black;
+            border-spacing:0px;
+           
+            }  
+         th {
+             border: 0.2px solid black;
+             padding:5px;
+             font-size: 13px;
+             }           
+         td {
+            border: 0.2px solid black;
+            padding:5px;
+            font-size: 13px;
+            }
+         td.header2 {
+            font-weight:bold;
+            }
+         tr.header {
+            text-align:center;
+            font-size: 14px;
+            font-weight:bold;
+            }
+          tr.other {
+            font-size: 12px;
+            }   
+            table.lines {
+                text-align: center;
+                border-spacing: 0px;
+            }  
+            table.total {
+                text-align: center;
+                width: 50%;
+                margin-right: 0px;
+                margin-left: auto;
+            }      
+                       
+            table.footer {
+                border: 0px;
+                font-family: verdana,arial,sans-serif;
+                color: #37383a;
+                padding:0px;
+                margin:0px;
+                border-collapse: collapse;
+                
+            }
+            
+            h2{
+                font-family: verdana,arial,sans-serif;
+                text-align:center;
+            }
+            h3{
+                font-family: verdana,arial,sans-serif;
+                text-align:center;
+            }
+            td.footer{
+                border: 0px;
+                cell-spacing:0px;
+                padding:0px;
+                margin:0px;
+                border-collapse: collapse;
+                text-align:left;
+                font-size: 10px;
+            }
+            td.footer2{
+                border: 0px;
+                cell-spacing:0px;
+                padding:0px;
+                margin:0px;
+                border-collapse: collapse;
+                text-align:right;
+                font-size: 10px;
+            }
+            
+                </style> 
+     </head> 
+        
+<body>
+        <div>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+          
+    
+        <apex:image id="logo" value="{!$Resource.ConnectITLogo2}" width="50%" /> 
+        <br/>
+        <br/> 
+        <h2>Purchase Order</h2>
+        </div>
+        
+       <div>
+        <br/>
+        <br/>    
+                   
+        <table>
+                <tr>
+                    <td>FAO: {!Purchase_Order__c.Supplier_Contact__r.Name}</td><th>PO Number:</th><td><apex:outputText value="{!Purchase_Order__c.Name}"/></td>
+                </tr>
+                <tr class="other">
+                    <td rowspan="5"><apex:outputText value="{!Purchase_Order__c.Supplier__r.Name}"/><br/>
+                    <apex:outputText value="{!Purchase_Order__c.Supplier__r.BillingStreet}"/><br/>
+                    <apex:outputText value="{!Purchase_Order__c.Supplier__r.BillingCity}"/><br/>
+                    <apex:outputText value="{!Purchase_Order__c.Supplier__r.BillingPostalCode}"/><br/>
+                    <apex:outputText value="{!Purchase_Order__c.Supplier__r.BillingCountry}"/>  </td>
+                    <th>Date:</th><td><apex:outputField value="{!Purchase_Order__c.Date__c}"/></td>
+                </tr>
+                <tr class="other"><th>Delivery Date:</th><td><apex:outputField value="{!Purchase_Order__c.Date_Expected_Delivery__c}"/></td>
+                </tr>
+                <tr class="other"><th >Project:</th><td><apex:outputField value="{!Purchase_Order__c.Milestone_Project__r.Name}"/></td>
+                </tr>
+                <tr class="other"><th >Total Cost:</th><td><apex:outputField value="{!Purchase_Order__c.Total_Cost__c}"/></td>
+                </tr>
+        </table>    
+        <br/>
+        <br/>
+               
+        </div>
+    
+        <div>
+        <h3>Line Items</h3>  
+       
+         
+        <table class="lines" style="{!IF(Purchase_Order__c.Purchase_Order_Line_Items__r.size > 0,'','display: none;')}">
+            <tr><th style="width:50%">Description</th><th>Unit Cost</th><th>Quantity</th><th>Total Cost</th></tr>
+            <apex:repeat value="{!Purchase_Order__c.Purchase_Order_Line_Items__r}" var="poli">
+            <tr><td style="text-align:left">{!poli.Product_Description__c}</td>
+            <td>£<apex:outputText value="{0, number, ###,###.00}"><apex:param value="{!poli.Unit_Cost__c}"/></apex:outputText></td>
+            <td><apex:outputText value="{0, number, ###,###.##}"><apex:param value="{!poli.Quantity__c}"/></apex:outputText></td>
+            <td>£<apex:outputText value="{0, number, ###,###.00}"><apex:param value="{!poli.Total_Cost__c}"/></apex:outputText></td></tr>
+            </apex:repeat> 
+           
+        </table>
+        
+                  
+         </div>    
+      
+        <div class="footer">
+             <table class="footer">
+                 <tr><td class="footer">VAT No</td><td class="footer2">Bank</td></tr>
+                 <tr><td class="footer">Company No </td><td class="footer2">Account Number  </td></tr>
+                 <tr><td class="footer">Connect IT Utility Services</td><td class="footer2">Sort Code</td></tr>
+                <tr><td class="footer">Foundation House Unit C (West) Hamilton Business Park, Hamilton Way, Hedge End,Southampton</td><td class="footer2">Swift Code</td></tr>
+                 <tr><td class="footer">Hampshire, SO30 2JR Tel  01489 346444</td><td class="footer2">IBAN</td></tr>
+                                 
+             </table> 
+                 
+          </div>  
+                        
+      </body> 
+    
+</apex:page>

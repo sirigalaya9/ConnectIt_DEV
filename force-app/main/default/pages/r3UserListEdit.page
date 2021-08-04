@@ -1,0 +1,112 @@
+<apex:page standardController="User" recordSetVar="users" lightningStylesheets="true" extensions="r3UserListEdit">
+
+<head>
+<style>
+h1 {text-align: center;}
+</style>
+</head>
+
+    <apex:form id="UserPage">
+                <h1>Gantt Resource Update Page</h1>
+        <!-- VIEW MODE -->
+        <apex:pageBlock rendered="{!NOT(EditMode)}">
+            <apex:pageBlockSection columns="1">
+                <apex:selectList label="Filter:" size="1" value="{!whereClause}">
+                    <apex:actionSupport event="onchange" action="{!getUsers}" rerender="UserPage"/>
+                 <!--      <apex:selectOption itemLabel="All Users"             itemValue="(isActive = true)" ></apex:selectOption>
+                    <apex:selectOption itemLabel="Without Employee Type" itemValue="(Employment_Type__c = null)" ></apex:selectOption>
+                    <apex:selectOption itemLabel="Employees"             itemValue="(Employment_Type__c = 'Employee')" ></apex:selectOption>
+                    <apex:selectOption itemLabel="Contractors"           itemValue="(Employment_Type__c = 'Contractor')" ></apex:selectOption>
+                    <apex:selectOption itemLabel="Leavers"               itemValue="(IsActive = False)" ></apex:selectOption> -->
+                    <apex:selectOption itemLabel="Non Office Staff"      itemValue="(Office_Staff_Y_N__c = False)" ></apex:selectOption> 
+                    <apex:selectOption itemLabel="Project Resources"     itemValue="(Project_Resource__c = True)" ></apex:selectOption>
+                </apex:selectList>
+            </apex:pageBlockSection>
+
+    
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Edit" action="{!onEdit}"/>
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockTable value="{!users}" var="usr">
+
+                <apex:column headerValue="{!$ObjectType.User.Fields.Name.Label}" >
+                    <apex:facet name="header">   
+                        <apex:commandLink action="{!getUsers}" value="{!$ObjectType.User.Fields.Name.Label}{!IF(sortExpression=='Name',IF(sortDirection='ASC','▼','▲'),'')}" >
+                            <apex:param value="Name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                        </apex:commandLink>
+                    </apex:facet>
+                   <apex:outputLink value="{!URLFOR($Action.User.View,usr.id)}" target="_parent">
+                        {!usr.Name} 
+                    </apex:outputLink> 
+                </apex:column>
+
+           <!--     <apex:column headerValue="{!$ObjectType.User.Fields.Username.Label}">
+                    <apex:facet name="header">   
+                        <apex:commandLink action="{!getUsers}" value="{!$ObjectType.User.Fields.Username.Label}{!IF(sortExpression=='Username',IF(sortDirection='ASC','▼','▲'),'')}" >
+                            <apex:param value="Username" name="column" assignTo="{!sortExpression}" ></apex:param>
+                        </apex:commandLink>
+                    </apex:facet>
+                    <apex:outputField value="{!usr.username}"/>
+                </apex:column>  -->
+                
+                <apex:column headerValue="{!$ObjectType.User.Fields.job_title__c.label}">
+                    <apex:outputField value="{!usr.job_title__c}"/>
+                </apex:column>
+                
+                <apex:column headerValue="{!$ObjectType.User.Fields.Office_Staff_Y_N__c.Label}">  
+                    <apex:outputField value="{!usr.Office_Staff_Y_N__c}"/>
+                </apex:column>
+                
+                
+                <apex:column headerValue="{!$ObjectType.User.Fields.Project_Resource__c.label}">
+                    <apex:outputField value="{!usr.Project_Resource__c}"/>
+                </apex:column>
+                
+                <apex:column headerValue="{!$ObjectType.User.Fields.Capable_of_Working_From_Home__c.label}">
+                    <apex:outputField value="{!usr.Capable_of_Working_From_Home__c}"/> 
+                </apex:column> -->
+
+                <apex:column headerValue="{!$ObjectType.User.Fields.Working_from_Home_restrictions__c.label}">
+                    <apex:outputField value="{!usr.Working_from_Home_restrictions__c}"/> 
+                </apex:column> -->
+
+            </apex:pageBlockTable>     
+        </apex:pageBlock>
+
+
+        <!-- EDIT MODE -->
+        <apex:pageBlock rendered="{!EditMode}">
+            <apex:pageMessages />
+                <apex:pageBlockButtons >
+                    <apex:commandButton value="Save" action="{!onSave}"/>
+                    <apex:commandButton value="Cancel" action="{!onCancel}" immediate="true"/>
+                </apex:pageBlockButtons>
+                <apex:pageBlockTable value="{!users}" var="usr">
+
+                   <apex:column value="{!usr.name}"/>
+                    
+                   <apex:column headerValue="{!$ObjectType.User.Fields.job_title__c.label}">
+                      <apex:inputfield value="{!usr.job_title__c}"/>
+                   </apex:column>
+
+                    <apex:column headerValue="{!$ObjectType.User.Fields.Office_Staff_Y_N__c.Label}">
+                        <apex:inputField value="{!usr.Office_Staff_Y_N__c}"/>
+                    </apex:column>
+                    
+                <apex:column headerValue="{!$ObjectType.User.Fields.Capable_of_Working_From_Home__c.label}">
+                    <apex:inputfield value="{!usr.Capable_of_Working_From_Home__c}"/> 
+                </apex:column> 
+
+                <apex:column headerValue="{!$ObjectType.User.Fields.Working_from_Home_restrictions__c.label}">
+                    <apex:inputField value="{!usr.Working_from_Home_restrictions__c}"/> 
+                </apex:column> 
+                  
+      
+                </apex:pageBlockTable>     
+            </apex:pageBlock>
+        </apex:form>
+                
+ 
+                   
+</apex:page>

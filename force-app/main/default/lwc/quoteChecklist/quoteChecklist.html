@@ -1,0 +1,76 @@
+<template>
+    <div>
+        <lightning-accordion onsectiontoggle={handleToggleSection} active-section-name={activeSectionName}>
+
+            <template for:each={areas} for:item="area">
+                <lightning-accordion-section name={area.name} label={area.name} key={area.name}>
+
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th class="col-0" scope="col">
+                                    <div class="slds-truncate"></div>
+                                </th>
+                                <th class="col-1" scope="col">
+                                    <div class="slds-truncate" title="Title">Title</div>
+                                </th>
+                                <th class="col-2" scope="col">
+                                    <div class="slds-truncate" title="Responsibility">Responsibility</div>
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <template for:each={area.items} for:item="item">
+                                <tr key={item.Id}>
+                                    <td>
+                                        <lightning-icon icon-name="action:close" size="xx-small"
+                                            alternative-text="Remove" title="Remove" style="cursor:pointer"
+                                            onclick={removeItem} data-id={item.Id} data-area={area.name}>
+                                        </lightning-icon>
+                                    </td>
+                                    <td>
+                                        <lightning-input variant="label-hidden" type="text" value={item.Title__c}
+                                            data-id={item.Id} data-area={area.name} onchange={handleTitleChanged}>
+                                        </lightning-input>
+                                    </td>
+                                    <td>
+                                        <lightning-record-edit-form object-api-name="Estimate_Checklist__c">
+                                            <lightning-input-field field-name="Responsibility__c" variant="label-hidden"
+                                                value={item.Responsibility__c} data-id={item.Id} data-area={area.name}
+                                                onchange={handleResponsibilityChanged}></lightning-input-field>
+                                        </lightning-record-edit-form>
+                                    </td>
+                                </tr>
+                            </template>
+                            <tr>
+                                <td colspan="3">
+                                    <lightning-button label="Add Checklist Item" onclick={addItem}
+                                        data-area={area.name}>
+                                    </lightning-button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </lightning-accordion-section>
+
+            </template>
+
+        </lightning-accordion>
+
+        <div class="slds-align_absolute-center slds-p-around_small">
+            <lightning-button label="Reset" onclick={resetItems}>
+            </lightning-button>
+            &nbsp;
+            <lightning-button label="Save" onclick={saveItems} variant="brand">
+            </lightning-button>
+        </div>
+
+        <template if:true={showSpinner}>
+            <lightning-spinner alternative-text="Loading" size="large" variant="brand"></lightning-spinner>
+        </template>
+
+    </div>
+
+</template>

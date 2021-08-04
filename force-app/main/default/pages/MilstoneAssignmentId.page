@@ -1,0 +1,4 @@
+<apex:page showHeader="false" showChat="false" 
+ standardController="CCMI__Milestone_Assignment__c" sidebar="false" lightningStylesheets="true">
+{!CCMI__Milestone_Assignment__c.Project_Id__c}
+</apex:page>
