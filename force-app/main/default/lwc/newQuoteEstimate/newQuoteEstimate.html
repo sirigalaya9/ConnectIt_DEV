@@ -164,7 +164,8 @@
                                                 value={opp_Project} class="slds-hide" data-utilitytype="all-scheme">
                                             </lightning-input-field>
 
-                                            <lightning-accordion active-section-name='Plot Types' allow-multiple-sections-open>
+                                            <lightning-accordion active-section-name='Plot Types'
+                                                allow-multiple-sections-open>
                                                 <lightning-accordion-section name='Plot Types' label='Plot Types'
                                                     key={scheme.utilityType}>
                                                     <div>
@@ -172,13 +173,7 @@
                                                     </div>
                                                     <lightning-layout>
 
-                                                        <lightning-layout-item flexibility="auto">
-                                                            <lightning-input-field field-name="No_of_Commercial__c"
-                                                                class="electric-scheme"
-                                                                data-utilitytype="electric-scheme-plot"
-                                                                onchange={calculatePlots}>
-                                                            </lightning-input-field>
-                                                        </lightning-layout-item>
+
                                                         <lightning-layout-item flexibility="auto">
                                                             <lightning-input-field field-name="No_of_Houses__c"
                                                                 class="electric-scheme"
@@ -186,13 +181,7 @@
                                                                 onchange={calculatePlots}>
                                                             </lightning-input-field>
                                                         </lightning-layout-item>
-                                                        <lightning-layout-item flexibility="auto">
-                                                            <lightning-input-field field-name="No_of_Landlord__c"
-                                                                class="electric-scheme"
-                                                                data-utilitytype="electric-scheme-plot"
-                                                                onchange={calculatePlots}>
-                                                            </lightning-input-field>
-                                                        </lightning-layout-item>
+
 
                                                         <lightning-layout-item flexibility="auto">
                                                             <lightning-input-field field-name="No_of_Flats__c"
@@ -205,29 +194,47 @@
                                                         <lightning-layout-item flexibility="auto">
                                                             <lightning-input-field field-name="No_of_TBS__c"
                                                                 class="electric-scheme"
-                                                                data-utilitytype="gas-scheme-plot"
+                                                                data-utilitytype="electric-scheme-plot"
                                                                 onchange={calculatePlots}>
                                                             </lightning-input-field>
                                                         </lightning-layout-item>
                                                     </lightning-layout>
+
+                                                    <lightning-layout>
+                                                        <lightning-layout-item size="4">
+                                                            <lightning-input-field field-name="No_of_Commercial__c"
+                                                                class="electric-scheme"
+                                                                data-utilitytype="electric-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                            <template if:true={showElectricCommercial}>
+                                                                <c-commercial-breakdown scheme-type-name='Commercial'
+                                                                    utility-type='Electric' parent-id={scheme.recordId}
+                                                                    number-of-plot={electricCommercialNumberofPlots}>
+                                                                </c-commercial-breakdown>
+                                                            </template>
+                                                        </lightning-layout-item>
+                                                        <lightning-layout-item size="4">
+                                                            <lightning-input-field field-name="No_of_Landlord__c"
+                                                                class="electric-scheme"
+                                                                data-utilitytype="electric-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                            <template if:true={showElectricLandlords}>
+                                                                <c-commercial-breakdown scheme-type-name='Landlords'
+                                                                    utility-type='Electric' parent-id={scheme.recordId}
+                                                                    number-of-plot='2'>
+                                                                </c-commercial-breakdown>
+                                                            </template>
+                                                        </lightning-layout-item>
+
+
+                                                    </lightning-layout>
+
                                                 </lightning-accordion-section>
                                             </lightning-accordion>
 
                                             <lightning-layout multiple-rows>
-
-                                                <!--class="slds-p-left_x-large"-->
-
-                                                <!--<lightning-input-field field-name="Rule__c" data-utilitytype="electric-scheme" class="slds-hide" value={rule_eletric}>
-                                                        </lightning-input-field>
-
-                                                    <lightning-layout-item size="4" class="slds-p-left_x-large">
-                                                        <c-lookup label="Rule" onsearch={handleSearchRule} onclick={handleSearchRule}
-                                                            onselectionchange={handleSelectionRuleChange}
-                                                            placeholder='Search Rules..' scroll-after-n-items="10" data-selectedutility="Electric"
-                                                            class="electric-scheme" data-utilitytype="electric-scheme">
-                                                        </c-lookup>
-                                                    </lightning-layout-item>-->
-
 
                                                 <!--<lightning-layout-item size="3">
                                                     <lightning-input-field field-name="Units_Type__c" required="true"
@@ -235,36 +242,31 @@
                                                     </lightning-input-field>
                                                 </lightning-layout-item>-->
 
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="Product_Family__c"
                                                         class="electric-scheme" data-utilitytype="electric-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
-                                                <!--<lightning-layout-item size="3">
-                                                    <lightning-input-field field-name="Metering_Voltage__c"
-                                                        class="electric-scheme" data-utilitytype="electric-scheme"
-                                                        required="true"></lightning-input-field>
-                                                </lightning-layout-item>-->
 
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="Asset_Value__c"
                                                         class="electric-scheme" data-utilitytype="electric-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="Non_Contestable_Cost__c"
                                                         class="electric-scheme" data-utilitytype="electric-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="DNO__c" class="electric-scheme"
                                                         data-utilitytype="electric-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="IDNO__c" class="electric-scheme"
                                                         data-utilitytype="electric-scheme">
                                                     </lightning-input-field>
@@ -280,7 +282,7 @@
                                                     </lightning-input-field>
                                                 </lightning-layout-item>-->
 
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="4" class="slds-form-element_stacked">
                                                     <label class='slds-form-element__label' for={scheme.utilityType}>POC
                                                         to Boundary (m)</label>
                                                     <lightning-input-field id={scheme.utilityType}
@@ -288,34 +290,19 @@
                                                         data-utilitytype="electric-scheme" variant="label-hidden">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="No_of_Joint_Bays__c"
+                                                        class="electric-scheme" data-utilitytype="electric-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="4">
+                                                    <lightning-input-field field-name="Total_Load_kVA__c"
                                                         class="electric-scheme" data-utilitytype="electric-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
 
-                                                <lightning-layout-item size="3">
-                                                    <lightning-input-field field-name="POC__c" required="true"
-                                                        class="electric-scheme" data-utilitytype="electric-scheme"
-                                                        onchange={pocTypeChange}>
-                                                    </lightning-input-field>
-                                                </lightning-layout-item>
-                                                <template if:true={isHV}>
-                                                    <lightning-layout-item size="3">
-                                                        <lightning-input-field field-name="Number_of_Substations__c"
-                                                            class="electric-scheme" data-utilitytype="electric-scheme">
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
-                                                </template>
-                                                <template if:true={isLV}>
-                                                    <lightning-layout-item size="3">
-                                                        <lightning-input-field field-name="Number_of_Link_Boxes__c"
-                                                            class="electric-scheme" data-utilitytype="electric-scheme">
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
-                                                </template>
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="Traffic_Management__c"
                                                         class="electric-scheme" data-utilitytype="electric-scheme">
                                                     </lightning-input-field>
@@ -331,35 +318,53 @@
                                                     </lightning-input-field>
                                                 </lightning-layout-item>-->
 
-                                                <lightning-layout-item size="3">
+
+                                                <lightning-layout-item size="4">
+                                                    <lightning-input-field field-name="POC__c" required="true"
+                                                        class="electric-scheme" data-utilitytype="electric-scheme"
+                                                        onchange={pocTypeChange}>
+                                                    </lightning-input-field>
+                                                    <c-commercial-breakdown scheme-type-name='Substation'
+                                                        utility-type='Electric' parent-id='a1y3G000000MirrQAC'
+                                                        number-of-plot='5'>
+                                                    </c-commercial-breakdown>
+                                                </lightning-layout-item>
+                                                <template if:true={isHV}>
+                                                    <lightning-layout-item size="4">
+                                                        <lightning-input-field field-name="Number_of_Substations__c"
+                                                            class="electric-scheme" data-utilitytype="electric-scheme">
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+                                                </template>
+                                                <template if:true={isLV}>
+                                                    <lightning-layout-item size="4">
+                                                        <lightning-input-field field-name="Number_of_Link_Boxes__c"
+                                                            class="electric-scheme" data-utilitytype="electric-scheme">
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+                                                </template>
+
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="Onsite_Excavation__c"
                                                         class="electric-scheme" data-utilitytype="electric-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
-                                                <lightning-layout-item size="3">
-                                                    <lightning-input-field field-name="Total_Load_kVA__c"
-                                                        class="electric-scheme" data-utilitytype="electric-scheme"
-                                                        required="true">
-                                                    </lightning-input-field>
-                                                </lightning-layout-item>
-
                                             </lightning-layout>
+
 
                                             <template if:true={scheme.recordId}>
                                                 <lightning-button class="slds-m-top_small" variant="brand" type="submit"
-                                                    label="Update Electric Scheme"
-                                                    data-utilitytype="electric-scheme" data-selectedutility="Electric">
+                                                    label="Update Electric Scheme" data-utilitytype="electric-scheme"
+                                                    data-selectedutility="Electric">
                                                 </lightning-button>
                                             </template>
                                             <template if:false={scheme.recordId}>
                                                 <lightning-button class="slds-m-top_small" variant="brand" type="submit"
-                                                    label="Create Electric Scheme"
-                                                    data-utilitytype="electric-scheme" data-selectedutility="Electric">
+                                                    label="Create Electric Scheme" data-utilitytype="electric-scheme"
+                                                    data-selectedutility="Electric">
                                                 </lightning-button>
                                             </template>
-
-                                            <!--onclick={handleSubmitScheme}-->
 
                                         </lightning-record-edit-form>
                                         <!--isElectric-->
@@ -381,43 +386,44 @@
                                                 value={opp_Project} class="slds-hide" data-utilitytype="all-scheme">
                                             </lightning-input-field>
 
-                                            <lightning-accordion active-section-name='Plot Types' allow-multiple-sections-open>
-                                            <lightning-accordion-section name='Plot Types' label='Plot Types'
-                                                key={scheme.utilityType}>
-                                                <div>
-                                                    Total Number of Plots : {gas_totalNumberOfPlots}
-                                                </div>
-                                                <lightning-layout>
+                                            <lightning-accordion active-section-name='Plot Types'
+                                                allow-multiple-sections-open>
+                                                <lightning-accordion-section name='Plot Types' label='Plot Types'
+                                                    key={scheme.utilityType}>
+                                                    <div>
+                                                        Total Number of Plots : {gas_totalNumberOfPlots}
+                                                    </div>
+                                                    <lightning-layout>
 
-                                                    <lightning-layout-item flexibility="auto">
-                                                        <lightning-input-field field-name="No_of_Commercial__c"
-                                                            class="gas-scheme" data-utilitytype="gas-scheme-plot"
-                                                            onchange={calculatePlots}>
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
-                                                    <lightning-layout-item flexibility="auto">
-                                                        <lightning-input-field field-name="No_of_Houses__c"
-                                                            class="gas-scheme" data-utilitytype="gas-scheme-plot"
-                                                            onchange={calculatePlots}>
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
+                                                        <lightning-layout-item flexibility="auto">
+                                                            <lightning-input-field field-name="No_of_Commercial__c"
+                                                                class="gas-scheme" data-utilitytype="gas-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                        </lightning-layout-item>
+                                                        <lightning-layout-item flexibility="auto">
+                                                            <lightning-input-field field-name="No_of_Houses__c"
+                                                                class="gas-scheme" data-utilitytype="gas-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                        </lightning-layout-item>
 
-                                                    <lightning-layout-item flexibility="auto">
-                                                        <lightning-input-field field-name="No_of_Landlord__c"
-                                                            class="gas-scheme" data-utilitytype="gas-scheme-plot"
-                                                            onchange={calculatePlots}>
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
+                                                        <lightning-layout-item flexibility="auto">
+                                                            <lightning-input-field field-name="No_of_Landlord__c"
+                                                                class="gas-scheme" data-utilitytype="gas-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                        </lightning-layout-item>
 
-                                                    <lightning-layout-item flexibility="auto">
-                                                        <lightning-input-field field-name="No_of_Flats__c"
-                                                            class="gas-scheme" data-utilitytype="gas-scheme-plot"
-                                                            onchange={calculatePlots}>
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
+                                                        <lightning-layout-item flexibility="auto">
+                                                            <lightning-input-field field-name="No_of_Flats__c"
+                                                                class="gas-scheme" data-utilitytype="gas-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                        </lightning-layout-item>
 
-                                                </lightning-layout>
-                                            </lightning-accordion-section>
+                                                    </lightning-layout>
+                                                </lightning-accordion-section>
                                             </lightning-accordion>
 
                                             <lightning-layout multiple-rows>
@@ -497,7 +503,7 @@
                                                     </lightning-layout-item>-->
 
 
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="3" class="slds-form-element_stacked">
                                                     <label class='slds-form-element__label'
                                                         for={scheme.utilityType}>CSEP to
                                                         Boundary (m)</label>
@@ -527,14 +533,14 @@
 
                                             <template if:true={scheme.recordId}>
                                                 <lightning-button class="slds-m-top_small" variant="brand" type="submit"
-                                                    label="Update Gas Scheme"
-                                                    data-utilitytype="gas-scheme" data-selectedutility="Gas">
+                                                    label="Update Gas Scheme" data-utilitytype="gas-scheme"
+                                                    data-selectedutility="Gas">
                                                 </lightning-button>
                                             </template>
                                             <template if:false={scheme.recordId}>
                                                 <lightning-button class="slds-m-top_small" variant="brand" type="submit"
-                                                    label="Create Gas Scheme"
-                                                    data-utilitytype="gas-scheme" data-selectedutility="Gas">
+                                                    label="Create Gas Scheme" data-utilitytype="gas-scheme"
+                                                    data-selectedutility="Gas">
                                                 </lightning-button>
                                             </template>
 
@@ -559,49 +565,64 @@
                                                 value={opp_Project} class="slds-hide" data-utilitytype="all-scheme">
                                             </lightning-input-field>
 
-                                            <lightning-accordion active-section-name='Plot Types' allow-multiple-sections-open>
-                                            <lightning-accordion-section name='Plot Types' label='Plot Types'
-                                                key={scheme.utilityType}>
-                                                <div>
-                                                    Total Number of Plots : {water_totalNumberOfPlots}
-                                                </div>
-                                                <lightning-layout>
+                                            <lightning-accordion active-section-name='Plot Types'
+                                                allow-multiple-sections-open>
+                                                <lightning-accordion-section name='Plot Types' label='Plot Types'
+                                                    key={scheme.utilityType}>
+                                                    <div>
+                                                        Total Number of Plots : {water_totalNumberOfPlots}
+                                                    </div>
+                                                    <lightning-layout>
 
-                                                    <lightning-layout-item flexibility="auto">
-                                                        <lightning-input-field field-name="No_of_Commercial__c"
-                                                            class="water-scheme" data-utilitytype="water-scheme-plot"
-                                                            onchange={calculatePlots}>
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
-                                                    <lightning-layout-item flexibility="auto">
-                                                        <lightning-input-field field-name="No_of_Houses__c"
-                                                            class="water-scheme" data-utilitytype="water-scheme-plot"
-                                                            onchange={calculatePlots}>
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
+                                                        <lightning-layout-item flexibility="auto">
+                                                            <lightning-input-field field-name="No_of_Houses__c"
+                                                                class="water-scheme"
+                                                                data-utilitytype="water-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                        </lightning-layout-item>
 
-                                                    <lightning-layout-item flexibility="auto">
-                                                        <lightning-input-field field-name="No_of_Landlord__c"
-                                                            class="water-scheme" data-utilitytype="water-scheme-plot"
-                                                            onchange={calculatePlots}>
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
+                                                        <lightning-layout-item flexibility="auto">
+                                                            <lightning-input-field field-name="No_of_Flats__c"
+                                                                class="water-scheme"
+                                                                data-utilitytype="water-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                        </lightning-layout-item>
+                                                        <lightning-layout-item flexibility="auto">
+                                                            <lightning-input-field field-name="No_of_TBS__c"
+                                                                class="water-scheme" data-utilitytype="gas-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                        </lightning-layout-item>
 
-                                                    <lightning-layout-item flexibility="auto">
-                                                        <lightning-input-field field-name="No_of_Flats__c"
-                                                            class="water-scheme" data-utilitytype="water-scheme-plot"
-                                                            onchange={calculatePlots}>
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
-                                                    <lightning-layout-item flexibility="auto">
-                                                        <lightning-input-field field-name="No_of_TBS__c"
-                                                            class="water-scheme" data-utilitytype="gas-scheme-plot"
-                                                            onchange={calculatePlots}>
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
+                                                    </lightning-layout>
+                                                    <lightning-layout multiple-rows>
+                                                        <lightning-layout-item size="4">
+                                                            <lightning-input-field field-name="No_of_Commercial__c"
+                                                                class="water-scheme"
+                                                                data-utilitytype="water-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                            <c-commercial-breakdown scheme-type-name='Commercial'
+                                                                utility-type='Water' parent-id='a1y3G000000MirrQAC'
+                                                                number-of-plot='5'>
+                                                            </c-commercial-breakdown>
+                                                        </lightning-layout-item>
+                                                        <lightning-layout-item size="4">
+                                                            <lightning-input-field field-name="No_of_Landlord__c"
+                                                                class="water-scheme"
+                                                                data-utilitytype="water-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                            <c-commercial-breakdown scheme-type-name='Landlords'
+                                                                utility-type='Water' parent-id='a1y3G000000MirrQAC'
+                                                                number-of-plot='2'>
+                                                            </c-commercial-breakdown>
+                                                        </lightning-layout-item>
 
-                                                </lightning-layout>
-                                            </lightning-accordion-section>
+                                                    </lightning-layout>
+                                                </lightning-accordion-section>
                                             </lightning-accordion>
 
                                             <lightning-layout multiple-rows>
@@ -641,7 +662,7 @@
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="3" class="slds-form-element_stacked">
                                                     <label class='slds-form-element__label'
                                                         for={scheme.utilityType}>Source
                                                         of Water to Boundary (m)</label>
@@ -671,14 +692,14 @@
 
                                             <template if:true={scheme.recordId}>
                                                 <lightning-button class="slds-m-top_small" variant="brand" type="submit"
-                                                    label="Update Water Scheme"
-                                                    data-utilitytype="water-scheme" data-selectedutility="Water">
+                                                    label="Update Water Scheme" data-utilitytype="water-scheme"
+                                                    data-selectedutility="Water">
                                                 </lightning-button>
                                             </template>
                                             <template if:false={scheme.recordId}>
                                                 <lightning-button class="slds-m-top_small" variant="brand" type="submit"
-                                                    label="Create Water Scheme"
-                                                    data-utilitytype="water-scheme" data-selectedutility="Water">
+                                                    label="Create Water Scheme" data-utilitytype="water-scheme"
+                                                    data-selectedutility="Water">
                                                 </lightning-button>
                                             </template>
 
@@ -734,7 +755,7 @@
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="3" class="slds-form-element_stacked">
                                                     <label class='slds-form-element__label' for={scheme.utilityType}>POC
                                                         to Boundary (m)</label>
                                                     <lightning-input-field id={scheme.utilityType}
@@ -797,14 +818,14 @@
 
                                             <template if:true={scheme.recordId}>
                                                 <lightning-button class="slds-m-top_small" variant="brand" type="submit"
-                                                    label="Update Charger Scheme"
-                                                    data-utilitytype="charger-scheme" data-selectedutility="Charger">
+                                                    label="Update Charger Scheme" data-utilitytype="charger-scheme"
+                                                    data-selectedutility="Charger">
                                                 </lightning-button>
                                             </template>
                                             <template if:false={scheme.recordId}>
                                                 <lightning-button class="slds-m-top_small" variant="brand" type="submit"
-                                                    label="Create Charger Scheme"
-                                                    data-utilitytype="charger-scheme" data-selectedutility="Charger">
+                                                    label="Create Charger Scheme" data-utilitytype="charger-scheme"
+                                                    data-selectedutility="Charger">
                                                 </lightning-button>
                                             </template>
 
@@ -829,55 +850,60 @@
                                                 value={opp_Project} class="slds-hide" data-utilitytype="all-scheme">
                                             </lightning-input-field>
 
-                                            <lightning-accordion active-section-name='Street Light Types' allow-multiple-sections-open>
-                                            <lightning-accordion-section name='Street Light Types'
-                                                label='Street Light Types' key={scheme.utilityType}>
-                                                <div>
-                                                    Total Number of Plots : {street_totalNumberOfPlots}
-                                                </div>
-                                                <lightning-layout>
+                                            <lightning-accordion active-section-name='Street Light Types'
+                                                allow-multiple-sections-open>
+                                                <lightning-accordion-section name='Street Light Types'
+                                                    label='Street Light Types' key={scheme.utilityType}>
+                                                    <div>
+                                                        Total Number of Plots : {street_totalNumberOfPlots}
+                                                    </div>
+                                                    <lightning-layout>
 
-                                                    <lightning-layout-item flexibility="auto">
-                                                        <lightning-input-field field-name="X5m__c" class="street-scheme"
-                                                            data-utilitytype="street-scheme-plot"
-                                                            onchange={calculatePlots}>
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
-                                                    <lightning-layout-item flexibility="auto">
-                                                        <lightning-input-field field-name="X6m__c" class="street-scheme"
-                                                            data-utilitytype="street-scheme-plot"
-                                                            onchange={calculatePlots}>
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
-                                                    <lightning-layout-item flexibility="auto">
-                                                        <lightning-input-field field-name="X6m_Hinged__c"
-                                                            class="street-scheme" data-utilitytype="street-scheme-plot"
-                                                            onchange={calculatePlots}>
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
+                                                        <lightning-layout-item flexibility="auto">
+                                                            <lightning-input-field field-name="X5m__c"
+                                                                class="street-scheme"
+                                                                data-utilitytype="street-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                        </lightning-layout-item>
+                                                        <lightning-layout-item flexibility="auto">
+                                                            <lightning-input-field field-name="X6m__c"
+                                                                class="street-scheme"
+                                                                data-utilitytype="street-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                        </lightning-layout-item>
+                                                        <lightning-layout-item flexibility="auto">
+                                                            <lightning-input-field field-name="X6m_Hinged__c"
+                                                                class="street-scheme"
+                                                                data-utilitytype="street-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                        </lightning-layout-item>
 
-                                                    <lightning-layout-item flexibility="auto">
-                                                        <lightning-input-field field-name="X8m__c" class="street-scheme"
-                                                            data-utilitytype="street-scheme-plot"
-                                                            onchange={calculatePlots}>
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
+                                                        <lightning-layout-item flexibility="auto">
+                                                            <lightning-input-field field-name="X8m__c"
+                                                                class="street-scheme"
+                                                                data-utilitytype="street-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                        </lightning-layout-item>
 
-                                                    <lightning-layout-item flexibility="auto">
-                                                        <lightning-input-field field-name="X10m__c"
-                                                            class="street-scheme" data-utilitytype="gas-scheme-plot"
-                                                            onchange={calculatePlots}>
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
+                                                        <lightning-layout-item flexibility="auto">
+                                                            <lightning-input-field field-name="X10m__c"
+                                                                class="street-scheme" data-utilitytype="gas-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                        </lightning-layout-item>
 
-                                                    <lightning-layout-item flexibility="auto">
-                                                        <lightning-input-field field-name="X12m__c"
-                                                            class="street-scheme" data-utilitytype="gas-scheme-plot"
-                                                            onchange={calculatePlots}>
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
-                                                </lightning-layout>
-                                            </lightning-accordion-section>
+                                                        <lightning-layout-item flexibility="auto">
+                                                            <lightning-input-field field-name="X12m__c"
+                                                                class="street-scheme" data-utilitytype="gas-scheme-plot"
+                                                                onchange={calculatePlots}>
+                                                            </lightning-input-field>
+                                                        </lightning-layout-item>
+                                                    </lightning-layout>
+                                                </lightning-accordion-section>
                                             </lightning-accordion>
 
                                             <lightning-layout multiple-rows>
@@ -885,6 +911,12 @@
                                                 <lightning-layout-item size="3">
                                                     <lightning-input-field field-name="Product_Family__c"
                                                         class="street-scheme" data-utilitytype="street-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Charger_Provider__c"
+                                                        class="charger-scheme" data-utilitytype="charger-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
@@ -912,11 +944,11 @@
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
-                                                <lightning-layout-item size="3">
+                                                <!--<lightning-layout-item size="3">
                                                     <lightning-input-field field-name="Number_of_street_Lights__c"
                                                         class="street-scheme" data-utilitytype="street-scheme">
                                                     </lightning-input-field>
-                                                </lightning-layout-item>
+                                                </lightning-layout-item>-->
 
                                                 <lightning-layout-item size="3">
                                                     <lightning-input-field
@@ -958,20 +990,65 @@
 
                                             <template if:true={scheme.recordId}>
                                                 <lightning-button class="slds-m-top_small" variant="brand" type="submit"
-                                                    label="Update Steet Lights Scheme"
-                                                    data-utilitytype="street-scheme" data-selectedutility="Street Lights">
+                                                    label="Update Street Lights Scheme" data-utilitytype="street-scheme"
+                                                    data-selectedutility="Street Lights">
                                                 </lightning-button>
                                             </template>
                                             <template if:false={scheme.recordId}>
                                                 <lightning-button class="slds-m-top_small" variant="brand" type="submit"
-                                                    label="Create Steet Lights Scheme"
-                                                    data-utilitytype="street-scheme" data-selectedutility="Street Lights">
+                                                    label="Create Street Lights Scheme" data-utilitytype="street-scheme"
+                                                    data-selectedutility="Street Lights">
                                                 </lightning-button>
                                             </template>
 
                                         </lightning-record-edit-form>
                                         <!--isStreetLightning-->
                                     </template>
+
+                                    <template if:true={scheme.isFibre}>
+
+                                        <lightning-record-edit-form object-api-name="Site_Scheme__c"
+                                            record-type-id={scheme.utilityRecordTypeId} record-id='{scheme.recordId}'
+                                            onsuccess={handleSuccessCreateScheme}>
+                                            <lightning-messages></lightning-messages>
+                                            <!--onsubmit={handleSubmitScheme} onsuccess={handleSuccessCreateScheme}-->
+
+                                            <lightning-input-field name="Estimate__c" field-name="Estimate__c"
+                                                value={recordId} class="slds-hide" data-utilitytype="all-scheme">
+                                            </lightning-input-field>
+                                            <lightning-input-field name="Site__c" field-name="Site__c" value={opp_Site}
+                                                class="slds-hide" data-utilitytype="all-scheme"></lightning-input-field>
+                                            <lightning-input-field name="Project__c" field-name="Project__c"
+                                                value={opp_Project} class="slds-hide" data-utilitytype="all-scheme">
+                                            </lightning-input-field>
+
+                                            <lightning-layout multiple-rows>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="Fibre_Rebate__c"
+                                                        class="fibre-scheme" data-utilitytype="fibre-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                
+                                            </lightning-layout>
+
+                                            <template if:true={scheme.recordId}>
+                                                <lightning-button class="slds-m-top_small" variant="brand" type="submit"
+                                                    label="Update Fibre Lights Scheme" data-utilitytype="fibre-scheme"
+                                                    data-selectedutility="Fibre Lights">
+                                                </lightning-button>
+                                            </template>
+                                            <template if:false={scheme.recordId}>
+                                                <lightning-button class="slds-m-top_small" variant="brand" type="submit"
+                                                    label="Create Fibre Lights Scheme" data-utilitytype="fibre-scheme"
+                                                    data-selectedutility="Fibre Lights">
+                                                </lightning-button>
+                                            </template>
+
+                                        </lightning-record-edit-form>
+                                    </template>
+
+
                                 </div>
 
                             </lightning-accordion-section>

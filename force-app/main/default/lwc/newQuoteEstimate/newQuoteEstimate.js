@@ -141,6 +141,10 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
     isHV = false;
     isLV = false;
 
+    showElectricCommercial = false;
+    showElectricLandlords = false;
+    electricCommercialNumberofPlots = 0;
+
 
 
     userData;
@@ -254,18 +258,24 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                     this.schemeItems = [];
                     this.selectedUtilityList.forEach(selectedUtility => {
                     console.log('selectedUtility: ' + selectedUtility);
+                    let recordTypeName;
+                    if(selectedUtility == 'Street Lighting') recordTypeName = 'StreetLighting';
+                    else if(selectedUtility == 'Charge Points') recordTypeName = 'Charger';
+                    else recordTypeName = selectedUtility;
+                    console.log('recordTypeName: ' + recordTypeName);
                     let count = this.schemeItems.length;
                     console.log('count: ' + count);
                     let utilityItem = {
                         index: count++,
-                        recordId: Object.keys(schemes).find(scheme => schemes[scheme] === selectedUtility),
+                        recordId: Object.keys(schemes).find(scheme => schemes[scheme] === recordTypeName),
                         isElectric: false,
                         isGas: false,
                         isWater: false,
                         isStreetLightning: false,
                         isCharger: false,
+                        isFibre: false,
                         utilityType: selectedUtility,
-                        utilityRecordTypeId: Object.keys(this.rtis).find(rti => this.rtis[rti].name === selectedUtility)
+                        utilityRecordTypeId: Object.keys(this.rtis).find(rti => this.rtis[rti].name === recordTypeName)
                     }
 
                     if (selectedUtility == 'Electric') utilityItem.isElectric = true;
@@ -273,6 +283,7 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                     else if (selectedUtility == 'Water') utilityItem.isWater = true;
                     else if (selectedUtility == 'Street Lighting') utilityItem.isStreetLightning = true;
                     else if (selectedUtility == 'Charge Points') utilityItem.isCharger = true;
+                    else if (selectedUtility == 'Fibre') utilityItem.isFibre = true;
 
                     console.log(JSON.stringify(utilityItem));
                     this.schemeItems.push(utilityItem);
@@ -866,6 +877,8 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
     {
         console.log('calculatePlots');
         let utilityTypePlot = event.target.dataset.utilitytype;
+        let fieldName = event.target.fieldName;
+        let value = event.target.value;
         console.log(utilityTypePlot);
 
         let plotFields = this.template.querySelectorAll('lightning-input-field[data-utilityType="' + utilityTypePlot + '"]');
@@ -882,7 +895,30 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
             });
 
             if(utilityTypePlot == 'electric-scheme-plot')
+            {
                 this.eletric_totalNumberOfPlots = totalNumberOfPlots;
+
+                if(fieldName == 'No_of_Commercial__c' && value > 0)
+                {
+                    this.showElectricCommercial = true;
+                    this.electricCommercialNumberofPlots = value;
+                    //this.template.querySelector("c-commercial-breakdown").initital();
+                }
+                else if(fieldName == 'No_of_Commercial__c' && (value == '' || value == null))
+                {
+                    this.showElectricCommercial = false;
+                }
+
+
+                if(fieldName == 'No_of_Landlord__c' && value > 0)
+                {
+                    this.showElectricLandlords = true;
+                }
+                else if(fieldName == 'No_of_Landlord__c' && (value == '' || value == null))
+                {
+                    this.showElectricLandlords = false;
+                }
+            }
             else if(utilityTypePlot == 'gas-scheme-plot')
                 this.gas_totalNumberOfPlots = totalNumberOfPlots;
             else if(utilityTypePlot == 'water-scheme-plot')
@@ -891,6 +927,8 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                 this.street_totalNumberOfPlots = totalNumberOfPlots;
 
         }
+
+        
     }
 
     pocTypeChange(event)
@@ -1627,7 +1665,9 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
             .then((result) => {
                 if (result && result.length !== 0) {
                     console.log(result);
-                    recordTypeName = result[0].RecordType.Name;
+                    if(result[0].RecordType.Name == 'Charger') recordTypeName = 'Charge Points';
+                    else if(result[0].RecordType.Name == 'StreetLighting') recordTypeName = 'Street Lighting';
+                    else recordTypeName = result[0].RecordType.Name;
                     console.log(recordTypeName);
 
                     let item = this.schemeItems.find(item => item.utilityType == recordTypeName);
