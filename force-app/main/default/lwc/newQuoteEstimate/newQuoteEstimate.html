@@ -207,10 +207,10 @@
                                                                 data-utilitytype="electric-scheme-plot"
                                                                 onchange={calculatePlots}>
                                                             </lightning-input-field>
-                                                            <template if:true={showElectricCommercial}>
+                                                            <template if:true={scheme.showCommercial}>
                                                                 <c-commercial-breakdown scheme-type-name='Commercial'
                                                                     utility-type='Electric' parent-id={scheme.recordId}
-                                                                    number-of-plot={electricCommercialNumberofPlots}>
+                                                                    number-of-plot={scheme.numberOfCommercial}>
                                                                 </c-commercial-breakdown>
                                                             </template>
                                                         </lightning-layout-item>
@@ -220,10 +220,10 @@
                                                                 data-utilitytype="electric-scheme-plot"
                                                                 onchange={calculatePlots}>
                                                             </lightning-input-field>
-                                                            <template if:true={showElectricLandlords}>
+                                                            <template if:true={scheme.showLandlord}>
                                                                 <c-commercial-breakdown scheme-type-name='Landlords'
                                                                     utility-type='Electric' parent-id={scheme.recordId}
-                                                                    number-of-plot='2'>
+                                                                    number-of-plot={scheme.numberOfLandlord}>
                                                                 </c-commercial-breakdown>
                                                             </template>
                                                         </lightning-layout-item>
@@ -321,22 +321,25 @@
 
                                                 <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="POC__c" required="true"
-                                                        class="electric-scheme" data-utilitytype="electric-scheme"
+                                                        class="electric-scheme" data-utilitytype="Electric"
                                                         onchange={pocTypeChange}>
                                                     </lightning-input-field>
-                                                    <c-commercial-breakdown scheme-type-name='Substation'
-                                                        utility-type='Electric' parent-id='a1y3G000000MirrQAC'
-                                                        number-of-plot='5'>
-                                                    </c-commercial-breakdown>
+                                                    <template if:true={scheme.showSubstation}>
+                                                        <c-commercial-breakdown scheme-type-name='Substation'
+                                                            utility-type='Electric' parent-id={scheme.recordId}
+                                                            number-of-plot={scheme.numberOfSubstations}>
+                                                        </c-commercial-breakdown>
+                                                    </template>
                                                 </lightning-layout-item>
-                                                <template if:true={isHV}>
+                                                <template if:true={scheme.isHV}>
                                                     <lightning-layout-item size="4">
                                                         <lightning-input-field field-name="Number_of_Substations__c"
-                                                            class="electric-scheme" data-utilitytype="electric-scheme">
+                                                            class="electric-scheme" data-utilitytype="Electric"
+                                                            onchange={pocTypeChange}>
                                                         </lightning-input-field>
                                                     </lightning-layout-item>
                                                 </template>
-                                                <template if:true={isLV}>
+                                                <template if:false={scheme.isHV}>
                                                     <lightning-layout-item size="4">
                                                         <lightning-input-field field-name="Number_of_Link_Boxes__c"
                                                             class="electric-scheme" data-utilitytype="electric-scheme">
@@ -604,10 +607,12 @@
                                                                 data-utilitytype="water-scheme-plot"
                                                                 onchange={calculatePlots}>
                                                             </lightning-input-field>
-                                                            <c-commercial-breakdown scheme-type-name='Commercial'
-                                                                utility-type='Water' parent-id='a1y3G000000MirrQAC'
-                                                                number-of-plot='5'>
-                                                            </c-commercial-breakdown>
+                                                            <template if:true={scheme.showCommercial}>
+                                                                <c-commercial-breakdown scheme-type-name='Commercial'
+                                                                    utility-type='Water' parent-id={scheme.recordId}
+                                                                    number-of-plot={scheme.numberOfCommercial}>
+                                                                </c-commercial-breakdown>
+                                                            </template>
                                                         </lightning-layout-item>
                                                         <lightning-layout-item size="4">
                                                             <lightning-input-field field-name="No_of_Landlord__c"
@@ -615,10 +620,12 @@
                                                                 data-utilitytype="water-scheme-plot"
                                                                 onchange={calculatePlots}>
                                                             </lightning-input-field>
-                                                            <c-commercial-breakdown scheme-type-name='Landlords'
-                                                                utility-type='Water' parent-id='a1y3G000000MirrQAC'
-                                                                number-of-plot='2'>
-                                                            </c-commercial-breakdown>
+                                                            <template if:true={scheme.showLandlord}>
+                                                                <c-commercial-breakdown scheme-type-name='Landlords'
+                                                                    utility-type='Water' parent-id={scheme.recordId}
+                                                                    number-of-plot={scheme.numberOfLandlord}>
+                                                                </c-commercial-breakdown>
+                                                            </template>
                                                         </lightning-layout-item>
 
                                                     </lightning-layout>
@@ -725,37 +732,43 @@
 
                                             <lightning-layout multiple-rows>
 
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="Product_Family__c"
                                                         class="charger-scheme" data-utilitytype="charger-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="4">
+                                                    <lightning-input-field field-name="Charger_Provider__c"
+                                                        class="charger-scheme" data-utilitytype="charger-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="Asset_Value__c"
                                                         class="charger-scheme" data-utilitytype="charger-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="Non_Contestable_Cost__c"
                                                         class="charger-scheme" data-utilitytype="charger-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="DNO__c" class="charger-scheme"
                                                         data-utilitytype="charger-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="IDNO__c" class="charger-scheme"
                                                         data-utilitytype="charger-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
-                                                <lightning-layout-item size="3" class="slds-form-element_stacked">
+                                                <lightning-layout-item size="4" class="slds-form-element_stacked">
                                                     <label class='slds-form-element__label' for={scheme.utilityType}>POC
                                                         to Boundary (m)</label>
                                                     <lightning-input-field id={scheme.utilityType}
@@ -763,55 +776,65 @@
                                                         data-utilitytype="charger-scheme" variant="label-hidden">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="No_of_Joint_Bays__c"
                                                         class="charger-scheme" data-utilitytype="charger-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
-
-                                                <lightning-layout-item size="3">
-                                                    <lightning-input-field field-name="POC__c" required="true"
-                                                        class="charger-scheme" data-utilitytype="charger-scheme"
-                                                        onchange={pocTypeChange}>
+                                                <lightning-layout-item size="4">
+                                                    <lightning-input-field field-name="Offsite_Excavation__c"
+                                                        class="charger-scheme" data-utilitytype="charger-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
-                                                <template if:true={isHV}>
-                                                    <lightning-layout-item size="3">
-                                                        <lightning-input-field field-name="Number_of_Substations__c"
-                                                            class="charger-scheme" data-utilitytype="charger-scheme">
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
-                                                </template>
-                                                <template if:true={isLV}>
-                                                    <lightning-layout-item size="3">
-                                                        <lightning-input-field field-name="Number_of_Link_Boxes__c"
-                                                            class="charger-scheme" data-utilitytype="charger-scheme">
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
-                                                </template>
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="4">
+                                                    <lightning-input-field field-name="Onsite_Excavation__c"
+                                                        class="charger-scheme" data-utilitytype="charger-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="Traffic_Management__c"
                                                         class="charger-scheme" data-utilitytype="charger-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
 
-                                                <lightning-layout-item size="3">
-                                                    <lightning-input-field field-name="Offsite_Excavation__c"
-                                                        class="charger-scheme" data-utilitytype="charger-scheme">
-                                                    </lightning-input-field>
-                                                </lightning-layout-item>
-                                                <lightning-layout-item size="3">
-                                                    <lightning-input-field field-name="Onsite_Excavation__c"
-                                                        class="charger-scheme" data-utilitytype="charger-scheme">
-                                                    </lightning-input-field>
-                                                </lightning-layout-item>
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="Mains_Cable_length__c"
                                                         class="charger-scheme" data-utilitytype="charger-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
+                                                
+
+                                                <lightning-layout-item size="4">
+                                                    <lightning-input-field field-name="POC__c" required="true"
+                                                        class="charger-scheme" data-utilitytype="Charge Points"
+                                                        onchange={pocTypeChange}>
+                                                    </lightning-input-field>
+                                                    <template if:true={scheme.showSubstation}>
+                                                        <c-commercial-breakdown scheme-type-name='Substation'
+                                                            utility-type='Charge Points' parent-id={scheme.recordId}
+                                                            number-of-plot={scheme.numberOfSubstations}>
+                                                        </c-commercial-breakdown>
+                                                    </template>
+                                                </lightning-layout-item>
+                                                <template if:true={scheme.isHV}>
+                                                    <lightning-layout-item size="4">
+                                                        <lightning-input-field field-name="Number_of_Substations__c"
+                                                            class="charger-scheme" data-utilitytype="Charge Points"
+                                                            onchange={pocTypeChange}>
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+                                                </template>
+                                                <template if:false={scheme.isHV}>
+                                                    <lightning-layout-item size="4">
+                                                        <lightning-input-field field-name="Number_of_Link_Boxes__c"
+                                                            class="charger-scheme" data-utilitytype="charger-scheme">
+                                                        </lightning-input-field>
+                                                    </lightning-layout-item>
+                                                </template>
 
                                             </lightning-layout>
 
@@ -914,11 +937,6 @@
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
-                                                <lightning-layout-item size="3">
-                                                    <lightning-input-field field-name="Charger_Provider__c"
-                                                        class="charger-scheme" data-utilitytype="charger-scheme">
-                                                    </lightning-input-field>
-                                                </lightning-layout-item>
 
                                                 <lightning-layout-item size="3">
                                                     <lightning-input-field field-name="IDNO__c" class="street-scheme"
@@ -1029,7 +1047,7 @@
                                                         class="fibre-scheme" data-utilitytype="fibre-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
-                                                
+
                                             </lightning-layout>
 
                                             <template if:true={scheme.recordId}>

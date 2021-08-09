@@ -1,0 +1,97 @@
+<template>
+    <div style="overflow-y: scroll; height: 200px; width: 100%;padding-left: 10px;">
+        <div style="font-weight: bold;">{schemeTypeName}</div>
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+            <thead>
+                <tr class="slds-line-height_reset">
+                    <th class="col-0" scope="col">
+                        <div class="slds-truncate" title="No.">No.</div>
+                    </th>
+                    <template if:true={showType}>
+                        <th class="col-1" scope="col">
+                            <div class="slds-truncate" title="Scheme Type">Scheme Type</div>
+                        </th>
+                    </template>
+                    <template if:true={showKVA}>
+                        <th class="col-2" scope="col">
+                            <div class="slds-truncate" title="KVA">KVA</div>
+                        </th>
+                    </template>
+                    <template if:true={showQuantity}>
+                        <th class="col-3" scope="col">
+                            <div class="slds-truncate" title="Quantity">Quantity</div>
+                        </th>
+                    </template>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <template for:each={schemeTypes} for:item="item">
+                    
+                        <tr key={item.Id}>
+                            <td>
+                                {item.index}
+                            </td>
+
+                            <template if:true={showType}>
+                                <td>
+                                    <lightning-record-edit-form object-api-name="Scheme_Type_Breakdown__c" record-type-id={item.recordTypeId}>
+                                    <lightning-input-field name="Utility_Type__c" field-name="Utility_Type__c"
+                                    value={item.Utility_Type__c} class="slds-hide">
+                                </lightning-input-field>
+                                        <lightning-input-field field-name="Type__c" variant="label-hidden"
+                                            value={item.Type__c} data-index={item.index} onchange={inputChanged} disabled = {isLandlords} data-schemetype = {item.schemeTypeName}  required>
+                                        </lightning-input-field>
+                                   </lightning-record-edit-form>
+                                </td>
+                            </template>
+  
+                            <template if:true={showKVA}>
+                                <td>
+
+                                    <lightning-input type="number" name="KVA__c" value={item.KVA__c} min=1 step="0.01"
+                                        variant="label-hidden" data-index={item.index} onchange={inputChanged} data-schemetype = {item.schemeTypeName} required>
+                                    </lightning-input>
+                                </td>
+                            </template>
+
+                            <template if:true={showQuantity}>
+                                <td>
+                                    <lightning-input type="number" class="quantity" name="Quantity__c" value={item.Quantity__c} min=1 step="0.01"
+                                        variant="label-hidden" data-index={item.index} onchange={inputChanged} data-schemetype = {item.schemeTypeName} required>
+                                    </lightning-input>
+                                </td>
+                            </template>
+                        </tr>
+                    
+                </template>
+
+                <tr>
+                    <td colspan="3">
+                        <lightning-button label="Save"  variant="brand" onclick={save} disabled = {disableSave}>
+                        </lightning-button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <!--<div style="height: 300px;">
+        <lightning-datatable
+                key-field="id"
+                data={data}
+                show-row-number-column
+                row-number-offset={rowOffset}
+                hide-checkbox-column
+                columns={columns}>
+        </lightning-datatable>
+    </div>
+    <div class="slds-m-around--medium">
+        <lightning-button
+                label="Increase row offset"
+                onclick={increaseRowOffset}>
+        </lightning-button>
+    </div>-->
+</template>

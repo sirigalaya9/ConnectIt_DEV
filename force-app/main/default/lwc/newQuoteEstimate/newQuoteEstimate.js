@@ -22,7 +22,7 @@ import CREATEDDATE from "@salesforce/schema/Opportunity.CreatedDate";
 import userId from "@salesforce/user/Id";
 
 import searchProduct from "@salesforce/apex/NewQuoteEstimateController.searchProduct";
-import searchDefaultProducts from "@salesforce/apex/RuleController.getProducts";
+//import searchDefaultProducts from "@salesforce/apex/RuleController.getProducts";
 import getInitialLineItems from "@salesforce/apex/NewQuoteEstimateController.getInitialLineItems";
 import query from '@salesforce/apex/NewQuoteEstimateController.query';
 import saveUtilityProducts from '@salesforce/apex/NewQuoteEstimateController.saveUtilityProducts';
@@ -54,8 +54,8 @@ const _FIELDS = [
 ];
 
 const columns = [
-    {label: 'Rule Name', fieldName: 'Name', type: 'text'},
-    {label: 'Description', fieldName: 'Description__c', type: 'text'}
+    { label: 'Rule Name', fieldName: 'Name', type: 'text' },
+    { label: 'Description', fieldName: 'Description__c', type: 'text' }
 ];
 
 /*cellAttributes: { class: 'slds-text-color_success slds-text-title_caps'}*/
@@ -255,44 +255,117 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                 selectedUtilityList: this.selectedUtilityList
             })
                 .then(schemes => {
-                    this.schemeItems = [];
-                    this.selectedUtilityList.forEach(selectedUtility => {
-                    console.log('selectedUtility: ' + selectedUtility);
-                    let recordTypeName;
-                    if(selectedUtility == 'Street Lighting') recordTypeName = 'StreetLighting';
-                    else if(selectedUtility == 'Charge Points') recordTypeName = 'Charger';
-                    else recordTypeName = selectedUtility;
-                    console.log('recordTypeName: ' + recordTypeName);
-                    let count = this.schemeItems.length;
-                    console.log('count: ' + count);
-                    let utilityItem = {
-                        index: count++,
-                        recordId: Object.keys(schemes).find(scheme => schemes[scheme] === recordTypeName),
-                        isElectric: false,
-                        isGas: false,
-                        isWater: false,
-                        isStreetLightning: false,
-                        isCharger: false,
-                        isFibre: false,
-                        utilityType: selectedUtility,
-                        utilityRecordTypeId: Object.keys(this.rtis).find(rti => this.rtis[rti].name === recordTypeName)
+                    let schemeIdMap = new Map();
+                    let schemeFieldValuesMap = new Map();
+                    for (var key in schemes) {
+                        schemeIdMap.set(key, schemes[key].Id);
+                        schemeFieldValuesMap.set(key, schemes[key]);
                     }
 
-                    if (selectedUtility == 'Electric') utilityItem.isElectric = true;
-                    else if (selectedUtility == 'Gas') utilityItem.isGas = true;
-                    else if (selectedUtility == 'Water') utilityItem.isWater = true;
-                    else if (selectedUtility == 'Street Lighting') utilityItem.isStreetLightning = true;
-                    else if (selectedUtility == 'Charge Points') utilityItem.isCharger = true;
-                    else if (selectedUtility == 'Fibre') utilityItem.isFibre = true;
+                    this.schemeItems = [];
+                    this.selectedUtilityList.forEach(selectedUtility => {
+                        console.log('selectedUtility: ' + selectedUtility);
+                        let recordTypeName;
+                        if (selectedUtility == 'Street Lighting') recordTypeName = 'StreetLighting';
+                        else if (selectedUtility == 'Charge Points') recordTypeName = 'Charger';
+                        else recordTypeName = selectedUtility;
+                        console.log('recordTypeName: ' + recordTypeName);
+                        let count = this.schemeItems.length;
+                        console.log('count: ' + count);
 
-                    console.log(JSON.stringify(utilityItem));
-                    this.schemeItems.push(utilityItem);
+                        let utilityItem = {
+                            index: count++,
+                            recordId: schemeIdMap.get(recordTypeName),
+                            isElectric: false,
+                            isGas: false,
+                            isWater: false,
+                            isStreetLightning: false,
+                            isCharger: false,
+                            isFibre: false,
+                            isHV: false,
+                            showCommercial: false,
+                            showLandlord: false,
+                            showSubstation: false,
+                            numberOfCommercial: 0,
+                            numberOfLandlord: 0,
+                            numberOfSubstations: 0,
+                            utilityType: selectedUtility,
+                            utilityRecordTypeId: Object.keys(this.rtis).find(rti => this.rtis[rti].name === recordTypeName)
+                        }
+
+
+                        if (selectedUtility == 'Electric') {
+                            utilityItem.isElectric = true;
+
+                            if (schemeFieldValuesMap.get(recordTypeName)) {
+                                if (typeof schemeFieldValuesMap.get(recordTypeName).No_of_Commercial__c != 'undefined' &&
+                                    schemeFieldValuesMap.get(recordTypeName).No_of_Commercial__c > 0) {
+                                    utilityItem.showCommercial = true;
+                                    utilityItem.numberOfCommercial = schemeFieldValuesMap.get(recordTypeName).No_of_Commercial__c;
+                                }
+
+                                if (typeof schemeFieldValuesMap.get(recordTypeName).No_of_Landlord__c != 'undefined' &&
+                                    schemeFieldValuesMap.get(recordTypeName).No_of_Landlord__c > 0) {
+                                    utilityItem.showLandlord = true;
+                                    utilityItem.numberOfLandlord = schemeFieldValuesMap.get(recordTypeName).No_of_Landlord__c;
+                                }
+
+                                if (schemeFieldValuesMap.get(recordTypeName).POC__c == 'HV') {
+                                    utilityItem.isHV = true;
+                                    if (typeof schemeFieldValuesMap.get(recordTypeName).Number_of_Substations__c != 'undefined' &&
+                                        schemeFieldValuesMap.get(recordTypeName).Number_of_Substations__c > 0) {
+                                        utilityItem.showSubstation = true;
+                                        utilityItem.numberOfSubstations = schemeFieldValuesMap.get(recordTypeName).Number_of_Substations__c;
+                                    }
+                                }
+
+                            }
+                        }
+                        else if (selectedUtility == 'Water') {
+                            utilityItem.isWater = true;
+
+                            if (schemeFieldValuesMap.get(recordTypeName)) {
+                                if (typeof schemeFieldValuesMap.get(recordTypeName).No_of_Commercial__c != 'undefined' &&
+                                    schemeFieldValuesMap.get(recordTypeName).No_of_Commercial__c > 0) {
+                                    utilityItem.showCommercial = true;
+                                    utilityItem.numberOfCommercial = schemeFieldValuesMap.get(recordTypeName).No_of_Commercial__c;
+                                }
+
+                                if (typeof schemeFieldValuesMap.get(recordTypeName).No_of_Landlord__c != 'undefined' &&
+                                    schemeFieldValuesMap.get(recordTypeName).No_of_Landlord__c > 0) {
+                                    utilityItem.showLandlord = true;
+                                    utilityItem.numberOfLandlord = schemeFieldValuesMap.get(recordTypeName).No_of_Landlord__c;
+                                }
+                            }
+                        }
+                        else if (selectedUtility == 'Gas') utilityItem.isGas = true;
+                        else if (selectedUtility == 'Street Lighting') utilityItem.isStreetLightning = true;
+                        else if (selectedUtility == 'Charge Points') 
+                        {
+                            utilityItem.isCharger = true;
+                            
+                            if (schemeFieldValuesMap.get(recordTypeName)) {
+                                if (schemeFieldValuesMap.get(recordTypeName).POC__c == 'HV') {
+                                    utilityItem.isHV = true;
+                                    if (typeof schemeFieldValuesMap.get(recordTypeName).Number_of_Substations__c != 'undefined' &&
+                                        schemeFieldValuesMap.get(recordTypeName).Number_of_Substations__c > 0) {
+                                        utilityItem.showSubstation = true;
+                                        utilityItem.numberOfSubstations = schemeFieldValuesMap.get(recordTypeName).Number_of_Substations__c;
+                                    }
+                                }
+                            }
+
+                        }
+                        else if (selectedUtility == 'Fibre') utilityItem.isFibre = true;
+
+                        console.log(JSON.stringify(utilityItem));
+                        this.schemeItems.push(utilityItem);
+
+                    });
+                    console.log(this.schemeItems);
 
                 });
-                console.log(this.schemeItems);
-                    
-                });
- 
+
         }
 
     }
@@ -368,8 +441,7 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
 
     }
 
-    saveUtilityProducts()
-    {
+    saveUtilityProducts() {
         let utilityProducts = [];
 
         this._utilityItems.forEach(utilityItem => {
@@ -417,7 +489,7 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
             console.log(utilityProducts);
 
         });
-        
+
         saveUtilityProducts({
             oppId: this.recordId,
             utilityProducts: utilityProducts
@@ -434,7 +506,7 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                             variant: 'success',
                         }),
                     );
-                    
+
                 }
             })
             .catch(error => {
@@ -647,9 +719,8 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
             inputFields.forEach(field => {
                 if (field.fieldName === "Product_Family__c") {
                     this.ProductFamilyScheme = field.value;
-                }  
-                else if(field.fieldName === "No_of_Units__c")
-                {
+                }
+                else if (field.fieldName === "No_of_Units__c") {
                     this.NumberofPlots = field.value;
                 }
             });
@@ -681,13 +752,13 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
     }
 
     handleSelectionRuleChange(event) {
-       let utilityType = event.target.dataset.utilitytype;
-         /*let selectedutility = event.target.dataset.selectedutility;
-        this.schemeItems.forEach(item => {
-            if (item.utilityType === selectedutility) {
-                item.ruleId = event.detail[0];
-            }
-        });*/
+        let utilityType = event.target.dataset.utilitytype;
+        /*let selectedutility = event.target.dataset.selectedutility;
+       this.schemeItems.forEach(item => {
+           if (item.utilityType === selectedutility) {
+               item.ruleId = event.detail[0];
+           }
+       });*/
 
         const inputFields = this.template.querySelectorAll('lightning-input-field[data-utilitytype="' + utilityType + '"]');
         if (inputFields) {
@@ -696,18 +767,18 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                     field.value = event.detail[0];
                     this.rule_eletric = event.detail[0];
                     console.log("Seleted Rule ID : " + event.detail[0]);
-                }  
+                }
             });
         }
 
-        
+
 
     }
 
     handleSelectedRule(event) {
         const selectedRows = event.detail.selectedRows;
         this.selectedRules = [];
-        for (let i = 0; i < selectedRows.length; i++){
+        for (let i = 0; i < selectedRows.length; i++) {
             //alert("Selected Rule : " + selectedRows[i].Name +'-- Id ' +selectedRows[i].Id);
             this.selectedRules.push(selectedRows[i].Id);
         }
@@ -873,8 +944,7 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
         this.calculateTotalSell(parentIndex);
     }
 
-    calculatePlots(event)
-    {
+    calculatePlots(event) {
         console.log('calculatePlots');
         let utilityTypePlot = event.target.dataset.utilitytype;
         let fieldName = event.target.fieldName;
@@ -887,68 +957,107 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
         if (plotFields) {
             var totalNumberOfPlots = 0;
             plotFields.forEach(field => {
-                console.log(field.value);
-              if(field.value != null && field.value != "")
-              {
-                totalNumberOfPlots += parseInt(field.value);
-              }
+                //console.log(field.value);
+                if (field.value != null && field.value != "") {
+                    totalNumberOfPlots += parseInt(field.value);
+                }
             });
 
-            if(utilityTypePlot == 'electric-scheme-plot')
-            {
+            let schemeItem = {};
+            if (utilityTypePlot == 'electric-scheme-plot') {
                 this.eletric_totalNumberOfPlots = totalNumberOfPlots;
 
-                if(fieldName == 'No_of_Commercial__c' && value > 0)
-                {
+                schemeItem = this.schemeItems.find(item => item.utilityType == 'Electric');
+
+                /*if (fieldName == 'No_of_Commercial__c' && value > 0) {
                     this.showElectricCommercial = true;
                     this.electricCommercialNumberofPlots = value;
-                    //this.template.querySelector("c-commercial-breakdown").initital();
+                    
                 }
-                else if(fieldName == 'No_of_Commercial__c' && (value == '' || value == null))
-                {
+                else if (fieldName == 'No_of_Commercial__c' && (value == '' || value == null)) {
                     this.showElectricCommercial = false;
                 }
 
 
-                if(fieldName == 'No_of_Landlord__c' && value > 0)
-                {
+                if (fieldName == 'No_of_Landlord__c' && value > 0) {
                     this.showElectricLandlords = true;
                 }
-                else if(fieldName == 'No_of_Landlord__c' && (value == '' || value == null))
-                {
+                else if (fieldName == 'No_of_Landlord__c' && (value == '' || value == null)) {
                     this.showElectricLandlords = false;
-                }
+                }*/
             }
-            else if(utilityTypePlot == 'gas-scheme-plot')
+            else if (utilityTypePlot == 'gas-scheme-plot')
                 this.gas_totalNumberOfPlots = totalNumberOfPlots;
-            else if(utilityTypePlot == 'water-scheme-plot')
+            else if (utilityTypePlot == 'water-scheme-plot') {
                 this.water_totalNumberOfPlots = totalNumberOfPlots;
-            else if(utilityTypePlot == 'street-scheme-plot')
+                schemeItem = this.schemeItems.find(item => item.utilityType == 'Water');
+            }
+            else if (utilityTypePlot == 'street-scheme-plot')
                 this.street_totalNumberOfPlots = totalNumberOfPlots;
 
+            if (schemeItem) {
+
+                console.log('test ' + schemeItem);
+                if (fieldName == 'No_of_Commercial__c' && value > 0) {
+                    schemeItem.showCommercial = true;
+                    schemeItem.numberOfCommercial = value;
+
+                }
+                else if (fieldName == 'No_of_Commercial__c' && (value == '' || value == null)) {
+                    schemeItem.showCommercial = false;
+                    schemeItem.numberOfCommercial = value;
+                }
+
+
+                if (fieldName == 'No_of_Landlord__c' && value > 0) {
+                    schemeItem.showLandlord = true;
+                    schemeItem.numberOfLandlord = value;
+                }
+                else if (fieldName == 'No_of_Landlord__c' && (value == '' || value == null)) {
+                    schemeItem.showLandlord = false;
+                    schemeItem.numberOfLandlord = value;
+
+                }
+
+            }
+
         }
 
-        
+
     }
 
-    pocTypeChange(event)
-    {
+    pocTypeChange(event) {
         console.log('pocTypeChange');
+        let utilityType = event.target.dataset.utilitytype;
         let fieldName = event.target.fieldName;
         let value = event.target.value;
-        
+
         console.log(fieldName);
         console.log(value);
+        console.log(utilityType);
 
-        if(value == 'LV')
+        let schemeItem = this.schemeItems.find(item => item.utilityType == utilityType);
+
+        if(fieldName == 'POC__c')
         {
-            this.isLV = true;
-            this.isHV = false;
+            if (value == 'LV') {
+                schemeItem.isHV = false;
+                schemeItem.showSubstation = false;
+            }
+            else if (value == 'HV') {
+                schemeItem.isHV = true;
+                if(schemeItem.numberOfSubstations > 0)
+                    schemeItem.showSubstation = true;
+                
+            }
         }
-        else if(value == 'HV')
+        else if(fieldName == 'Number_of_Substations__c')
         {
-            this.isHV = true;
-            this.isLV = false;
+            schemeItem.numberOfSubstations = value;
+            if(schemeItem.numberOfSubstations > 0)
+                schemeItem.showSubstation = true;
+            else
+            schemeItem.showSubstation = false;
         }
     }
 
@@ -1032,7 +1141,7 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
         else if (this.currentStep == '6') {
             this.lastPage = false;
             this.nextDisabled = false;
-            this.saveDisabled = false;
+            this.saveDisabled = true;
             this.currentStep = '5';
             this.template.querySelector('div.stepSix').classList.add('slds-hide');
             this.template.querySelector('div.stepFive').classList.remove('slds-hide');
@@ -1040,7 +1149,7 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
         else if (this.currentStep == '7') {
             this.lastPage = false;
             this.nextDisabled = false;
-            this.saveDisabled = true;
+            this.saveDisabled = false;
             this.currentStep = '6';
             this.template.querySelector('div.stepSeven').classList.add('slds-hide');
             this.template.querySelector('div.stepSix').classList.remove('slds-hide');
@@ -1064,7 +1173,7 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
             this.currentStep = '3';
             this.template.querySelector('div.stepTwo').classList.add('slds-hide');
             this.template.querySelector('div.stepThree').classList.remove('slds-hide');
-            
+
             this.queryDefaultProducts(true);
         }
         else if (this.currentStep == '3') {
@@ -1100,8 +1209,7 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
     }
 
 
-    getNumberOfAvailableRules()
-    {
+    getNumberOfAvailableRules() {
         console.log('getNumberOfAvailableRules');
         //this.selectedRuleParentIndex = event.target.dataset.parentindex;
         //let utilityType = event.target.dataset.utilitytype;
@@ -1115,31 +1223,28 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
         })
             .then((results) => {
                 console.log(results);
-                
+
                 //this.noOfAvailableRules = results.length;
             })
             .catch((error) => {
                 console.error("getNumberOfAvailableRules error", JSON.stringify(error));
-                
+
             });
     }
 
 
 
-    openSelectUtilityTypeModal(event)
-    {
+    openSelectUtilityTypeModal(event) {
 
         this.showSelectUtilityTypeModal = true;
     }
 
-    closeSSelectUtilityTypeModal(event)
-    {
+    closeSSelectUtilityTypeModal(event) {
         this.showSelectUtilityTypeModal = false;
 
     }
 
-    openSelectRuleModal(event)
-    {
+    openSelectRuleModal(event) {
         console.log('openSelectRuleModal');
         this.selectedRuleParentIndex = event.target.dataset.parentindex;
         let utilityType = event.target.dataset.utilitytype;
@@ -1172,8 +1277,7 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
         this.showSelectRuleModal = true;
     }
 
-    saveRule(event)
-    {
+    saveRule(event) {
         this.showSpinner = true;
         let parentindex = event.target.dataset.parentindex;
         /*addCoreToUtilityProducts({
@@ -1190,9 +1294,9 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
         })
             .then((results) => {
                 console.log(results);
-                
+
                 if (results && results.length !== 0) {
-                    
+
                     let utilityItem = this._utilityItems.find(item => item.index == parentindex);
                     utilityItem.noOfSeletcedRules = this.selectedRules.length;
                     let index = utilityItem.oppProducts.length;
@@ -1203,7 +1307,7 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                         oppProduct.oppLineItem = {};
                         let item = result.oppLineItem;
                         console.log(item.Product2Id__r.Id);
-                        
+
                         oppProduct.productUrl = '/' + item.Product2Id__r.Id;
                         oppProduct.index = index++;
                         oppProduct.isNew = false;
@@ -1239,17 +1343,16 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                 console.log('Error in query: ' + JSON.stringify(error));
                 this.showSpinner = false;
             });
-        
+
         this.showSelectRuleModal = false;
     }
 
-    closeSelectRuleModal(event)
-    {
+    closeSelectRuleModal(event) {
         this.showSelectRuleModal = false;
         this.productToDeleteParentIndex = null;
     }
 
-   
+
 
     openDeleteProductModal(event) {
         this.showDeleteProductModal = true;
@@ -1326,6 +1429,7 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
             let newIndex = 0;
             utilityItem.oppProducts.forEach(item => {
                 item.index = newIndex++;
+                //this.template.querySelector('c-lookup[data-index="' + item.index + '"]').handleClearSelection();
             });
         }
 
@@ -1430,7 +1534,7 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                 });
 
 
-                console.log(JSON.parse(JSON.stringify(this._labourSellItems)));
+                /*console.log(JSON.parse(JSON.stringify(this._labourSellItems)));
                 this._labourSellItems.forEach(item => {
                     if (item.Product2Id__r.Id) {
                         let oppProduct = {};
@@ -1460,7 +1564,7 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                         plantSellItems.push(oppProduct);
                     }
                 });
-                console.log(plantSellItems);
+                console.log(plantSellItems);*/
 
 
                 //this.generatePDFDoc();
@@ -1568,7 +1672,7 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
         //test.RecordTypeId = '0124J000000Y7Q9QAK';
         //console.log(test);
 
-        var ruleId,recordTypeId;
+        var ruleId, recordTypeId;
 
         this.schemeItems.forEach(item => {
             if (item.utilityType === selectedUtility) {
@@ -1582,58 +1686,58 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
         );
         if (inputFields) {
             inputFields.forEach(item => {
-              console.log(item.fieldName);
-              console.log(item.value);
+                console.log(item.fieldName);
+                console.log(item.value);
             });
 
-        console.log(inputFields);
+            console.log(inputFields);
 
-        const recordInput = { apiName: 'Site_Scheme__c', fields: inputFields };
-        createRecord(recordInput)
-            .then(scheme => {
-                //this.accountId = account.id;
-                console.log(scheme.id);
+            const recordInput = { apiName: 'Site_Scheme__c', fields: inputFields };
+            createRecord(recordInput)
+                .then(scheme => {
+                    //this.accountId = account.id;
+                    console.log(scheme.id);
 
-                /*const inputFields = this.template.querySelectorAll(
-                    'lightning-input-field[data-utilityType="' + utilityType + '"]'
-                );*/
+                    /*const inputFields = this.template.querySelectorAll(
+                        'lightning-input-field[data-utilityType="' + utilityType + '"]'
+                    );*/
 
-                /*if (inputFields) {
-                    inputFields.forEach(field => {
-                        if (field.name != "Estimate__c" && field.name != "Site__c" && field.name != "Project__c") {
-                            //field.reset();
-                            field.value = null;
-                            console.log(field.name + ' not reset');
+                    /*if (inputFields) {
+                        inputFields.forEach(field => {
+                            if (field.name != "Estimate__c" && field.name != "Site__c" && field.name != "Project__c") {
+                                //field.reset();
+                                field.value = null;
+                                console.log(field.name + ' not reset');
+                            }
+                            else {
+                                console.log(field.name + ' not reset');
+                            }
+                        });
+    
+                        let lookups = this.template.querySelectorAll('c-lookup');
+                        for (var i = 0; i < lookups.length; i++) {
+                            lookups[i].handleClearSelection();
                         }
-                        else {
-                            console.log(field.name + ' not reset');
-                        }
-                    });
-
-                    let lookups = this.template.querySelectorAll('c-lookup');
-                    for (var i = 0; i < lookups.length; i++) {
-                        lookups[i].handleClearSelection();
-                    }
-                }*/
+                    }*/
 
 
-                this.dispatchEvent(
-                    new ShowToastEvent({
-                        title: 'Success',
-                        message: "Scheme has been created",
-                        variant: 'success',
-                    }),
-                );
-            })
-            .catch(error => {
-                this.dispatchEvent(
-                    new ShowToastEvent({
-                        title: 'Error creating record',
-                        message: error.body.message,
-                        variant: 'error',
-                    }),
-                );
-            });
+                    this.dispatchEvent(
+                        new ShowToastEvent({
+                            title: 'Success',
+                            message: "Scheme has been created",
+                            variant: 'success',
+                        }),
+                    );
+                })
+                .catch(error => {
+                    this.dispatchEvent(
+                        new ShowToastEvent({
+                            title: 'Error creating record',
+                            message: error.body.message,
+                            variant: 'error',
+                        }),
+                    );
+                });
 
         }
 
@@ -1665,8 +1769,8 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
             .then((result) => {
                 if (result && result.length !== 0) {
                     console.log(result);
-                    if(result[0].RecordType.Name == 'Charger') recordTypeName = 'Charge Points';
-                    else if(result[0].RecordType.Name == 'StreetLighting') recordTypeName = 'Street Lighting';
+                    if (result[0].RecordType.Name == 'Charger') recordTypeName = 'Charge Points';
+                    else if (result[0].RecordType.Name == 'StreetLighting') recordTypeName = 'Street Lighting';
                     else recordTypeName = result[0].RecordType.Name;
                     console.log(recordTypeName);
 
