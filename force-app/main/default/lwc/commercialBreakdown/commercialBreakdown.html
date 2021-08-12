@@ -9,7 +9,7 @@
                     </th>
                     <template if:true={showType}>
                         <th class="col-1" scope="col">
-                            <div class="slds-truncate" title="Scheme Type">Scheme Type</div>
+                            <div class="slds-truncate" title={typeColName}>{typeColName}</div>
                         </th>
                     </template>
                     <template if:true={showKVA}>
@@ -76,22 +76,4 @@
             </tbody>
         </table>
     </div>
-
-
-    <!--<div style="height: 300px;">
-        <lightning-datatable
-                key-field="id"
-                data={data}
-                show-row-number-column
-                row-number-offset={rowOffset}
-                hide-checkbox-column
-                columns={columns}>
-        </lightning-datatable>
-    </div>
-    <div class="slds-m-around--medium">
-        <lightning-button
-                label="Increase row offset"
-                onclick={increaseRowOffset}>
-        </lightning-button>
-    </div>-->
 </template>

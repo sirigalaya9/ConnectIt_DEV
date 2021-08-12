@@ -22,19 +22,14 @@ import CREATEDDATE from "@salesforce/schema/Opportunity.CreatedDate";
 import userId from "@salesforce/user/Id";
 
 import searchProduct from "@salesforce/apex/NewQuoteEstimateController.searchProduct";
-//import searchDefaultProducts from "@salesforce/apex/RuleController.getProducts";
 import getInitialLineItems from "@salesforce/apex/NewQuoteEstimateController.getInitialLineItems";
 import query from '@salesforce/apex/NewQuoteEstimateController.query';
 import saveUtilityProducts from '@salesforce/apex/NewQuoteEstimateController.saveUtilityProducts';
 import createEstimate from '@salesforce/apex/NewQuoteEstimateController.createEstimate';
-import searchRule from "@salesforce/apex/NewQuoteEstimateController.searchRule";
 import getrelatedRules from "@salesforce/apex/NewQuoteEstimateController.getrelatedRules";
 import addCoreToUtilityProducts from "@salesforce/apex/NewQuoteEstimateController.addCoreToUtilityProducts";
 import getCoreProductsByRules from "@salesforce/apex/NewQuoteEstimateController.getCoreProductsByRules";
 import getExistingScheme from "@salesforce/apex/NewQuoteEstimateController.getExistingScheme";
-
-//import getNumberOfAvailableRules from "@salesforce/apex/NewQuoteEstimateController.getNumberOfAvailableRules";
-
 
 
 import TOTALKITSELL from "@salesforce/schema/Opportunity.Total_Kit_Sell__c";
@@ -84,12 +79,6 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
     @track preDisabled = true;
     @track nextDisabled = false;
     @track siteSchemeInfo;
-    @track electric_RTId;
-    @track gas_RTId;
-    @track water_RTId;
-    @track eletricItems = [];
-    @track waterItems = [];
-    @track gasItems = [];
     @track selectedUtilityList = [];
     @track schemeItems = [];
 
@@ -134,18 +123,6 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
     selectedRuleUtilityType;
     selectedRuleParentIndex;
     showSelectUtilityTypeModal = false;
-    eletric_totalNumberOfPlots = 0;
-    gas_totalNumberOfPlots = 0;
-    water_totalNumberOfPlots = 0;
-    street_totalNumberOfPlots = 0;
-    isHV = false;
-    isLV = false;
-
-    showElectricCommercial = false;
-    showElectricLandlords = false;
-    electricCommercialNumberofPlots = 0;
-
-
 
     userData;
     getUserInfo() {
@@ -289,6 +266,7 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                             numberOfCommercial: 0,
                             numberOfLandlord: 0,
                             numberOfSubstations: 0,
+                            totalNumberOfPlots: 0,
                             utilityType: selectedUtility,
                             utilityRecordTypeId: Object.keys(this.rtis).find(rti => this.rtis[rti].name === recordTypeName)
                         }
@@ -298,6 +276,8 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                             utilityItem.isElectric = true;
 
                             if (schemeFieldValuesMap.get(recordTypeName)) {
+                                utilityItem.totalNumberOfPlots = schemeFieldValuesMap.get(recordTypeName).Total_Number_of_plots__c;
+
                                 if (typeof schemeFieldValuesMap.get(recordTypeName).No_of_Commercial__c != 'undefined' &&
                                     schemeFieldValuesMap.get(recordTypeName).No_of_Commercial__c > 0) {
                                     utilityItem.showCommercial = true;
@@ -318,6 +298,12 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                                         utilityItem.numberOfSubstations = schemeFieldValuesMap.get(recordTypeName).Number_of_Substations__c;
                                     }
                                 }
+                                else if (schemeFieldValuesMap.get(recordTypeName).POC__c == 'LV') {
+                                    utilityItem.isLV = true;
+                                    utilityItem.showSubstation = false;
+                                    utilityItem.numberOfSubstations = schemeFieldValuesMap.get(recordTypeName).Number_of_Substations__c;
+                                }
+
 
                             }
                         }
@@ -325,6 +311,8 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                             utilityItem.isWater = true;
 
                             if (schemeFieldValuesMap.get(recordTypeName)) {
+                                utilityItem.totalNumberOfPlots = schemeFieldValuesMap.get(recordTypeName).Total_Number_of_plots__c;
+
                                 if (typeof schemeFieldValuesMap.get(recordTypeName).No_of_Commercial__c != 'undefined' &&
                                     schemeFieldValuesMap.get(recordTypeName).No_of_Commercial__c > 0) {
                                     utilityItem.showCommercial = true;
@@ -338,12 +326,27 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                                 }
                             }
                         }
-                        else if (selectedUtility == 'Gas') utilityItem.isGas = true;
-                        else if (selectedUtility == 'Street Lighting') utilityItem.isStreetLightning = true;
-                        else if (selectedUtility == 'Charge Points') 
-                        {
+                        else if (selectedUtility == 'Gas') {
+                            utilityItem.isGas = true;
+
+                            if (schemeFieldValuesMap.get(recordTypeName)) {
+
+                                utilityItem.totalNumberOfPlots = schemeFieldValuesMap.get(recordTypeName).Total_Number_of_plots__c;
+                            }
+
+                        }
+                        else if (selectedUtility == 'Street Lighting') {
+                            utilityItem.isStreetLightning = true;
+
+                            if (schemeFieldValuesMap.get(recordTypeName)) {
+
+                                utilityItem.totalNumberOfPlots = schemeFieldValuesMap.get(recordTypeName).Total_Number_of_plots__c;
+                            }
+
+                        }
+                        else if (selectedUtility == 'Charge Points') {
                             utilityItem.isCharger = true;
-                            
+
                             if (schemeFieldValuesMap.get(recordTypeName)) {
                                 if (schemeFieldValuesMap.get(recordTypeName).POC__c == 'HV') {
                                     utilityItem.isHV = true;
@@ -353,6 +356,11 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                                         utilityItem.numberOfSubstations = schemeFieldValuesMap.get(recordTypeName).Number_of_Substations__c;
                                     }
                                 }
+                            }
+                            else if (schemeFieldValuesMap.get(recordTypeName).POC__c == 'LV') {
+                                utilityItem.isLV = true;
+                                utilityItem.showSubstation = false;
+                                utilityItem.numberOfSubstations = schemeFieldValuesMap.get(recordTypeName).Number_of_Substations__c;
                             }
 
                         }
@@ -523,46 +531,6 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
 
     }
 
-
-    /*queryDefaultProducts_test(utilityType) {
-        let items = [];
-        searchDefaultProducts({
-            utilityType: utilityType,
-            name: '',
-            ruleId: null
-        }).then((result) => {
-            if (result && result.length !== 0) {
-                console.log(result);
-
-                const clone = JSON.parse(JSON.stringify(result));
-                let index = 0;
-                items = clone.map((item) => {
-                    item.productUrl = "/" + item.Product2.Id;
-                    item.index = index++;
-                    item.isNew = false;
-                    item.errors = [];
-                    item.selection = {
-                        id: item.Id,
-                        sObjectType: "Product2",
-                        icon: "standard:product",
-                        title: item.Name,
-                        subtitle: item.Name
-                    };
-                    item.Quantity = 0;
-
-                    return item;
-                });
-
-                console.log(items);
-
-            }
-        })
-            .catch((error) => {
-                console.log("Error in query: " + JSON.stringify(error));
-                //showToast(this, "error", "Error!", JSON.stringify(error.body.message));
-            });
-    }*/
-
     addNewProduct(event) {
 
         console.log('addNewProduct');
@@ -573,89 +541,34 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
         console.log(this._utilityItems);
 
         let product = {};
-        if (utilityType == 'Labour') {
-            product.index = this._labourSellItems.length;
-            product.isNew = true;
-            product.sobjectType = "OpportunityLineItem__c";
-            product.OpportunityId__c = this.recordId;
-            product.Product2Id__r = {};
-            product.selection = null;
-            product.errors = [];
-            product.Family = utilityType;
-            product.placeholderLabel = "Search Product";
-            product.isRemoveable = true;
-            product.Quantity__c = 1;
-            product.Labour_Sell__c = 0;
-            product.Labour_Cost__c = null;
-            this._labourSellItems.push(product);
+        let utilityItem = this._utilityItems.find(item => item.index == parentIndex);
+        product.index = utilityItem.oppProducts.length;
+        product.isNew = true;
+        //product.sobjectType = "OpportunityLineItem";
+        product.errors = [];
+        product.placeholderLabel = "New Product";
+        product.isRemoveable = true;
 
-        }
-        else if (utilityType == 'Plant') {
-            product.index = this._plantSellItems.length;
-            product.isNew = true;
-            product.sobjectType = "OpportunityLineItem__c";
-            product.OpportunityId__c = this.recordId;
-            product.Product2Id__r = {};
-            product.selection = null;
-            product.errors = [];
-            product.Family = utilityType;
-            product.placeholderLabel = "Search Product";
-            product.isRemoveable = true;
-            product.Quantity__c = 1;
-            product.Plant_Sell__c = 0;
-            product.Plant_Cost__c = null;
-            this._plantSellItems.push(product);
-        }
-        else {
-            let utilityItem = this._utilityItems.find(item => item.index == parentIndex);
-            product.index = utilityItem.oppProducts.length;
-            product.isNew = true;
-            //product.sobjectType = "OpportunityLineItem";
-            product.errors = [];
-            product.placeholderLabel = "New Product";
-            product.isRemoveable = true;
+        product.oppLineItem = {};
+        product.oppLineItem.OpportunityId__c = this.recordId;
+        product.oppLineItem.Product2Id__r = {};
+        if (utilityType == 'Electric') product.oppLineItem.Product2Id__r.Family = 'Electricity';
+        else product.oppLineItem.Product2Id__r.Family = utilityType;
+        product.oppLineItem.Quantity__c = 1;
+        product.oppLineItem.Kit_Sell__c = 0;
+        product.oppLineItem.Material_Sell__c = 0;
+        product.oppLineItem.Plant_Sell__c = 0;
+        product.oppLineItem.Labour_Sell__c = 0;
 
-            product.oppLineItem = {};
-            product.oppLineItem.OpportunityId__c = this.recordId;
-            product.oppLineItem.Product2Id__r = {};
-            if (utilityType == 'Electric') product.oppLineItem.Product2Id__r.Family = 'Electricity';
-            else product.oppLineItem.Product2Id__r.Family = utilityType;
-            product.oppLineItem.Quantity__c = 1;
-            product.oppLineItem.Kit_Sell__c = 0;
-            //product.oppLineItem.Material_Sell__c = 0;
-            //product.oppLineItem.Plant_Sell__c = 0;
+        product.selection = null;
+        product.errors = [];
+        product.placeholderLabel = 'Search Product';
+        product.isRemoveable = true;
 
-            product.selection = null;
-            product.errors = [];
-            product.placeholderLabel = 'Search Product';
-            product.isRemoveable = true;
-
-            utilityItem.oppProducts.push(product);
-        }
+        utilityItem.oppProducts.push(product);
 
         this.currentAddedNewIndex = product.index;
     }
-
-    /*addLabourProduct(event) {
-
-        console.log('addLabourProduct');
-        let product = {};
-            product.index = this._labourSellItems.length;
-            product.isNew = true;
-            product.sobjectType = "OpportunityLineItem";
-            product.OpportunityId = this.recordId;
-            product.Product2 = {};
-            product.selection = {};
-            product.errors = [];
-            product.Family = 'Labour';
-            product.placeholderLabel = "Search Product";
-            product.isRemoveable = true;
-            product.Quantity = 0;
-            product.Labour_Sell__c = 0;
-            
-            this._labourSellItems.push(product);
-            this.currentAddedIndex = product.index;
-    }*/
 
     handleSearch(event) {
         console.log("handleSearch");
@@ -664,7 +577,6 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
         let searchTerm = event.detail.searchTerm;
         let utilityType = event.target.dataset.utilitytype;
         console.log('utilityType: ' + utilityType);
-        // Call Apex endpoint to search for records and pass results to the lookup
 
         searchProduct({
             searchKeyWord: searchTerm,
@@ -707,74 +619,6 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
         }
     }
 
-    handleSearchRule(event) {
-        console.log("handleSearchRule");
-        //console.log(event.target.dataset.index);
-        //let index = event.target.dataset.index;
-        let searchTerm = event.detail.searchTerm;
-        let utilityType = event.target.dataset.utilitytype;
-        console.log('utilityType: ' + utilityType);
-        const inputFields = this.template.querySelectorAll('lightning-input-field[data-utilitytype="' + utilityType + '"]');
-        if (inputFields) {
-            inputFields.forEach(field => {
-                if (field.fieldName === "Product_Family__c") {
-                    this.ProductFamilyScheme = field.value;
-                }
-                else if (field.fieldName === "No_of_Units__c") {
-                    this.NumberofPlots = field.value;
-                }
-            });
-        }
-
-        console.log('ProductFamilyScheme: ' + this.ProductFamilyScheme);
-        console.log('NumberofPlots: ' + this.NumberofPlots);
-
-        // Call Apex endpoint to search for records and pass results to the lookup
-
-        searchRule({
-            searchKeyWord: searchTerm,
-            utilityType: this.ProductFamilyScheme,
-            numberOfPlot: this.NumberofPlots
-        })
-            .then((results) => {
-                console.log(results);
-                this.template
-                    .querySelector('c-lookup[data-utilityType="' + utilityType + '"]')
-                    .setSearchResults(results);
-            })
-            .catch((error) => {
-                //this.notifyUser('Lookup Error', 'An error occured while searching with the lookup field.', 'error');
-                // eslint-disable-next-line no-console
-                console.error("Lookup error", JSON.stringify(error));
-                this.errors = [error];
-            });
-
-    }
-
-    handleSelectionRuleChange(event) {
-        let utilityType = event.target.dataset.utilitytype;
-        /*let selectedutility = event.target.dataset.selectedutility;
-       this.schemeItems.forEach(item => {
-           if (item.utilityType === selectedutility) {
-               item.ruleId = event.detail[0];
-           }
-       });*/
-
-        const inputFields = this.template.querySelectorAll('lightning-input-field[data-utilitytype="' + utilityType + '"]');
-        if (inputFields) {
-            inputFields.forEach(field => {
-                if (field.fieldName === "Rule__c") {
-                    field.value = event.detail[0];
-                    this.rule_eletric = event.detail[0];
-                    console.log("Seleted Rule ID : " + event.detail[0]);
-                }
-            });
-        }
-
-
-
-    }
-
     handleSelectedRule(event) {
         const selectedRows = event.detail.selectedRows;
         this.selectedRules = [];
@@ -786,71 +630,23 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
 
 
     get TotalKitSell() {
-        console.log(this.TotalKitSell);
-        //console.log('TotalKitSell : ' + this.opportunity.data.fields.Total_Kit_Sell__c.displayValue);
-        /*return this.opportunity && this.opportunity.data && this.opportunity.data.fields.Total_Kit_Sell__c.value ?
-            this.opportunity.data.fields.Total_Kit_Sell__c.displayValue : null;*/
         return this.TotalKitSell;
     }
 
     get TotalLabourSell() {
-        //console.log('TotalLabourSell : ' + this.opportunity.data.fields.Total_Labour_Sell__c.displayValue);
-        /*return this.opportunity && this.opportunity.data && this.opportunity.data.fields.Total_Labour_Sell__c.value != null ?
-            this.opportunity.data.fields.Total_Labour_Sell__c.displayValue : 0;*/
         return this.TotalLabourSell;
     }
 
     get TotalMaterialSell() {
-        //console.log('TotalMaterialSell : ' + this.opportunity.data.fields.Total_Material_Sell__c.displayValue);
-        /*return this.opportunity && this.opportunity.data && this.opportunity.data.fields.Total_Material_Sell__c.value != null ?
-            this.opportunity.data.fields.Total_Material_Sell__c.displayValue : 0;*/
         return this.TotalMaterialSell;
     }
 
     get TotalPlantSell() {
-        //console.log('TotalPlantSell : ' + this.opportunity.data.fields.Total_Plant_Sell__c.displayValue);
-        /*return this.opportunity && this.opportunity.data && this.opportunity.data.fields.Total_Plant_Sell__c.value != null ?
-            this.opportunity.data.fields.Total_Plant_Sell__c.displayValue : 0;*/
         return this.TotalPlantSell;
-
     }
 
     get TotalClientContribution() {
-        //console.log('TotalClientContribution : ' + this.opportunity.data.fields.Total_Client_Contribution__c.displayValue);
-        /*return this.opportunity && this.opportunity.data && this.opportunity.data.fields.Total_Client_Contribution__c.value != null ?
-            this.opportunity.data.fields.Total_Client_Contribution__c.displayValue : 0;*/
         return this.TotalClientContribution;
-
-    }
-
-    get acceptedFormats() {
-        return ['.pdf', '.png', '.jpg', '.jpeg'];
-    }
-
-    @track imageUrl;
-
-    handleUploadFinished(event) {
-        // Get the list of uploaded files
-        const uploadedFiles = event.detail.files;
-        let uploadedFileNames = '';
-        let uploadedFileContentVersionId = '';
-        for (let i = 0; i < uploadedFiles.length; i++) {
-            uploadedFileNames += uploadedFiles[i].name + ', ';
-            uploadedFileContentVersionId += uploadedFiles[i].contentVersionId;
-        }
-
-        this.dispatchEvent(
-            new ShowToastEvent({
-                title: 'Success',
-                message: uploadedFiles.length + ' Files uploaded Successfully: ' + uploadedFileNames,
-                variant: 'success',
-            }),
-        );
-        console.log('Content Version ' + uploadedFileContentVersionId);
-        this.imageUrl = '/sfc/servlet.shepherd/version/download/' + uploadedFileContentVersionId;
-    }
-
-    renderedCallback() {
 
     }
 
@@ -896,48 +692,22 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
             console.log('index: ' + index);
         }
 
-        if (utilityType == 'Labour') {
-            item = this._labourSellItems.find(item => item.index == index);
+        let utilityItem = this._utilityItems.find(item => item.index == parentIndex);
+        let oppProduct = utilityItem.oppProducts.find(item => item.index == index);
+        item = oppProduct.oppLineItem;
+        console.log(item);
+        {
             item[name] = value;
             item.Quantity__c = item.Quantity__c || 0;
             {
-                if (name == 'Labour_Sell__c') {
-                    item.Labour_Sell__c = item.Labour_Sell__c;
+                if (name == 'Implementor__c') {
+                    item.Implementor__c = item.Implementor__c;
+                }
+                else if (name == 'Kit_Sell__c') {
+                    item.Kit_Sell__c = item.Kit_Sell__c;
+
                 }
 
-            }
-            console.log(item);
-        }
-        else if (utilityType == 'Plant') {
-            item = this._plantSellItems.find(item => item.index == index);
-            item[name] = value;
-            item.Quantity__c = item.Quantity__c || 0;
-            {
-                if (name == 'Plant_Sell__c') {
-                    item.Plant_Sell__c = item.Plant_Sell__c;
-                }
-
-            }
-            console.log(item);
-        }
-        else {
-            let utilityItem = this._utilityItems.find(item => item.index == parentIndex);
-            let oppProduct = utilityItem.oppProducts.find(item => item.index == index);
-            item = oppProduct.oppLineItem;
-            console.log(item);
-            {
-                item[name] = value;
-                item.Quantity__c = item.Quantity__c || 0;
-                {
-                    if (name == 'Implementor__c') {
-                        item.Implementor__c = item.Implementor__c;
-                    }
-                    else if (name == 'Kit_Sell__c') {
-                        item.Kit_Sell__c = item.Kit_Sell__c;
-
-                    }
-
-                }
             }
         }
 
@@ -965,39 +735,21 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
 
             let schemeItem = {};
             if (utilityTypePlot == 'electric-scheme-plot') {
-                this.eletric_totalNumberOfPlots = totalNumberOfPlots;
-
                 schemeItem = this.schemeItems.find(item => item.utilityType == 'Electric');
-
-                /*if (fieldName == 'No_of_Commercial__c' && value > 0) {
-                    this.showElectricCommercial = true;
-                    this.electricCommercialNumberofPlots = value;
-                    
-                }
-                else if (fieldName == 'No_of_Commercial__c' && (value == '' || value == null)) {
-                    this.showElectricCommercial = false;
-                }
-
-
-                if (fieldName == 'No_of_Landlord__c' && value > 0) {
-                    this.showElectricLandlords = true;
-                }
-                else if (fieldName == 'No_of_Landlord__c' && (value == '' || value == null)) {
-                    this.showElectricLandlords = false;
-                }*/
             }
-            else if (utilityTypePlot == 'gas-scheme-plot')
-                this.gas_totalNumberOfPlots = totalNumberOfPlots;
+            else if (utilityTypePlot == 'gas-scheme-plot') {
+                schemeItem = this.schemeItems.find(item => item.utilityType == 'Gas');
+            }
             else if (utilityTypePlot == 'water-scheme-plot') {
-                this.water_totalNumberOfPlots = totalNumberOfPlots;
                 schemeItem = this.schemeItems.find(item => item.utilityType == 'Water');
             }
-            else if (utilityTypePlot == 'street-scheme-plot')
-                this.street_totalNumberOfPlots = totalNumberOfPlots;
+            else if (utilityTypePlot == 'street-scheme-plot') {
+                schemeItem = this.schemeItems.find(item => item.utilityType == 'Street Lighting');
+            }
 
             if (schemeItem) {
 
-                console.log('test ' + schemeItem);
+                schemeItem.totalNumberOfPlots = totalNumberOfPlots;
                 if (fieldName == 'No_of_Commercial__c' && value > 0) {
                     schemeItem.showCommercial = true;
                     schemeItem.numberOfCommercial = value;
@@ -1038,26 +790,24 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
 
         let schemeItem = this.schemeItems.find(item => item.utilityType == utilityType);
 
-        if(fieldName == 'POC__c')
-        {
+        if (fieldName == 'POC__c') {
             if (value == 'LV') {
                 schemeItem.isHV = false;
                 schemeItem.showSubstation = false;
             }
             else if (value == 'HV') {
                 schemeItem.isHV = true;
-                if(schemeItem.numberOfSubstations > 0)
+                if (schemeItem.numberOfSubstations > 0)
                     schemeItem.showSubstation = true;
-                
+
             }
         }
-        else if(fieldName == 'Number_of_Substations__c')
-        {
+        else if (fieldName == 'Number_of_Substations__c') {
             schemeItem.numberOfSubstations = value;
-            if(schemeItem.numberOfSubstations > 0)
+            if (schemeItem.numberOfSubstations > 0)
                 schemeItem.showSubstation = true;
             else
-            schemeItem.showSubstation = false;
+                schemeItem.showSubstation = false;
         }
     }
 
@@ -1086,18 +836,6 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
         this.TotalLabourSell = 0;
         //this.TotalMaterialSell = 0;
         this.TotalPlantSell = 0;
-
-        /*this._plantSellItems.forEach(item => {
-
-            let totalPlantSell = (item.Plant_Sell__c || 0) * (item.Quantity__c || 0);
-            this.TotalPlantSell += (+totalPlantSell);
-        });
-
-        this._labourSellItems.forEach(item => {
-            let totalLabourSell = (item.Labour_Sell__c || 0) * (item.Quantity__c || 0);
-            this.TotalLabourSell += (+totalLabourSell);
-        });*/
-
 
         this._utilityItems.forEach(utilityItem => {
             this.TotalKitSell += utilityItem.totalKitSell;
@@ -1128,11 +866,9 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
             this.currentStep = '3';
             this.template.querySelector('div.stepFour').classList.add('slds-hide');
             this.template.querySelector('div.stepThree').classList.remove('slds-hide');
-            //this.queryDefaultProducts('Electric');
         }
         else if (this.currentStep == '5') {
             this.lastPage = false;
-            //this.nextDisabled = false;
             this.saveDisabled = true;
             this.currentStep = '4';
             this.template.querySelector('div.stepFive').classList.add('slds-hide');
@@ -1182,20 +918,24 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
             this.template.querySelector('div.stepThree').classList.add('slds-hide');
             this.template.querySelector('div.stepFour').classList.remove('slds-hide');
 
-            //this.saveUtilityProducts();
         }
-        else if (this.currentStep == '4') {
-            //this.nextDisabled = true;
-            this.saveDisabled = true;
+        else if (this.currentStep == '4') { // CheckList to Payment
+
+            /*this.saveDisabled = true;
             this.currentStep = '5';
             this.template.querySelector('div.stepFour').classList.add('slds-hide');
-            this.template.querySelector('div.stepFive').classList.remove('slds-hide');
+            this.template.querySelector('div.stepFive').classList.remove('slds-hide');*/
+            this.template.querySelector('c-quote-checklist').saveItemsAndNext();
+
+
         }
-        else if (this.currentStep == '5') {
-            this.saveDisabled = false;
+        else if (this.currentStep == '5') { // Payment to PDF
+            /*this.saveDisabled = false;
             this.currentStep = '6';
             this.template.querySelector('div.stepFive').classList.add('slds-hide');
             this.template.querySelector('div.stepSix').classList.remove('slds-hide');
+            this.template.querySelector('c-quote-p-d-f-editor').renderPDF();*/
+            this.template.querySelector('c-quote-payment-schedule').saveItemsAndNext();
         }
         else if (this.currentStep == '6') {
             this.lastPage = true;
@@ -1207,6 +947,24 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
         }
 
     }
+
+    saveItemsCheckListSuccess() {
+        console.log('saveItemsCheckListSuccess');
+        this.saveDisabled = true;
+        this.currentStep = '5';
+        this.template.querySelector('div.stepFour').classList.add('slds-hide');
+        this.template.querySelector('div.stepFive').classList.remove('slds-hide');
+    }
+
+    saveItemsPaymentSuccess() {
+        console.log('saveItemsPaymentSuccess');
+        this.saveDisabled = false;
+        this.currentStep = '6';
+        this.template.querySelector('div.stepFive').classList.add('slds-hide');
+        this.template.querySelector('div.stepSix').classList.remove('slds-hide');
+        this.template.querySelector('c-quote-p-d-f-editor').renderPDF();
+    }
+
 
 
     getNumberOfAvailableRules() {
@@ -1256,23 +1014,6 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
         console.log(JSON.parse(JSON.stringify(utilityItem.rules)));
         //console.log(utilityItem.rules);
         this.data = utilityItem.rules;
-
-
-
-        /*getrelatedRules({
-            utility: utilityType,
-            oppId: this.recordId
-        })
-            .then((results) => {
-                console.log(results);
-                this.data = results;
-                this.noOfAvailableRules = results.length;
-            })
-            .catch((error) => {
-                console.error("getrelatedRules error", JSON.stringify(error));
-                this.errors = [error];
-            });*/
-
 
         this.showSelectRuleModal = true;
     }
@@ -1407,31 +1148,14 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
         let utilityType = event.target.dataset.utilitytype;
         console.log('parentIndex: ' + parentIndex);
         console.log('index: ' + index);
-        if (utilityType == 'Labour') {
-            this._labourSellItems.splice(event.target.dataset.index, 1);
-            let newIndex = 0;
-            this._labourSellItems.forEach((item) => {
-                item.index = newIndex++;
-            });
 
-        }
-        else if (utilityType == 'Plant') {
-            this._plantSellItems.splice(event.target.dataset.index, 1);
-            let newIndex = 0;
-            this._plantSellItems.forEach((item) => {
-                item.index = newIndex++;
-            });
-
-        }
-        else {
-            let utilityItem = this._utilityItems.find(item => item.index == parentIndex);
-            utilityItem.oppProducts.splice(event.target.dataset.index, 1);
-            let newIndex = 0;
-            utilityItem.oppProducts.forEach(item => {
-                item.index = newIndex++;
-                //this.template.querySelector('c-lookup[data-index="' + item.index + '"]').handleClearSelection();
-            });
-        }
+        let utilityItem = this._utilityItems.find(item => item.index == parentIndex);
+        utilityItem.oppProducts.splice(event.target.dataset.index, 1);
+        let newIndex = 0;
+        utilityItem.oppProducts.forEach(item => {
+            item.index = newIndex++;
+            //this.template.querySelector('c-lookup[data-index="' + item.index + '"]').handleClearSelection();
+        });
 
         this.calculateCoupledProduct(parentIndex);
     }
@@ -1661,17 +1385,15 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
 
     }
 
+    breakdownupdated(event) {
+        console.log('BreakdownUpdated');
+        console.log(event.detail);   //Here the value is shown as undefined     
+    }
+
     handleSubmitScheme(event) {
         event.preventDefault();       // stop the form from submitting
         let utilityType = event.target.dataset.utilitytype;
         let selectedUtility = event.target.dataset.selectedutility;
-        //const fields = event.detail.fields;
-        //console.log(JSON.parse(JSON.stringify(fields)));
-        //var test = JSON.parse(JSON.stringify(fields));
-        //test.Rule__c = 'a3I3G00000083sLUAQ';
-        //test.RecordTypeId = '0124J000000Y7Q9QAK';
-        //console.log(test);
-
         var ruleId, recordTypeId;
 
         this.schemeItems.forEach(item => {
@@ -1816,19 +1538,11 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
         console.log('parentIndex: ' + parentIndex);
         console.log('index: ' + index);
         console.log(event.detail[0]);
-        let pricebook2Id = this.opportunity.data.fields.Pricebook2Id.value;
-        let item;
-        if (utilityType == 'Labour') {
-            item = this._labourSellItems.find(item => item.index == index);
-        }
-        else if (utilityType == 'Plant') {
-            item = this._plantSellItems.find(item => item.index == index);
-        }
-        else {
-            let utilityItem = this._utilityItems.find(item => item.index == parentIndex);
-            let oppProduct = utilityItem.oppProducts.find(item => item.index == index);
-            item = oppProduct.oppLineItem;
-        }
+        //let pricebook2Id = this.opportunity.data.fields.Pricebook2Id.value;
+
+        let utilityItem = this._utilityItems.find(item => item.index == parentIndex);
+        let oppProduct = utilityItem.oppProducts.find(item => item.index == index);
+        let item = oppProduct.oppLineItem;
 
         {
             if (typeof event.detail[0] !== 'undefined') {
@@ -1836,11 +1550,8 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                 item.Product2Id = event.detail[0];
                 query({
                     q:
-                        "SELECT Id, Product2.Name, Product2.ProductCode,Product2.Kit_Sell__c,Product2.Material_Sell__c,Product2.Plant_Sell__c,Product2.Labour_Sell__c, Product2.Material_Cost__c,Product2.Plant_Cost__c,Product2.Labour_Cost__c, Product2.Description, UnitPrice FROM PricebookEntry WHERE Product2Id = '" +
-                        item.Product2Id +
-                        "' AND Pricebook2Id = '" +
-                        pricebook2Id +
-                        "'"
+                        "SELECT Id, Name, ProductCode, Implementor__c, Kit_Sell__c, Material_Sell__c, Plant_Sell__c, Labour_Sell__c, Material_Cost__c, Plant_Cost__c, Labour_Cost__c, Description FROM Product2 WHERE Id = '" +
+                        item.Product2Id + "'"
                 })
                     .then((result) => {
                         if (result && result.length !== 0) {
@@ -1851,48 +1562,25 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                                     id: event.detail[0],
                                     sObjectType: 'Product2',
                                     icon: 'standard:product',
-                                    title: i.Product2.Name,
-                                    subtitle: i.Product2.Name
+                                    title: i.Name,
+                                    subtitle: i.Name
                                 }
 
-                                if (utilityType == 'Labour') {
-                                    //item.Product2 = {};
-                                    item.Product2Id__r.Id = event.detail[0];
-                                    item.Product2Id__r.ProductCode = i.Product2.ProductCode;
-                                    item.Product2Id__r.Family = utilityType;
-                                    if (typeof i.Product2.Labour_Sell__c === 'undefined') item.Labour_Sell__c = 0;
-                                    else item.Labour_Sell__c = i.Product2.Labour_Sell__c;
-                                    item.Labour_Cost__c = i.Product2.Labour_Cost__c;
-                                    item.PricebookEntryId = i.Id;
-                                    item.selection = selected;
-                                }
-                                else if (utilityType == 'Plant') {
-
-                                    //item.Product2 = {};
-                                    item.Product2Id__r.Id = event.detail[0];
-                                    item.Product2Id__r.ProductCode = i.Product2.ProductCode;
-                                    item.Product2Id__r.Family = utilityType;
-                                    item.Plant_Sell__c = i.Product2.Plant_Sell__c;
-                                    item.Plant_Cost__c = i.Product2.Plant_Cost__c;
-                                    item.PricebookEntryId = i.Id;
-                                    item.selection = selected;
-                                }
-                                else {
-                                    //item.Product2Id__r = {};
-                                    item.Product2Id__r.Id = event.detail[0];
-                                    item.Product2Id__r.ProductCode = i.Product2.ProductCode;
-                                    if (utilityType == 'Electric') item.Product2.Family = 'Electricity';
-                                    else item.Product2Id__r.Family = utilityType;
-                                    //console.log(i.Product2.Kit_Sell__c);
-                                    if (typeof i.Product2.Kit_Sell__c === 'undefined') item.Kit_Sell__c = 0;
-                                    else item.Kit_Sell__c = i.Product2.Kit_Sell__c;
-                                    //item.Material_Sell__c = i.Product2.Material_Sell__c;
-                                    //item.Plant_Sell__c = i.Product2.Plant_Sell__c;
-                                    item.Material_Cost__c = i.Product2.Material_Cost__c;
-                                    item.Plant_Cost__c = i.Product2.Plant_Cost__c;
-                                    item.selection = selected;
-                                    //item.PricebookEntryId = i.Id;
-                                }
+                                //item.Product2Id__r = {};
+                                item.Product2Id__r.Id = event.detail[0];
+                                item.Product2Id__r.ProductCode = i.ProductCode;
+                                item.Quantity__c = 1;
+                                item.Implementor__c = i.Implementor__c;
+                                if (utilityType == 'Electric') item.Product2Id__r.Family = 'Electricity';
+                                else item.Product2Id__r.Family = utilityType;
+                                if (typeof i.Kit_Sell__c === 'undefined') item.Kit_Sell__c = 0;
+                                else item.Kit_Sell__c = i.Kit_Sell__c;
+                                item.Material_Sell__c = i.Material_Sell__c;
+                                item.Labour_Sell__c = i.Labour_Sell__c;
+                                item.Plant_Sell__c = i.Plant_Sell__c;
+                                item.Material_Cost__c = i.Material_Cost__c;
+                                item.Plant_Cost__c = i.Plant_Cost__c;
+                                item.selection = selected;
 
 
                             });
@@ -1901,36 +1589,25 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                         }
                     })
                     .catch((error) => {
-                        console.log("Error in query: " + JSON.stringify(error));
+                        console.log(JSON.stringify(error));
                         const event = new ShowToastEvent({
                             title: 'Error',
                             variant: 'error',
-                            message: JSON.stringify(error.body.message),
+                            message: JSON.stringify(error),
                         });
                         this.dispatchEvent(event);
                     });
 
             }
             else {
+                item.Kit_Sell__c = 0;
+                item.Plant_Sell__c = 0;
+                item.Labour_Sell__c = 0;
                 item.Quantity__c = 1;
-                if (utilityType == 'Labour') {
-                    item.Labour_Sell__c = 0;
-                    item.Labour_Cost__c = 0;
-
-                }
-                else if (utilityType == 'Plant') {
-                    item.Plant_Sell__c = 0;
-                    item.Plant_Cost__c = 0;
-
-                }
-                else {
-                    item.Kit_Sell__c = 0;
-                }
+                item.Implementor__c = null;
 
                 this.calculateTotalSell(parentIndex);
             }
-
-
         }
     }
 
@@ -1943,150 +1620,5 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
         const accordion = this.template.querySelector('.example-accordion');
         accordion.activeSectionName = 'C';
     }
-
-    queryTerm = 'Test';
-    searchValue;
-
-    handleKeyUp(evt) {
-        const isEnterKey = evt.keyCode === 13;
-        this.queryTerm = evt.target.value;
-        console.log(this.queryTerm);
-        if (isEnterKey) {
-            console.log('Press Enter');
-            this.searchValue = this.queryTerm;
-            console.log(this.searchValue);
-
-        }
-    }
-
-    handleSearchKeyword() {
-
-        if (this.searchValue !== '') {
-            getContactList({
-                searchKey: this.searchValue
-            })
-                .then(result => {
-                    // set @track contacts variable with return contact list from server  
-                    this.contactsRecord = result;
-                })
-                .catch(error => {
-
-                    const event = new ShowToastEvent({
-                        title: 'Error',
-                        variant: 'error',
-                        message: error.body.message,
-                    });
-                    this.dispatchEvent(event);
-                    // reset contacts var with null   
-                    this.contactsRecord = null;
-                });
-        } else {
-            // fire toast event if input field is blank
-            const event = new ShowToastEvent({
-                variant: 'error',
-                message: 'Search text missing..',
-            });
-            this.dispatchEvent(event);
-        }
-    }
-
-    callQuotePDFEditor() {
-        this.template.querySelector("quote-p-d-f-editor").childFunction();
-    }
-
-    /*get options() {
-        console.log(this.UTILITIES_PicklistValues);
-        console.log(this.UTILITIES_PicklistValues.values);
-        return this.UTILITIES_PicklistValues.values;
-
-    }
-
-    get selected() {
-        return this._selected.length ? this._selected : 'none';
-    }
-
-    handleChange(e) {
-        this._selected = e.detail.value;
-    }*/
-
-
-    /*get electric_recordTypeId() {
-        if (this.siteSchemeInfo.data && this.siteSchemeInfo.data.recordTypeInfos) {
-            const rtis = this.siteSchemeInfo.data.recordTypeInfos;
-            console.log(rtis);
-            return Object.keys(rtis).find(rti => rtis[rti].name === 'Electric');
-        }
-    }
-
-   get gas_recordTypeId() {
-        if (this.siteSchemeInfo.data && this.siteSchemeInfo.data.recordTypeInfos) {
-            const rtis = this.siteSchemeInfo.data.recordTypeInfos;
-            console.log(rtis);
-            return Object.keys(rtis).find(rti => rtis[rti].name === 'Gas');
-        }
-    }
-
-    get water_recordTypeId() {
-        if (this.siteSchemeInfo.data && this.siteSchemeInfo.data.recordTypeInfos) {
-            const rtis = this.siteSchemeInfo.data.recordTypeInfos;
-            console.log(rtis);
-            return Object.keys(rtis).find(rti => rtis[rti].name === 'Water');
-        }
-    }*/
-
-    /* @wire(getObjectInfo, { objectApiName: OPPORTUNITY_OBJECT })
-     opportunityInfo;
- 
-      @wire(getPicklistValues, { recordTypeId: '$objectInfo.data.defaultRecordTypeId', fieldApiName: UTILITIES})
-      UTILITIES_PicklistValues({error, data})
-      {
-          if (data) {
-              this.options = data.values;
-  
-              if (this.selectedOption) {
-                  let optionIsValid = this.options.some(function(item) {
-                      return item.value === this.selectedOption;
-                  }, this);
-  
-                  if (!optionIsValid) {
-                      this.selectedOption = data.defaultValue;
-                  }
-              } else {
-                  this.selectedOption = data.defaultValue;
-              }
-          } else if (error) {
-              console.log(error);
-          }
-      }
-  
-      toggleActivity(event)
-      {
-          event.target.closest('.slds-timeline__item_expandable').classList.toggle('slds-is-open');
-      }
-      */
-
-    /*navigateTo_Electric_Sch() {
-      const defaultValues = encodeDefaultFieldValues({
-          FirstName: 'Morag',
-          LastName: 'de Fault',
-          LeadSource: 'Other'
-      });
-
-      //console.log(defaultValues);
-
-      this[NavigationMixin.Navigate]({
-          type: 'standard__objectPage',
-          attributes: {
-              objectApiName: 'Site_Scheme__c',
-              actionName: 'new'
-          },
-          state: {
-              //defaultFieldValues: defaultValues
-              recordTypeId: recordTypeId
-          }
-      });
-  }*/
-
-
 
 }

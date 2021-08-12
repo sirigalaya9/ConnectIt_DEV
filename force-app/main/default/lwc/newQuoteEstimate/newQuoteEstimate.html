@@ -18,7 +18,7 @@
                                 <div style="font-weight: bold;">Total Material Sell</div>
                                 <div>
                                     <lightning-formatted-number value={TotalKitSell} format-style="currency"
-                                        currency-code="EUR" currency-display-as="symbol" minimum-fraction-digits="2"
+                                        currency-code="GBP" currency-display-as="symbol" minimum-fraction-digits="2"
                                         maximum-fraction-digits="2"></lightning-formatted-number>
                                 </div>
                             </div>
@@ -30,7 +30,7 @@
                                 <div style="font-weight: bold;"> Total Labour Sell</div>
                                 <div>
                                     <lightning-formatted-number value={TotalLabourSell} format-style="currency"
-                                        currency-code="EUR" currency-display-as="symbol" minimum-fraction-digits="2"
+                                        currency-code="GBP" currency-display-as="symbol" minimum-fraction-digits="2"
                                         maximum-fraction-digits="2"></lightning-formatted-number>
                                 </div>
                             </div>
@@ -41,7 +41,7 @@
                                 <div style="font-weight: bold;">Total Material Sell</div>
                                 <div>
                                     <lightning-formatted-number value={TotalMaterialSell} format-style="currency"
-                                        currency-code="EUR" currency-display-as="symbol" minimum-fraction-digits="2"
+                                        currency-code="GBP" currency-display-as="symbol" minimum-fraction-digits="2"
                                         maximum-fraction-digits="2"></lightning-formatted-number>
                                 </div>
                             </div>
@@ -52,7 +52,7 @@
                                 <div style="font-weight: bold;">Total Plant Sell</div>
                                 <div>
                                     <lightning-formatted-number value={TotalPlantSell} format-style="currency"
-                                        currency-code="EUR" currency-display-as="symbol" minimum-fraction-digits="2"
+                                        currency-code="GBP" currency-display-as="symbol" minimum-fraction-digits="2"
                                         maximum-fraction-digits="2"></lightning-formatted-number>
                                 </div>
                             </div>
@@ -63,7 +63,7 @@
                                 <div style="font-weight: bold;">Total Client Contribution</div>
                                 <div>
                                     <lightning-formatted-number value={TotalClientContribution} format-style="currency"
-                                        currency-code="EUR" currency-display-as="symbol" minimum-fraction-digits="2"
+                                        currency-code="GBP" currency-display-as="symbol" minimum-fraction-digits="2"
                                         maximum-fraction-digits="2"></lightning-formatted-number>
                                 </div>
                             </div>
@@ -92,7 +92,7 @@
                     </lightning-progress-indicator>
                 </div>
 
-                <lightning-record-edit-form record-id={recordId} object-api-name="Opportunity"
+                <lightning-record-edit-form record-id={recordId} object-api-name="Opportunity" density="comfy"
                     onsuccess={handleSuccessUpdateOpp}>
                     <lightning-messages> </lightning-messages>
                     <div class="stepOne slds-p-left_medium slds-p-top_medium">
@@ -117,7 +117,7 @@
 
                         <lightning-layout>
                             <lightning-layout-item size="6">
-                                <lightning-input-field field-name="CloseDate"></lightning-input-field>
+                                <lightning-input-field field-name="Estimate_Return_Date__c"></lightning-input-field>
                             </lightning-layout-item>
                             <lightning-layout-item size="6" class="slds-p-left_x-large">
                                 <lightning-input-field field-name="Type"> </lightning-input-field>
@@ -149,7 +149,7 @@
                                 <div class="stepTwo slds-p-left_medium">
                                     <template if:true={scheme.isElectric}>
 
-                                        <lightning-record-edit-form object-api-name="Site_Scheme__c"
+                                        <lightning-record-edit-form object-api-name="Site_Scheme__c" density="comfy"
                                             record-type-id={scheme.utilityRecordTypeId} record-id='{scheme.recordId}'
                                             onsuccess={handleSuccessCreateScheme}>
                                             <lightning-messages></lightning-messages>
@@ -169,7 +169,7 @@
                                                 <lightning-accordion-section name='Plot Types' label='Plot Types'
                                                     key={scheme.utilityType}>
                                                     <div>
-                                                        Total Number of Plots : {eletric_totalNumberOfPlots}
+                                                        Total Number of Plots : {scheme.totalNumberOfPlots}
                                                     </div>
                                                     <lightning-layout>
 
@@ -210,7 +210,8 @@
                                                             <template if:true={scheme.showCommercial}>
                                                                 <c-commercial-breakdown scheme-type-name='Commercial'
                                                                     utility-type='Electric' parent-id={scheme.recordId}
-                                                                    number-of-plot={scheme.numberOfCommercial}>
+                                                                    number-of-plot={scheme.numberOfCommercial}
+                                                                    onupdate={breakdownupdated}>
                                                                 </c-commercial-breakdown>
                                                             </template>
                                                         </lightning-layout-item>
@@ -228,19 +229,12 @@
                                                             </template>
                                                         </lightning-layout-item>
 
-
                                                     </lightning-layout>
 
                                                 </lightning-accordion-section>
                                             </lightning-accordion>
 
                                             <lightning-layout multiple-rows>
-
-                                                <!--<lightning-layout-item size="3">
-                                                    <lightning-input-field field-name="Units_Type__c" required="true"
-                                                        class="electric-scheme" data-utilitytype="electric-scheme">
-                                                    </lightning-input-field>
-                                                </lightning-layout-item>-->
 
                                                 <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="Product_Family__c"
@@ -271,17 +265,7 @@
                                                         data-utilitytype="electric-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
-                                                <!--<lightning-layout-item size="3">
-                                                    <lightning-input-field field-name="DNO_Reference__c"
-                                                        class="electric-scheme" data-utilitytype="electric-scheme">
-                                                    </lightning-input-field>
-                                                </lightning-layout-item>
-                                                <lightning-layout-item size="3">
-                                                    <lightning-input-field field-name="IDNO_Reference__c"
-                                                        class="electric-scheme" data-utilitytype="electric-scheme">
-                                                    </lightning-input-field>
-                                                </lightning-layout-item>-->
-
+    
                                                 <lightning-layout-item size="4" class="slds-form-element_stacked">
                                                     <label class='slds-form-element__label' for={scheme.utilityType}>POC
                                                         to Boundary (m)</label>
@@ -307,17 +291,6 @@
                                                         class="electric-scheme" data-utilitytype="electric-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
-                                                <!--<lightning-layout-item size="3">
-                                                    <lightning-input-field field-name="Substation_Enclosure_Type__c"
-                                                        class="electric-scheme" data-utilitytype="electric-scheme">
-                                                    </lightning-input-field>
-                                                </lightning-layout-item>
-                                                <lightning-layout-item size="3">
-                                                    <lightning-input-field field-name="Substation_Size__c"
-                                                        class="electric-scheme" data-utilitytype="electric-scheme">
-                                                    </lightning-input-field>
-                                                </lightning-layout-item>-->
-
 
                                                 <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="POC__c" required="true"
@@ -374,7 +347,7 @@
                                     </template>
 
                                     <template if:true={scheme.isGas}>
-                                        <lightning-record-edit-form object-api-name="Site_Scheme__c"
+                                        <lightning-record-edit-form object-api-name="Site_Scheme__c" density="comfy"
                                             record-type-id={scheme.utilityRecordTypeId} record-id={scheme.recordId}
                                             onsuccess={handleSuccessCreateScheme}>
                                             <lightning-messages></lightning-messages>
@@ -394,7 +367,7 @@
                                                 <lightning-accordion-section name='Plot Types' label='Plot Types'
                                                     key={scheme.utilityType}>
                                                     <div>
-                                                        Total Number of Plots : {gas_totalNumberOfPlots}
+                                                        Total Number of Plots : {scheme.totalNumberOfPlots}
                                                     </div>
                                                     <lightning-layout>
 
@@ -430,24 +403,7 @@
                                             </lightning-accordion>
 
                                             <lightning-layout multiple-rows>
-                                                <!--<lightning-layout-item size="3">
-                                                        <lightning-input-field field-name="No_of_Units__c"
-                                                            required="true">
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
-                                                    <lightning-layout-item size="4" class="slds-p-left_x-large">
-                                                        <lightning-input-field field-name="Units_Type__c"
-                                                            required="true">
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
-                                                    <lightning-layout-item size="3">
-                                                        <lightning-input-field field-name="Total_Load_kwh__c"
-                                                            required="true"> </lightning-input-field>
-                                                    </lightning-layout-item>
-                                                <lightning-layout-item size="3">
-                                                        <lightning-input-field field-name="Metering__c">
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>-->
+                
                                                 <lightning-layout-item size="3">
                                                     <lightning-input-field field-name="Product_Family__c"
                                                         class="gas-scheme" data-utilitytype="gas-scheme">
@@ -483,28 +439,6 @@
                                                         data-utilitytype="gas-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
-                                                <!--<lightning-layout-item size="3">
-                                                        <lightning-input-field field-name="GT_Reference__c">
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
-                                                    <lightning-layout-item size="3">
-                                                        <lightning-input-field field-name="IGT_Reference__c">
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
-
-                                                    <lightning-layout-item size="3">
-                                                        <lightning-input-field field-name="Number_of_Govenors__c">
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
-                                                    <lightning-layout-item size="3">
-                                                        <lightning-input-field field-name="Govenor_Enclosure_Type__c">
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>
-                                                    <lightning-layout-item size="3">
-                                                        <lightning-input-field field-name="Govenor_Size__c">
-                                                        </lightning-input-field>
-                                                    </lightning-layout-item>-->
-
 
                                                 <lightning-layout-item size="3" class="slds-form-element_stacked">
                                                     <label class='slds-form-element__label'
@@ -553,7 +487,7 @@
 
                                     <template if:true={scheme.isWater}>
 
-                                        <lightning-record-edit-form object-api-name="Site_Scheme__c"
+                                        <lightning-record-edit-form object-api-name="Site_Scheme__c" density="comfy"
                                             record-type-id={scheme.utilityRecordTypeId} record-id={scheme.recordId}
                                             onsuccess={handleSuccessCreateScheme}>
                                             <lightning-messages></lightning-messages>
@@ -573,7 +507,7 @@
                                                 <lightning-accordion-section name='Plot Types' label='Plot Types'
                                                     key={scheme.utilityType}>
                                                     <div>
-                                                        Total Number of Plots : {water_totalNumberOfPlots}
+                                                        Total Number of Plots : {scheme.totalNumberOfPlots}
                                                     </div>
                                                     <lightning-layout>
 
@@ -594,7 +528,7 @@
                                                         </lightning-layout-item>
                                                         <lightning-layout-item flexibility="auto">
                                                             <lightning-input-field field-name="No_of_TBS__c"
-                                                                class="water-scheme" data-utilitytype="gas-scheme-plot"
+                                                                class="water-scheme" data-utilitytype="water-scheme-plot"
                                                                 onchange={calculatePlots}>
                                                             </lightning-input-field>
                                                         </lightning-layout-item>
@@ -610,7 +544,8 @@
                                                             <template if:true={scheme.showCommercial}>
                                                                 <c-commercial-breakdown scheme-type-name='Commercial'
                                                                     utility-type='Water' parent-id={scheme.recordId}
-                                                                    number-of-plot={scheme.numberOfCommercial}>
+                                                                    number-of-plot={scheme.numberOfCommercial}
+                                                                    onupdate={breakdownupdated}>
                                                                 </c-commercial-breakdown>
                                                             </template>
                                                         </lightning-layout-item>
@@ -715,7 +650,7 @@
 
                                     <template if:true={scheme.isCharger}>
 
-                                        <lightning-record-edit-form object-api-name="Site_Scheme__c"
+                                        <lightning-record-edit-form object-api-name="Site_Scheme__c" density="comfy"
                                             record-type-id={scheme.utilityRecordTypeId} record-id='{scheme.recordId}'
                                             onsuccess={handleSuccessCreateScheme}>
                                             <lightning-messages></lightning-messages>
@@ -806,7 +741,7 @@
                                                         class="charger-scheme" data-utilitytype="charger-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
-                                                
+
 
                                                 <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="POC__c" required="true"
@@ -858,7 +793,7 @@
 
                                     <template if:true={scheme.isStreetLightning}>
 
-                                        <lightning-record-edit-form object-api-name="Site_Scheme__c"
+                                        <lightning-record-edit-form object-api-name="Site_Scheme__c" density="comfy"
                                             record-type-id={scheme.utilityRecordTypeId} record-id='{scheme.recordId}'
                                             onsuccess={handleSuccessCreateScheme}>
                                             <lightning-messages></lightning-messages>
@@ -878,7 +813,7 @@
                                                 <lightning-accordion-section name='Street Light Types'
                                                     label='Street Light Types' key={scheme.utilityType}>
                                                     <div>
-                                                        Total Number of Plots : {street_totalNumberOfPlots}
+                                                        Total Number of Plots : {scheme.totalNumberOfPlots}
                                                     </div>
                                                     <lightning-layout>
 
@@ -914,14 +849,14 @@
 
                                                         <lightning-layout-item flexibility="auto">
                                                             <lightning-input-field field-name="X10m__c"
-                                                                class="street-scheme" data-utilitytype="gas-scheme-plot"
+                                                                class="street-scheme" data-utilitytype="street-scheme-plot"
                                                                 onchange={calculatePlots}>
                                                             </lightning-input-field>
                                                         </lightning-layout-item>
 
                                                         <lightning-layout-item flexibility="auto">
                                                             <lightning-input-field field-name="X12m__c"
-                                                                class="street-scheme" data-utilitytype="gas-scheme-plot"
+                                                                class="street-scheme" data-utilitytype="street-scheme-plot"
                                                                 onchange={calculatePlots}>
                                                             </lightning-input-field>
                                                         </lightning-layout-item>
@@ -1025,7 +960,7 @@
 
                                     <template if:true={scheme.isFibre}>
 
-                                        <lightning-record-edit-form object-api-name="Site_Scheme__c"
+                                        <lightning-record-edit-form object-api-name="Site_Scheme__c" density="comfy"
                                             record-type-id={scheme.utilityRecordTypeId} record-id='{scheme.recordId}'
                                             onsuccess={handleSuccessCreateScheme}>
                                             <lightning-messages></lightning-messages>
@@ -1106,7 +1041,7 @@
                                                 <div>Total Material Sell</div>
                                                 <div>
                                                     <lightning-formatted-number value={utilityItem.totalKitSell}
-                                                        format-style="currency" currency-code="EUR"
+                                                        format-style="currency" currency-code="GBP"
                                                         currency-display-as="symbol" minimum-fraction-digits="2"
                                                         maximum-fraction-digits="2"></lightning-formatted-number>
                                                 </div>
@@ -1120,7 +1055,7 @@
                                                 <div>Total Labour Sell</div>
                                                 <div>
                                                     <lightning-formatted-number value={utilityItem.totalLabourSell}
-                                                        format-style="currency" currency-code="EUR"
+                                                        format-style="currency" currency-code="GBP"
                                                         currency-display-as="symbol" minimum-fraction-digits="2"
                                                         maximum-fraction-digits="2"></lightning-formatted-number>
                                                 </div>
@@ -1131,7 +1066,7 @@
                                                 <div>Total Plant Sell</div>
                                                 <div>
                                                     <lightning-formatted-number value={utilityItem.totalPlantSell}
-                                                        format-style="currency" currency-code="EUR"
+                                                        format-style="currency" currency-code="GBP"
                                                         currency-display-as="symbol" minimum-fraction-digits="2"
                                                         maximum-fraction-digits="2"></lightning-formatted-number>
                                                 </div>
@@ -1143,7 +1078,7 @@
                                                 <div>
                                                     <lightning-formatted-number
                                                         value={utilityItem.totalClientContribution}
-                                                        format-style="currency" currency-code="EUR"
+                                                        format-style="currency" currency-code="GBP"
                                                         currency-display-as="symbol" minimum-fraction-digits="2"
                                                         maximum-fraction-digits="2"></lightning-formatted-number>
                                                 </div>
@@ -1340,7 +1275,7 @@
                                                     <div class="slds-truncate" title={item.oppLineItem.Material_Sell__c}>
                                                         <lightning-formatted-number
                                                             value={item.oppLineItem.Material_Sell__c}
-                                                            format-style="currency" currency-code="EUR"
+                                                            format-style="currency" currency-code="GBP"
                                                             currency-display-as="symbol" minimum-fraction-digits="2"
                                                             maximum-fraction-digits="2"></lightning-formatted-number>
                                                     </div>
@@ -1350,7 +1285,7 @@
                                                     <div class="slds-truncate" title={item.oppLineItem.Material_Cost__c}>
                                                         <lightning-formatted-number
                                                             value={item.oppLineItem.Material_Cost__c}
-                                                            format-style="currency" currency-code="EUR"
+                                                            format-style="currency" currency-code="GBP"
                                                             currency-display-as="symbol" minimum-fraction-digits="2"
                                                             maximum-fraction-digits="2"></lightning-formatted-number>
                                                     </div>
@@ -1359,7 +1294,7 @@
                                                 <td data-label="Plant Sell" class="">
                                                     <!--<div class="slds-truncate" title={item.oppLineItem.Plant_Sell__c}>
                                                         <lightning-formatted-number value={item.oppLineItem.Plant_Sell__c}
-                                                            format-style="currency" currency-code="EUR"
+                                                            format-style="currency" currency-code="GBP"
                                                             currency-display-as="symbol" minimum-fraction-digits="2"
                                                             maximum-fraction-digits="2"></lightning-formatted-number>
                                                     </div>-->
@@ -1374,7 +1309,7 @@
                                                 <!--<td data-label="Plant Cost" class="">
                                                     <div class="slds-truncate" title={item.oppLineItem.Plant_Cost__c}>
                                                         <lightning-formatted-number value={item.oppLineItem.Plant_Cost__c}
-                                                            format-style="currency" currency-code="EUR"
+                                                            format-style="currency" currency-code="GBP"
                                                             currency-display-as="symbol" minimum-fraction-digits="2"
                                                             maximum-fraction-digits="2"></lightning-formatted-number>
                                                     </div>
@@ -1417,12 +1352,12 @@
                 </div>
 
                 <div class="stepFour slds-hide">
-                    <c-quote-checklist record-id={recordId}>
+                    <c-quote-checklist record-id={recordId} onsave={saveItemsCheckListSuccess}>
                     </c-quote-checklist>
                 </div>
 
                 <div class="stepFive slds-hide">
-                    <c-quote-payment-schedule record-id={recordId}>
+                    <c-quote-payment-schedule record-id={recordId} onsave={saveItemsPaymentSuccess}>
                     </c-quote-payment-schedule>
                 </div>
 

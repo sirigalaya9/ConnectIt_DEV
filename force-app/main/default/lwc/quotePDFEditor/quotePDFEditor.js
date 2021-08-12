@@ -1,8 +1,12 @@
 import { LightningElement, api, wire, track } from 'lwc';
+import { getRecord, getFieldValue } from 'lightning/uiRecordApi';
 import { subscribe, MessageContext } from 'lightning/messageService';
 import ESTIMATE_CHECKLIST_CHANNEL from '@salesforce/messageChannel/Estimate_Checklist__c';
 import generatePDF from '@salesforce/apex/QuotePDFController.generatePDF';
 import { generateGUID, reduceErrors } from 'c/ldsUtils';
+import UTILITIES_FIELD from '@salesforce/schema/Opportunity.Utilities__c';
+
+const FIELDS = [UTILITIES_FIELD];
 
 export default class QuotePDFEditor extends LightningElement {
 
@@ -10,6 +14,8 @@ export default class QuotePDFEditor extends LightningElement {
   showSpinner = false;
   //image = 'https://cius--kliqxedev--c.documentforce.com/sfc/dist/version/download/?oid=00D3G0000008njb&ids=0683G000000MCoF&d=%2Fa%2F3G0000008XWG%2FqR0TMlwWiAj7I77znky_RY5doRJyGG8UPMBHyOO.w2I&asPdf=false';
   @api recordId;
+  record;
+  @track utilities = [{name: 'Overview', images: []},{name: 'Electricity', images: []},{name: 'Gas', images: []},{name: 'Water', images: []}];
   @track image_overview = [];
   @track image_electricity = [];
   @track image_gas = [];
@@ -25,6 +31,49 @@ export default class QuotePDFEditor extends LightningElement {
 
   @wire(MessageContext)
   messageContext;
+
+  @wire(getRecord, { recordId: '$recordId', fields: FIELDS })
+  wiredRecord({ error, data }) {
+      if (error) {
+          this.dispatchEvent(
+              new ShowToastEvent({
+                  title: 'Error loading record',
+                  message: reduceErrors(error),
+                  variant: 'error',
+              }),
+          );
+      } else if (data) {
+        console.log('wiredRecord');  
+        console.log(data);
+        
+          this.record = data;          
+          this.utilities = [{name: 'Overview', images: []}];
+          let utilities = getFieldValue(this.record, UTILITIES_FIELD);
+          if (utilities)
+          {
+              let utilityItems = utilities.split(';');
+              if (utilityItems)
+              {
+                utilityItems.forEach(item => {
+                  let utilityName = item;
+                  if (utilityName === 'Electric')
+                  {
+                    utilityName = 'Electricity';
+                  }
+                  let utility = {name: utilityName, images: []};
+                  if (utilityName !== 'Temporary Building Supply' && utilityName !== 'Fibre' )
+                  {
+                    this.utilities.push(utility);
+                  }
+                });
+              }
+          }
+          this.renderPDF();
+          window.addEventListener("message", this.handleVFResponse.bind(this));
+          this.subscribeToMessageChannel();
+          
+      }
+  }  
 
   subscribeToMessageChannel() {
     this.subscription = subscribe(
@@ -51,20 +100,26 @@ export default class QuotePDFEditor extends LightningElement {
     document.getElementById("pdfForm").submit();
   }
 
-  connectedCallback() {
+  connectedCallback() {    
+    /*
     this.renderPDF();
     window.addEventListener("message", this.handleVFResponse.bind(this));
     this.subscribeToMessageChannel();
+    */
   }
 
   handleVFResponse(message) {
     let dataURL = message.data.image;
     let type = message.data.type;
     let id = message.data.id;
+    let utility = this.utilities.find(item => item.name.toLowerCase() === type.toLowerCase());
+    let image = utility.images.find(item => item.id === id);
+    image.data = dataURL; 
+    /*
     if (type == 'overview')
     {
       let image = this.image_overview.find(item => item.id === id);
-      image.data = dataURL;      
+      image.data = dataURL;            
     }
     if (type == 'electricity')
     {
@@ -80,9 +135,11 @@ export default class QuotePDFEditor extends LightningElement {
     {
       let image = this.image_water.find(item => item.id === id);
       image.data = dataURL;      
-    }  
+    } 
+    */ 
   }
 
+  @api
   renderPDF() {        
 
     generatePDF({recordId: this.recordId}).then(result => {
@@ -97,10 +154,17 @@ export default class QuotePDFEditor extends LightningElement {
       console.log('account_name: ' + this.account_name);
 
       let resultObj = JSON.parse(result);
+      this.utilities.forEach(item => {
+        let mergeName = 'image_' + item.name.toLowerCase();
+        mergeName = mergeName.replaceAll(' ','_');
+        resultObj[mergeName] = item.images;
+      });
+      /*
       resultObj.image_overview = this.image_overview;
       resultObj.image_electricity = this.image_electricity;
       resultObj.image_gas = this.image_gas;
       resultObj.image_water = this.image_water;  
+      */
 
       this.showSpinner = true;
       fetch('https://www.webmerge.me/merge/785245/d5ehbv?test=1&download=1', {
@@ -163,10 +227,17 @@ export default class QuotePDFEditor extends LightningElement {
       console.log('account_name: ' + this.account_name);
 
       let resultObj = JSON.parse(result);
+      this.utilities.forEach(item => {
+        let mergeName = 'image_' + item.name.toLowerCase();
+        mergeName = mergeName.replaceAll(' ','_');
+        resultObj[mergeName] = item.images;
+      });
+      /*      
       resultObj.image_overview = this.image_overview;
       resultObj.image_electricity = this.image_electricity;
       resultObj.image_gas = this.image_gas;
       resultObj.image_water = this.image_water;
+      */
 
       this.showSpinner = true;
       fetch('https://www.webmerge.me/merge/758346/l2ukww?test=1&download=1', {
@@ -219,7 +290,8 @@ export default class QuotePDFEditor extends LightningElement {
 
   handleImageChange(event) {
 
-    var type = event.target.dataset.type;
+    var type = event.target.dataset.type;    
+    type = type.toLowerCase();
 
     //this.imageUrl = null;
     //this.imageData = null;
@@ -269,6 +341,10 @@ export default class QuotePDFEditor extends LightningElement {
       imageObj.id = generateGUID();
       imageObj.data = dataURL;      
       imageObj.src = '/apex/ImageEditor?type=' + type + '&id='+imageObj.id;
+
+      let utility = this.utilities.find(item => item.name.toLowerCase() === type.toLowerCase());
+      utility.images.push(imageObj);
+      /*
       if (type == 'overview')      
         this.image_overview.push(imageObj);      
       if (type == 'electricity')
@@ -277,6 +353,7 @@ export default class QuotePDFEditor extends LightningElement {
       this.image_gas.push(imageObj);
       if (type == 'water')
       this.image_water.push(imageObj);
+      */
 
       //this.imageData = uploadedImg;
       /*
@@ -318,6 +395,11 @@ export default class QuotePDFEditor extends LightningElement {
   {
     let type = event.target.dataset.type;
     let id = event.target.dataset.id;
+    let utility = this.utilities.find(item => item.name.toLowerCase() === type.toLowerCase());
+    let index = utility.images.findIndex(item => item.id === id);
+    utility.images.splice(index, 1);   
+
+    /*
     if (type == 'overview')
     {
       let index = this.image_overview.findIndex(item => item.id === id);      
@@ -337,7 +419,8 @@ export default class QuotePDFEditor extends LightningElement {
     {
       let index = this.image_water.findIndex(item => item.id === id);      
       this.image_water.splice(index, 1);      
-    }            
+    }  
+    */          
   }
 
 }

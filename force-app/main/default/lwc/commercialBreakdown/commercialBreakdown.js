@@ -8,7 +8,7 @@ import { createRecord } from 'lightning/uiRecordApi';
 import SCHEME_TYPE_BREAKDOWN_OBJECT from "@salesforce/schema/Scheme_Type_Breakdown__c";
 
 import saveSchemeBreakdown from "@salesforce/apex/NewQuoteEstimateController.saveSchemeBreakdown";
-import ParentId from '@salesforce/schema/Account.ParentId';
+import query from '@salesforce/apex/NewQuoteEstimateController.query';
 
 const columns = [
     { label: 'Type', fieldName: 'Type__c' },
@@ -36,7 +36,7 @@ export default class CommercialBreakdown extends LightningElement {
     }
     set numberOfPlot(value) {
         this._numberOfPlot = value;
-        this.initital();
+        //this.initital();
     }
 
     @track schemeTypes = [];
@@ -50,8 +50,11 @@ export default class CommercialBreakdown extends LightningElement {
     _numberOfPlot;
     _parentId;
     rtis;
+    existingBreakdown = [];
+    typeColName;
 
     connectedCallback() {
+        console.log('connectedCallback');
         this.initital();
     }
 
@@ -74,7 +77,19 @@ export default class CommercialBreakdown extends LightningElement {
 
 
     get showType() {
-        if (this.schemeTypeName == 'Commercial' || this.schemeTypeName == 'Landlords') return true;
+        if (this.schemeTypeName == 'Commercial' || this.schemeTypeName == 'Landlords') 
+        {
+            if(this.utilityType == 'Electric')
+            {
+                this.typeColName = 'Phase Type';
+            }
+            else if(this.utilityType == 'Water')
+            {
+                this.typeColName = 'Supply Type';
+            }
+            
+            return true;
+        }
         else return false;
     }
 
@@ -106,92 +121,265 @@ export default class CommercialBreakdown extends LightningElement {
 
         item = this.schemeTypes.find(item => item.index == index);
         item[name] = value;
-        if (schemetype == 'Commercial') {
 
-            //item.Quantity__c = item.Quantity__c || 0;
+        const customEventCheck = new CustomEvent("update", {        
+            detail: this.schemeTypes /* here is the problem */
+        });
+        this.dispatchEvent(customEventCheck); 
 
-        }
-        else if (this.schemeTypeName == 'Landlords') {
-
-        }
-        else if (this.schemeTypeName == 'Substation') {
-
-        }
     }
 
 
     initital() {
-
         if (this.rtis) {
+            if (this.schemeTypeName && this.utilityType && this.existingBreakdown.length == 0) {
+                if (this._parentId) {
+                    query({
+                        q: "SELECT Id, RecordTypeId, RecordType.Name, KVA__c,Utility_Type__c,Quantity__c,Type__c,Site_Scheme__c  FROM Scheme_Type_Breakdown__c WHERE Site_Scheme__c = '" + this._parentId + "' AND RecordType.Name = '" + this.schemeTypeName + "' AND Utility_Type__c ='" + this.utilityType + "' ORDER BY Name "
+                    })
+                        .then((result) => {
+                            this.existingBreakdown = result;
+                            console.log(this.existingBreakdown);
 
-            query({
-                q: "SELECT Id FROM Scheme_Type_Breakdown__c WHERE Site_Scheme__c = '" + this._parentId + "' AND RecordType.Name = '" + this.schemeTypeName + "' AND Utility_Type__c ='" + this.utilityType + "'"
-            })
-                .then((result) => {
-                    if (result && result.length !== 0) {
-                        console.log(result);
+                            if (this.schemeTypeName == 'Commercial') {
+
+                                if (this.existingBreakdown.length > 0) {
+                                    this.schemeTypes = [];
+                                    if (this._numberOfPlot >= this.existingBreakdown.length) {
+                                        for (let i = 0; i < this.existingBreakdown.length; i++) {
+                                            let schemeType = {};
+                                            schemeType.index = i + 1;
+                                            schemeType.Id = this.existingBreakdown[i].Id;
+                                            schemeType.RecordTypeId = this.existingBreakdown[i].RecordTypeId;
+                                            schemeType.Site_Scheme__c = this.existingBreakdown[i].Site_Scheme__c;
+                                            schemeType.Utility_Type__c = this.existingBreakdown[i].Utility_Type__c;
+                                            schemeType.Type__c = this.existingBreakdown[i].Type__c;
+                                            schemeType.KVA__c = this.existingBreakdown[i].KVA__c;
+                                            schemeType.schemeTypeName = this.schemeTypeName;
+                                            this.schemeTypes.push(schemeType);
+                                        }
+
+
+                                        for (let i = 0; i < this._numberOfPlot - this.existingBreakdown.length; i++) {
+                                            let schemeType = {};
+                                            schemeType.index = this.schemeTypes.length + 1;
+                                            schemeType.RecordTypeId = Object.keys(this.rtis).find(rti => this.rtis[rti].name === this.schemeTypeName);
+                                            schemeType.Site_Scheme__c = this._parentId;
+                                            schemeType.Utility_Type__c = this.utilityType;
+                                            schemeType.KVA__c = 0;
+                                            schemeType.schemeTypeName = this.schemeTypeName;
+                                            this.schemeTypes.push(schemeType);
+                                        }
+                                    }
+                                    else if (this._numberOfPlot < this.existingBreakdown.length) {
+
+                                        for (let i = 0; i < this.existingBreakdown.length; i++) {
+                                            if (i < this._numberOfPlot) {
+                                                let schemeType = {};
+                                                schemeType.index = i + 1;
+                                                schemeType.Id = this.existingBreakdown[i].Id;
+                                                schemeType.RecordTypeId = this.existingBreakdown[i].RecordTypeId;
+                                                schemeType.Site_Scheme__c = this.existingBreakdown[i].Site_Scheme__c;
+                                                schemeType.Utility_Type__c = this.existingBreakdown[i].Utility_Type__c;
+                                                schemeType.Type__c = this.existingBreakdown[i].Type__c;
+                                                schemeType.KVA__c = this.existingBreakdown[i].KVA__c;
+                                                schemeType.schemeTypeName = this.schemeTypeName;
+                                                this.schemeTypes.push(schemeType);
+                                            }
+                                        }
+
+
+                                    }
+                                }
+                                else {
+                                    this.initialCommercial();
+                                }
+                                this.isCommercial = true;
+                            }
+                            else if (this.schemeTypeName == 'Landlords') {
+                                if (this.existingBreakdown.length > 0) {
+                                    this.schemeTypes = [];
+                                    for (let i = 0; i < this.existingBreakdown.length; i++) {
+                                        let schemeType = {};
+                                        schemeType.index = i + 1;
+                                        schemeType.Id = this.existingBreakdown[i].Id;
+                                        schemeType.RecordTypeId = this.existingBreakdown[i].RecordTypeId;
+                                        schemeType.Site_Scheme__c = this.existingBreakdown[i].Site_Scheme__c;
+                                        schemeType.Utility_Type__c = this.existingBreakdown[i].Utility_Type__c;
+                                        schemeType.Type__c = this.existingBreakdown[i].Type__c;
+                                        schemeType.Quantity__c = this.existingBreakdown[i].Quantity__c;
+                                        schemeType.schemeTypeName = this.schemeTypeName;
+                                        this.schemeTypes.push(schemeType);
+                                    }
+                                }
+                                else {
+                                    this.initialLandlords();
+                                }
+
+                                this.isLandlords = true;
+
+                            }
+                            else if (this.schemeTypeName == 'Substation') {
+                                if (this.existingBreakdown.length > 0) {
+                                    this.schemeTypes = [];
+                                    if (this._numberOfPlot >= this.existingBreakdown.length) {
+                                        for (let i = 0; i < this.existingBreakdown.length; i++) {
+                                            let schemeType = {};
+                                            schemeType.index = i + 1;
+                                            schemeType.Id = this.existingBreakdown[i].Id;
+                                            schemeType.RecordTypeId = this.existingBreakdown[i].RecordTypeId;
+                                            schemeType.Site_Scheme__c = this.existingBreakdown[i].Site_Scheme__c;
+                                            schemeType.Utility_Type__c = this.existingBreakdown[i].Utility_Type__c;
+                                            //schemeType.Type__c = this.existingBreakdown[i].Type__c;
+                                            schemeType.KVA__c = this.existingBreakdown[i].KVA__c;
+                                            schemeType.schemeTypeName = this.schemeTypeName;
+                                            this.schemeTypes.push(schemeType);
+                                        }
+
+
+                                        for (let i = 0; i < this._numberOfPlot - this.existingBreakdown.length; i++) {
+                                            let schemeType = {};
+                                            schemeType.index = this.schemeTypes.length + 1;
+                                            schemeType.RecordTypeId = Object.keys(this.rtis).find(rti => this.rtis[rti].name === this.schemeTypeName);
+                                            schemeType.Site_Scheme__c = this._parentId;
+                                            schemeType.Utility_Type__c = this.utilityType;
+                                            schemeType.KVA__c = 0;
+                                            schemeType.schemeTypeName = this.schemeTypeName;
+                                            this.schemeTypes.push(schemeType);
+                                        }
+                                    }
+                                    else if (this._numberOfPlot < this.existingBreakdown.length) {
+
+                                        for (let i = 0; i < this.existingBreakdown.length; i++) {
+                                            if (i < this._numberOfPlot) {
+                                                let schemeType = {};
+                                                schemeType.index = i + 1;
+                                                schemeType.Id = this.existingBreakdown[i].Id;
+                                                schemeType.RecordTypeId = this.existingBreakdown[i].RecordTypeId;
+                                                schemeType.Site_Scheme__c = this.existingBreakdown[i].Site_Scheme__c;
+                                                schemeType.Utility_Type__c = this.existingBreakdown[i].Utility_Type__c;
+                                                //schemeType.Type__c = this.existingBreakdown[i].Type__c;
+                                                schemeType.KVA__c = this.existingBreakdown[i].KVA__c;
+                                                schemeType.schemeTypeName = this.schemeTypeName;
+                                                this.schemeTypes.push(schemeType);
+                                            }
+                                        }
+                                    }
+                                }
+                                else {
+
+                                    this.initialSubstation();
+                                }
+                                this.isSubstation = true;
+
+                            }
+                        });
+                }
+                else {
+                    if (this.schemeTypeName == 'Commercial') {
+                        this.initialCommercial();
                     }
-                });
-
-
-            if (this.schemeTypeName == 'Commercial') {
-                this.schemeTypes = [];
-                for (let index = 0; index < this._numberOfPlot; index++) {
-                    let schemeType = {};
-                    schemeType.index = index + 1;
-                    schemeType.recordTypeId = Object.keys(this.rtis).find(rti => this.rtis[rti].name === this.schemeTypeName);
-                    schemeType.Site_Scheme__c = this._parentId;
-                    schemeType.Utility_Type__c = this.utilityType;
-                    schemeType.KVA__c = 0;
-                    schemeType.schemeTypeName = this.schemeTypeName;
-                    this.schemeTypes.push(schemeType);
+                    else if (this.schemeTypeName == 'Landlords') {
+                        this.initialLandlords();
+                    }
+                    else if (this.schemeTypeName == 'Substation') {
+                        this.initialSubstation();
+                    }
                 }
-                this.isCommercial = true;
-            }
-            else if (this.schemeTypeName == 'Landlords') {
-                this.schemeTypes = [];
-                let schemeType = {};
-                schemeType.index = 1;
-                schemeType.recordTypeId = Object.keys(this.rtis).find(rti => this.rtis[rti].name === this.schemeTypeName);
-                schemeType.Site_Scheme__c = this._parentId;
-                if (this.utilityType == 'Electric') schemeType.Type__c = '1 Phase';
-                else if (this.utilityType == 'Water') schemeType.Type__c = '25 mm';
-                schemeType.Utility_Type__c = this.utilityType;
-                schemeType.Quantity__c = 0;
-                schemeType.schemeTypeName = this.schemeTypeName;
-                this.schemeTypes.push(schemeType);
-
-                schemeType = {};
-                schemeType.index = 2;
-                schemeType.recordTypeId = Object.keys(this.rtis).find(rti => this.rtis[rti].name === this.schemeTypeName);
-                schemeType.Site_Scheme__c = this._parentId;
-                if (this.utilityType == 'Electric') schemeType.Type__c = '3 Phase';
-                else if (this.utilityType == 'Water') schemeType.Type__c = '32 mm';
-                schemeType.Utility_Type__c = this.utilityType;
-                schemeType.Quantity__c = 0;
-                schemeType.schemeTypeName = this.schemeTypeName;
-                this.schemeTypes.push(schemeType);
-
-                this.isLandlords = true;
-
-            }
-            else if (this.schemeTypeName == 'Substation') {
-
-                this.schemeTypes = [];
-                for (let index = 0; index < this.numberOfPlot; index++) {
-                    let schemeType = {};
-                    schemeType.index = index + 1;
-                    schemeType.recordTypeId = Object.keys(this.rtis).find(rti => this.rtis[rti].name === this.schemeTypeName);
-                    schemeType.Site_Scheme__c = this._parentId;
-                    schemeType.Utility_Type__c = this.utilityType;
-                    schemeType.KVA__c = 0;
-                    schemeType.schemeTypeName = this.schemeTypeName;
-                    this.schemeTypes.push(schemeType);
-                }
-                this.isSubstation = true;
-
             }
         }
+    }
+
+
+    initialCommercial() {
+        //this.schemeTypes = [];
+        if (this.schemeTypes.length == 0) {
+            for (let i = 0; i < this._numberOfPlot; i++) {
+                let schemeType = {};
+                schemeType.index = i + 1;
+                schemeType.RecordTypeId = Object.keys(this.rtis).find(rti => this.rtis[rti].name === this.schemeTypeName);
+                schemeType.Site_Scheme__c = this._parentId;
+                schemeType.Utility_Type__c = this.utilityType;
+                schemeType.KVA__c = 0;
+                schemeType.schemeTypeName = this.schemeTypeName;
+                this.schemeTypes.push(schemeType);
+            }
+        }
+        else if (this.schemeTypes.length == this._numberOfPlot && this._parentId) {
+            this.schemeTypes.forEach(item => {
+                item.Site_Scheme__c = this._parentId;
+            });
+
+
+        }
+        console.log('initialCommercial');
+        console.log(this.schemeTypes);
+
+    }
+
+    initialLandlords() {
+        if (this.schemeTypes.length == 0) 
+        {
+            for (let i = 0; i < 2; i++) {
+                let schemeType = {};
+                schemeType.index = i + 1;
+                schemeType.RecordTypeId = Object.keys(this.rtis).find(rti => this.rtis[rti].name === this.schemeTypeName);
+                schemeType.Site_Scheme__c = this._parentId;
+                if (this.utilityType == 'Electric')
+                {
+                    if(schemeType.index == 1)
+                        schemeType.Type__c = '1 Phase';
+                    else
+                        schemeType.Type__c = '3 Phase';
+                } 
+                else if (this.utilityType == 'Water') 
+                {
+                    if(schemeType.index == 1)
+                        schemeType.Type__c = '25 mm';
+                    else
+                        schemeType.Type__c = '32 mm';
+                }
+                schemeType.Utility_Type__c = this.utilityType;
+                schemeType.Quantity__c = 0;
+                schemeType.schemeTypeName = this.schemeTypeName;
+                this.schemeTypes.push(schemeType);
+            }
+        }
+        else if (this.schemeTypes.length > 0 && this._parentId) {
+            this.schemeTypes.forEach(item => {
+                item.Site_Scheme__c = this._parentId;
+            });
+        }
+
+        this.isLandlords = true;
+        console.log('initialLandlords');
+        console.log(this.schemeTypes);
+
+    }
+
+    initialSubstation() {
+        if (this.schemeTypes.length == 0) 
+        {
+            for (let i = 0; i < this._numberOfPlot; i++) {
+                let schemeType = {};
+                schemeType.index = i + 1;
+                schemeType.RecordTypeId = Object.keys(this.rtis).find(rti => this.rtis[rti].name === this.schemeTypeName);
+                schemeType.Site_Scheme__c = this._parentId;
+                schemeType.Utility_Type__c = this.utilityType;
+                schemeType.KVA__c = 0;
+                schemeType.schemeTypeName = this.schemeTypeName;
+                this.schemeTypes.push(schemeType);
+            }
+        }
+        else if (this.schemeTypes.length > 0 && this._parentId) {
+            this.schemeTypes.forEach(item => {
+                item.Site_Scheme__c = this._parentId;
+            });
+        }
+
+        console.log('initialSubstation');
+        console.log(this.schemeTypes);
+
     }
 
     save(event) {
@@ -206,15 +394,14 @@ export default class CommercialBreakdown extends LightningElement {
 
         let totalQuantity = 0;
         let validQuantity = false;
-        
+
         let quantity = [...this.template.querySelectorAll('.quantity')]
         quantity.forEach(item => {
             console.log(item.value);
             totalQuantity += parseInt(item.value);
         });
 
-        if(totalQuantity > parseInt(this._numberOfPlot))
-        {
+        if (totalQuantity > parseInt(this._numberOfPlot)) {
             //quantity.setCustomValidity("Quantity cannot more than No of Landlord");
             //quantity.reportValidity(); 
             this.dispatchEvent(
@@ -232,7 +419,8 @@ export default class CommercialBreakdown extends LightningElement {
             this.schemeTypes.forEach(item => {
                 //if (item.Product2Id__r.Id) {
                 let schemeTypeBreakdown = {};
-                schemeTypeBreakdown.RecordTypeId = item.recordTypeId;
+                schemeTypeBreakdown.Id = item.Id;
+                schemeTypeBreakdown.RecordTypeId = item.RecordTypeId;
                 schemeTypeBreakdown.Site_Scheme__c = item.Site_Scheme__c;
                 schemeTypeBreakdown.Utility_Type__c = item.Utility_Type__c;
                 schemeTypeBreakdown.Type__c = item.Type__c;
@@ -251,7 +439,8 @@ export default class CommercialBreakdown extends LightningElement {
             parentId: this._parentId,
             schemeBreakdown: schemeTypeBreakdowns,
             recordTypeName: this.schemeTypeName,
-            utilityType: this.utilityType
+            utilityType: this.utilityType,
+            numberOfPlot: this._numberOfPlot
         })
             .then(result => {
                 if (result && result.length !== 0) {

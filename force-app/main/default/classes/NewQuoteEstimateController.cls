@@ -146,24 +146,31 @@ public class NewQuoteEstimateController {
     
     
     @AuraEnabled
-    public static Map<Id,String> getExistingScheme(Id oppId, List<String> selectedUtilityList)
+    public static Map<String,Site_Scheme__c> getExistingScheme(Id oppId, List<String> selectedUtilityList)
     {
         Map<Id,String> schemeIdMap = new Map<Id,String>();
-        List<Site_Scheme__c> allRelatedScheme = [SELECT Id, RecordType.Name FROM Site_Scheme__c WHERE  Estimate__c =: oppId  ORDER BY CreatedDate DESC];
+        Map<String,Site_Scheme__c> utilitySchemeMap = new Map<String,Site_Scheme__c>();
+        List<Site_Scheme__c> allRelatedScheme = [SELECT Id, RecordType.Name,POC__c,Number_of_Substations__c,Number_of_Link_Boxes__c,No_of_Commercial__c,No_of_Landlord__c,Total_Number_of_plots__c
+                                                 FROM Site_Scheme__c WHERE  Estimate__c =: oppId  ORDER BY CreatedDate DESC];
         
         for(String utility : selectedUtilityList)
         {
             for(Site_Scheme__c scheme : allRelatedScheme)
             {
-                if(utility == scheme.RecordType.Name)
+                String rtName = utility;
+                if(utility == 'Charge Points') rtName = 'Charger';
+                else if(utility == 'Street Lighting') rtName = 'StreetLighting';
+                
+                if(rtName == scheme.RecordType.Name)
                 {
-                    schemeIdMap.put(scheme.Id,utility);
+                    //schemeIdMap.put(scheme.Id,utility);
+                    utilitySchemeMap.put(rtName,scheme);
                     break;
                 }
             }             
         }
         
-        return schemeIdMap;
+        return utilitySchemeMap;
         
     }
     
@@ -220,41 +227,28 @@ public class NewQuoteEstimateController {
                     defaultProducts = getDefaultProducts(WaterSiteSchemes, utility);  // get Baseline Products from all Water Schemes
                 }
             }
-            else if(utility == 'Charge Points') schemeRTId = SiteSchemeRecordTypeInfo.get('Charger').getRecordTypeId();
+            else if(utility == 'Charge Points') 
+            {
+                schemeRTId = SiteSchemeRecordTypeInfo.get('Charger').getRecordTypeId();
+                if(ChargerPointSiteSchemes.size() > 0)
+                {
+                    defaultProducts = getDefaultProducts(ChargerPointSiteSchemes, utility);  // get Baseline Products from all Charge Points Schemes
+                }
+                
+            }
+            else if(utility == 'Street Lighting')
+            {
+                schemeRTId = SiteSchemeRecordTypeInfo.get('StreetLighting').getRecordTypeId();
+                if(StreetLightningSiteSchemes.size() > 0)
+                {
+                    defaultProducts = getDefaultProducts(StreetLightningSiteSchemes, utility);  // get Baseline Products from all Water Schemes
+                }
+            }
             
             UtilityItem uItem = new UtilityItem();
             uItem.utilityType = utility;
             uItem.schemeRTId = schemeRTId;
             uItem.oppProducts = new List<OpportunityProduct>();
-            
-            //fieldMap.put('Adopter__c', DNO);
-            //system.debug('fieldMap '+fieldMap);
-            //List<Product2> defaultProducts = RuleController.getProducts(utility,'',null, fieldMap); // Get defaultProducts from Rule Items
-            
-            
-            /*List<Core_Product_Rule__c> coreProducts = [SELECT Id, Rule__c, Rule__r.Utility_Type__c, Product__c, Product__r.Name, Product__r.Family, Quantity__c, To_Multiply__c 
-                                                       FROM Core_Product_Rule__c WHERE Rule__c =: ruleId order by name];
-            
-            for(Core_Product_Rule__c corePro : coreProducts)
-            {
-                
-                Product2 pro = new Product2(Id = corePro.Product__c, 
-                                            Name = corePro.Product__r.Name,
-                                            Family = corePro.Product__r.Family);
-                system.debug('add Core '+pro);
-                defaultProducts.add(pro);
-                
-                if(corePro.To_Multiply__c == true)
-                    coreProductQuantityMap.put(corePro.Product__c, corePro.Quantity__c * ElectricSiteSchemes[0].No_of_Units__c);
-                else
-                    coreProductQuantityMap.put(corePro.Product__c, corePro.Quantity__c);
-            }
-            
-            system.debug('coreProductQuantityMap '+coreProductQuantityMap);*/
-            
-            //system.debug('defaultProducts size BEFORE '+defaultProducts.size());
-            //defaultProducts = addCoreProducts(utility,defaultProducts);
-            //system.debug('defaultProducts size AFTER '+defaultProducts.size());
             
             
             system.debug('customOppLineItems size ' +customOppLineItems.size());
@@ -419,30 +413,24 @@ public class NewQuoteEstimateController {
         List<UtilityItem> ui = new List<UtilityItem>();
         if(utilityType == 'Electric') utilityType = 'Electricity';
         Decimal noOf_Commercial = 1 ;
-        Decimal noOf_CommercialEssentia = 1 ;
-        Decimal noOf_CommercialNonEssential = 1 ;
-        Decimal noOf_Detached = 1 ;
         Decimal noOf_Flats = 1 ;
         Decimal noOf_Landlord = 1 ;
-        Decimal noOf_PumpStation = 1 ;
-        Decimal noOf_Residential = 1 ;
-        Decimal noOf_Semi = 1 ;
+        Decimal noOf_House = 1 ;
+        Decimal noOf_TBS = 1 ;
+        Decimal total = 1 ;
         
-        List<site_scheme__c> scheme = [SELECT Id, No_of_Units__c,No_of_Commercial__c, No_of_Residential__c, Total_Number_of_plots__c, No_of_Commercial_Essential__c, 
-                                       No_of_Commercial_Non_Essential__c, No_of_Landlord__c, No_of_Detached__c, No_of_Flats__c, No_of_Semi__c, No_of_Pump_Station__c 
+        List<site_scheme__c> scheme = [SELECT Id, No_of_Units__c,Total_Number_of_plots__c,
+                                       No_of_Commercial__c, No_of_Houses__c, No_of_Landlord__c, No_of_Flats__c, No_of_TBS__c 
                                        FROM site_scheme__c WHERE Estimate__c = :oppId AND Product_Family__c =: utilityType order by createddate desc];
         if(!scheme.isEmpty()) 
         {
             noOf_Commercial = scheme[0].No_of_Commercial__c;
-            noOf_CommercialEssentia = scheme[0].No_of_Commercial_Essential__c;
-            noOf_CommercialNonEssential = scheme[0].No_of_Commercial_Non_Essential__c;
-            noOf_Detached = scheme[0].No_of_Detached__c;
             noOf_Flats = scheme[0].No_of_Flats__c;
             noOf_Landlord = scheme[0].No_of_Landlord__c;
-            noOf_PumpStation = scheme[0].No_of_Pump_Station__c;
-            noOf_Residential = scheme[0].No_of_Residential__c;
-            noOf_Semi = scheme[0].No_of_Semi__c;
-            system.debug('noOf_Commercial '+noOf_Commercial);
+            noOf_House = scheme[0].No_of_Houses__c;
+            total = scheme[0].Total_Number_of_plots__c;
+            
+
         }
         system.debug('utilityType '+utilityType);
         system.debug('selectedRuleIds '+selectedRuleIds);
@@ -450,8 +438,10 @@ public class NewQuoteEstimateController {
         
         List<Product2> defaultProducts = new List<Product2>();
 
-        List<Core_Product_Rule__c> coreProducts = [SELECT Id, Rule__c, Rule__r.Utility_Type__c, Rule__r.Units_Type__c,Product__c,Product__r.Name,Product__r.Family, Product__r.Kit_Sell__c,
-                                                   Quantity__c,Product__r.Implementor__c,Product__r.Material_Cost__c,To_Multiply__c, Qty_Multiplier_formula__c
+        List<Core_Product_Rule__c> coreProducts = [SELECT Id, Rule__c, Rule__r.Utility_Type__c, Rule__r.Units_Type__c,Product__c,
+                                                   Product__r.Name, Product__r.Family, Product__r.Kit_Sell__c,
+                                                   Product__r.Labour_Sell__c, Product__r.Plant_Sell__c, Product__r.Implementor__c,Product__r.Material_Cost__c,
+                                                   Quantity__c,To_Multiply__c, Qty_Multiplier_formula__c
                                                    FROM Core_Product_Rule__c WHERE Rule__c IN : selectedRuleIds order by createdDate];
         
         List<OpportunityProduct> oppProducts = new List<OpportunityProduct>();
@@ -463,9 +453,11 @@ public class NewQuoteEstimateController {
                                         Family = corePro.Product__r.Family,
                                         Implementor__c = corePro.Product__r.Implementor__c,
                                         Material_Cost__c = corePro.Product__r.Material_Cost__c,
-                                        Kit_Sell__c = corePro.Product__r.Kit_Sell__c);
+                                        Kit_Sell__c = corePro.Product__r.Kit_Sell__c,
+                                        Labour_Sell__c = corePro.Product__r.Labour_Sell__c,
+                                        Plant_Sell__c = corePro.Product__r.Plant_Sell__c);
             system.debug('add Core '+pro);
-
+  
             OpportunityProduct oppProduct = new OpportunityProduct();
             OpportunityLineItem__c oppLineItem = new OpportunityLineItem__c();
             oppLineItem.OpportunityId__c = oppId;
@@ -477,14 +469,11 @@ public class NewQuoteEstimateController {
             {
                 system.debug('To Multiply');
                 if(corePro.Rule__r.Units_Type__c == 'Commercial') oppLineItem.Quantity__c = corePro.Quantity__c * noOf_Commercial;
-                if(corePro.Rule__r.Units_Type__c == 'Commercial Essential') oppLineItem.Quantity__c = corePro.Quantity__c * noOf_CommercialEssentia ;
-                if(corePro.Rule__r.Units_Type__c == 'Commercial Non-Essential') oppLineItem.Quantity__c = corePro.Quantity__c * noOf_CommercialNonEssential ;
-                if(corePro.Rule__r.Units_Type__c == 'Detached') oppLineItem.Quantity__c = corePro.Quantity__c * noOf_Detached ;
                 if(corePro.Rule__r.Units_Type__c == 'Flats') oppLineItem.Quantity__c = corePro.Quantity__c * noOf_Flats ;
                 if(corePro.Rule__r.Units_Type__c == 'Landlord') oppLineItem.Quantity__c = corePro.Quantity__c * noOf_Landlord ;
-                if(corePro.Rule__r.Units_Type__c == 'PumpStation') oppLineItem.Quantity__c = corePro.Quantity__c * noOf_PumpStation ;
-                if(corePro.Rule__r.Units_Type__c == 'Residentia') oppLineItem.Quantity__c = corePro.Quantity__c * noOf_Residential ;
-                if(corePro.Rule__r.Units_Type__c == 'Semi') oppLineItem.Quantity__c = corePro.Quantity__c * noOf_Semi ;
+                if(corePro.Rule__r.Units_Type__c == 'Houses') oppLineItem.Quantity__c = corePro.Quantity__c * noOf_House ;
+                if(corePro.Rule__r.Units_Type__c == 'TBS') oppLineItem.Quantity__c = corePro.Quantity__c * noOf_TBS ;
+                if(corePro.Rule__r.Units_Type__c == 'Applicable for all') oppLineItem.Quantity__c = corePro.Quantity__c * total ;
                 system.debug('oppLineItem.Quantity '+oppLineItem.Quantity__c);
                 system.debug('corePro.Quantity__c '+corePro.Quantity__c);
                 
@@ -493,14 +482,10 @@ public class NewQuoteEstimateController {
             {
                 system.debug('To Divide');
                 if(corePro.Rule__r.Units_Type__c == 'Commercial') oppLineItem.Quantity__c = corePro.Quantity__c / noOf_Commercial;
-                if(corePro.Rule__r.Units_Type__c == 'Commercial Essential') oppLineItem.Quantity__c = corePro.Quantity__c / noOf_CommercialEssentia ;
-                if(corePro.Rule__r.Units_Type__c == 'Commercial Non-Essential') oppLineItem.Quantity__c = corePro.Quantity__c / noOf_CommercialNonEssential ;
-                if(corePro.Rule__r.Units_Type__c == 'Detached') oppLineItem.Quantity__c = corePro.Quantity__c / noOf_Detached ;
                 if(corePro.Rule__r.Units_Type__c == 'Flats') oppLineItem.Quantity__c = corePro.Quantity__c / noOf_Flats ;
                 if(corePro.Rule__r.Units_Type__c == 'Landlord') oppLineItem.Quantity__c = corePro.Quantity__c / noOf_Landlord ;
-                if(corePro.Rule__r.Units_Type__c == 'PumpStation') oppLineItem.Quantity__c = corePro.Quantity__c / noOf_PumpStation ;
-                if(corePro.Rule__r.Units_Type__c == 'Residentia') oppLineItem.Quantity__c = corePro.Quantity__c / noOf_Residential ;
-                if(corePro.Rule__r.Units_Type__c == 'Semi') oppLineItem.Quantity__c = corePro.Quantity__c / noOf_Semi ;
+                if(corePro.Rule__r.Units_Type__c == 'Houses') oppLineItem.Quantity__c = corePro.Quantity__c / noOf_House ;
+                if(corePro.Rule__r.Units_Type__c == 'TBS') oppLineItem.Quantity__c = corePro.Quantity__c / noOf_TBS ;
                 system.debug('oppLineItem.Quantity '+oppLineItem.Quantity__c);
                 system.debug('corePro.Quantity__c '+corePro.Quantity__c);
             }
@@ -559,7 +544,51 @@ public class NewQuoteEstimateController {
         
     }
     
-    
+    @AuraEnabled
+    public static List<Scheme_Type_Breakdown__c> saveSchemeBreakdown(String parentId, List<Scheme_Type_Breakdown__c> schemeBreakdown, String recordTypeName, String utilityType, Integer numberOfPlot)
+    {
+        
+        try
+        {
+			system.debug(schemeBreakdown);
+            Set<Id> Ids = new Set<Id>();
+            for(Scheme_Type_Breakdown__c stb : schemeBreakdown)
+            {
+                Ids.add(stb.Id);
+            }
+            
+            Integer existingCount = [SELECT COUNT() FROM Scheme_Type_Breakdown__c WHERE Site_Scheme__c =: parentId AND RecordType.Name =: recordTypeName AND Utility_Type__c =: utilityType];
+            
+            List<Scheme_Type_Breakdown__c> schemeBreakdownToDelete = [SELECT Id FROM Scheme_Type_Breakdown__c WHERE Site_Scheme__c =: parentId 
+                                                                       AND RecordType.Name =: recordTypeName
+                                                                       AND Utility_Type__c =: utilityType
+                                                                       AND Id NOT IN: Ids];
+            
+            if(existingCount > schemeBreakdown.size() && recordTypeName != 'Landlords') 
+            {
+                delete schemeBreakdownToDelete;
+            }
+            
+            upsert schemeBreakdown;
+            
+            
+            Site_Scheme__c schemeToUpdate = new Site_Scheme__c();
+            schemeToUpdate.Id = parentId;
+            if(recordTypeName == 'Commercial') schemeToUpdate.No_of_Commercial__c = numberOfPlot;
+            else if(recordTypeName == 'Substation') schemeToUpdate.Number_of_Substations__c = numberOfPlot;
+            else if(recordTypeName == 'Landlords') schemeToUpdate.No_of_Landlord__c = numberOfPlot;
+            update schemeToUpdate;
+            
+            return schemeBreakdown;
+            
+        }
+        catch (Exception e) 
+        {
+            System.debug(e.getMessage());
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
     
     @AuraEnabled
     public static List<OpportunityLineItem__c> saveUtilityProducts(Id oppId, List<UtilityItem> utilityProducts)
@@ -894,26 +923,27 @@ public class NewQuoteEstimateController {
     public static List<Rule__c> getrelatedRules(String utility, String oppId)
     {
         String query; 
-        List<Rule__c> rules;
+        List<Rule__c> rules = new List<Rule__c>();
         Map<String,Schema.RecordTypeInfo> SiteSchemeRecordTypeInfo = Schema.SObjectType.Site_Scheme__c.getRecordTypeInfosByDeveloperName(); //getRecordTypeInfosByName
         List<String> sitSchemeFields = new List<String>(Site_Scheme__c.SObjectType.getDescribe().fields.getMap().keySet());
         String objectName = 'site_scheme__c';
-        site_scheme__c scheme = new site_scheme__c() ;
+        site_scheme__c scheme;
         List<UtilityAvailableRules> uars = new List<UtilityAvailableRules> ();
         
         // get site scheme...
         queryAllSchemes(oppId);
-       /* system.debug('getrelatedRules');
-        system.debug(selectedUtilityList);
-        for(String utility : selectedUtilityList)
-        {*/
-			
-            system.debug(utility);
-            if(utility == 'Electric' && !ElectricSiteSchemes.isEmpty()) scheme = ElectricSiteSchemes[0];
-            else if(utility == 'Gas' && !GasSiteSchemes.isEmpty()) scheme = GasSiteSchemes[0];
-            else if(utility == 'Water' && !WaterSiteSchemes.isEmpty()) scheme = WaterSiteSchemes[0];
-            system.debug(scheme);
-            
+	
+        system.debug(utility);
+        if(utility == 'Electric' && !ElectricSiteSchemes.isEmpty()) scheme = ElectricSiteSchemes[0];
+        else if(utility == 'Gas' && !GasSiteSchemes.isEmpty()) scheme = GasSiteSchemes[0];
+        else if(utility == 'Water' && !WaterSiteSchemes.isEmpty()) scheme = WaterSiteSchemes[0];
+        else if(utility == 'Charge Points' && !WaterSiteSchemes.isEmpty()) scheme = WaterSiteSchemes[0];
+        else if(utility == 'Street Lighting' && !StreetLightningSiteSchemes.isEmpty()) scheme = StreetLightningSiteSchemes[0];
+        system.debug(scheme);
+        
+        
+        if(scheme != null)
+        {
             String qString = 'SELECT Id, Name, Active__c, Description__c FROM Rule__c WHERE Active__c = true ';
             if(utility != null && utility != '') 
                 qString += ' AND Utility_Type__c = \''+utility+'\' ';
@@ -922,166 +952,151 @@ public class NewQuoteEstimateController {
             
             if(scheme.Total_Number_of_plots__c >= 0 )
             {
-                Boolean first = true;
-                qString += ' AND ( ';
-                
-                qString += ' ( Units_Type__c = \'Applicable for all\' ';
-                qString += ' AND (Number_of_Plots_Lower_Band__c = null OR Number_of_Plots_Lower_Band__c <= '+scheme.Total_Number_of_plots__c+') and (Number_of_Plots_Higher_Band__c = null OR Number_of_Plots_Higher_Band__c >= '+scheme.Total_Number_of_plots__c+')) ';
-                if(first == true) first = false;
-                
-                if(scheme.No_of_Commercial__c != null) {
-                    if(first == false) qString += ' OR ';
-                    qString += ' ( Units_Type__c = \'Commercial\' ';
-                    qString += ' AND (Number_of_Plots_Lower_Band__c = null OR Number_of_Plots_Lower_Band__c <= '+scheme.No_of_Commercial__c+') and (Number_of_Plots_Higher_Band__c = null OR Number_of_Plots_Higher_Band__c >= '+scheme.No_of_Commercial__c+')) ';
-                    if(first == true) first = false;
-                }
-                if(scheme.No_of_Residential__c != null) 
+                if(utility == 'Electric' || utility == 'Gas' ||utility == 'Water')
                 {
-                    if(first == false) qString += ' OR ';
-                    qString += ' ( Units_Type__c = \'Residential\' ';
-                    qString += ' AND (Number_of_Plots_Lower_Band__c = null OR Number_of_Plots_Lower_Band__c <= '+scheme.No_of_Residential__c+') and (Number_of_Plots_Higher_Band__c = null OR Number_of_Plots_Higher_Band__c >= '+scheme.No_of_Residential__c+')) ';
+                    Boolean first = true;
+                    qString += ' AND ( ';
+                    
+                    qString += ' ( Units_Type__c = \'Applicable for all\' ';
+                    qString += ' AND (Number_of_Plots_Lower_Band__c = null OR Number_of_Plots_Lower_Band__c <= '+scheme.Total_Number_of_plots__c+') and (Number_of_Plots_Higher_Band__c = null OR Number_of_Plots_Higher_Band__c >= '+scheme.Total_Number_of_plots__c+')) ';
                     if(first == true) first = false;
+                    
+                    if(scheme.No_of_Commercial__c != null) {
+                        if(first == false) qString += ' OR ';
+                        qString += ' ( Units_Type__c = \'Commercial\' ';
+                        qString += ' AND (Number_of_Plots_Lower_Band__c = null OR Number_of_Plots_Lower_Band__c <= '+scheme.No_of_Commercial__c+') and (Number_of_Plots_Higher_Band__c = null OR Number_of_Plots_Higher_Band__c >= '+scheme.No_of_Commercial__c+')) ';
+                        if(first == true) first = false;
+                    }
+                    if(scheme.No_of_Landlord__c != null) 
+                    {
+                        if(first == false) qString += ' OR ';
+                        qString += ' ( Units_Type__c = \'Landlord\' ';
+                        qString += ' AND (Number_of_Plots_Lower_Band__c = null OR Number_of_Plots_Lower_Band__c <= '+scheme.No_of_Landlord__c+') and (Number_of_Plots_Higher_Band__c = null OR Number_of_Plots_Higher_Band__c >= '+scheme.No_of_Landlord__c+')) ';
+                        if(first == true) first = false;
+                    }
+                    if(scheme.No_of_Flats__c  != null) 
+                    {
+                        if(first == false) qString += ' OR ';
+                        qString += ' ( Units_Type__c = \'Flats\' ';
+                        qString += ' AND (Number_of_Plots_Lower_Band__c = null OR Number_of_Plots_Lower_Band__c <= '+scheme.No_of_Flats__c+') and (Number_of_Plots_Higher_Band__c = null OR Number_of_Plots_Higher_Band__c >= '+scheme.No_of_Flats__c+')) ';
+                        if(first == true) first = false;
+                    }
+                    if(scheme.No_of_Houses__c  != null) 
+                    {
+                        if(first == false) qString += ' OR ';
+                        qString += ' ( Units_Type__c = \'Houses\' ';
+                        qString += ' AND (Number_of_Plots_Lower_Band__c = null OR Number_of_Plots_Lower_Band__c <= '+scheme.No_of_Houses__c+') and (Number_of_Plots_Higher_Band__c = null OR Number_of_Plots_Higher_Band__c >= '+scheme.No_of_Houses__c+')) ';
+                        if(first == true) first = false;
+                    }
+                    if(scheme.No_of_TBS__c  != null) 
+                    {
+                        if(first == false) qString += ' OR ';
+                        qString += ' ( Units_Type__c = \'TBS\' ';
+                        qString += ' AND (Number_of_Plots_Lower_Band__c = null OR Number_of_Plots_Lower_Band__c <= '+scheme.No_of_TBS__c+') and (Number_of_Plots_Higher_Band__c = null OR Number_of_Plots_Higher_Band__c >= '+scheme.No_of_TBS__c+')) ';
+                        if(first == true) first = false;
+                    }
+                    
+                    qString += ' ) '; 
                 }
-                if(scheme.No_Of_Commercial_Essential__c  != null) 
+                else if(utility == 'Street Lighting')
                 {
-                    if(first == false) qString += ' OR ';
-                    qString += ' ( Units_Type__c = \'Commercial Essential\' ';
-                    qString += ' AND (Number_of_Plots_Lower_Band__c = null OR Number_of_Plots_Lower_Band__c <= '+scheme.No_Of_Commercial_Essential__c +') and (Number_of_Plots_Higher_Band__c = null OR Number_of_Plots_Higher_Band__c >= '+scheme.No_Of_Commercial_Essential__c +')) ';
+                    Boolean first = true;
+                    qString += ' AND ( ';
+                    
+                    qString += ' ( Type_of_Street_Light__c = \'Applicable for all\' ';
+                    qString += ' AND (Number_of_Street_Lights_Lower_Band__c  = null OR Number_of_Street_Lights_Lower_Band__c  <= '+scheme.Total_Number_of_plots__c+') and (Number_of_Street_Lights_Higher_Band__c  = null OR Number_of_Street_Lights_Higher_Band__c  >= '+scheme.Total_Number_of_plots__c+')) ';
                     if(first == true) first = false;
+                    
+                    if(scheme.X5m__c != null) {
+                        if(first == false) qString += ' OR ';
+                        qString += ' ( Type_of_Street_Light__c  = \'5m\' ';
+                        qString += ' AND (Number_of_Street_Lights_Lower_Band__c = null OR Number_of_Street_Lights_Lower_Band__c <= '+scheme.X5m__c+') and (Number_of_Street_Lights_Higher_Band__c = null OR Number_of_Street_Lights_Higher_Band__c >= '+scheme.X5m__c+')) ';
+                        if(first == true) first = false;
+                    }
+                    if(scheme.X6m__c != null) 
+                    {
+                        if(first == false) qString += ' OR ';
+                        qString += ' ( Type_of_Street_Light__c  = \'6m\' ';
+                        qString += ' AND (Number_of_Street_Lights_Lower_Band__c = null OR Number_of_Street_Lights_Lower_Band__c <= '+scheme.X6m__c+') and (Number_of_Street_Lights_Higher_Band__c = null OR Number_of_Street_Lights_Higher_Band__c >= '+scheme.X6m__c+')) ';
+                        if(first == true) first = false;
+                    }
+                    if(scheme.X6m_Hinged__c != null) 
+                    {
+                        if(first == false) qString += ' OR ';
+                        qString += ' ( Type_of_Street_Light__c  = \'6m Hinged\' ';
+                        qString += ' AND (Number_of_Street_Lights_Lower_Band__c = null OR Number_of_Street_Lights_Lower_Band__c <= '+scheme.X6m_Hinged__c+') and (Number_of_Street_Lights_Higher_Band__c = null OR Number_of_Street_Lights_Higher_Band__c >= '+scheme.X6m_Hinged__c+')) ';
+                        if(first == true) first = false;
+                    }
+                    if(scheme.X8m__c != null) 
+                    {
+                        if(first == false) qString += ' OR ';
+                        qString += ' ( Type_of_Street_Light__c  = \'8m\' ';
+                        qString += ' AND (Number_of_Street_Lights_Lower_Band__c = null OR Number_of_Street_Lights_Lower_Band__c <= '+scheme.X8m__c+') and (Number_of_Street_Lights_Higher_Band__c = null OR Number_of_Street_Lights_Higher_Band__c >= '+scheme.X8m__c+')) ';
+                        if(first == true) first = false;
+                    }
+                    if(scheme.X10m__c != null) 
+                    {
+                        if(first == false) qString += ' OR ';
+                        qString += ' ( Type_of_Street_Light__c  = \'10m\' ';
+                        qString += ' AND (Number_of_Street_Lights_Lower_Band__c = null OR Number_of_Street_Lights_Lower_Band__c <= '+scheme.X10m__c+') and (Number_of_Street_Lights_Higher_Band__c = null OR Number_of_Street_Lights_Higher_Band__c >= '+scheme.X10m__c+')) ';
+                        if(first == true) first = false;
+                    }
+                    if(scheme.X12m__c != null) 
+                    {
+                        if(first == false) qString += ' OR ';
+                        qString += ' ( Type_of_Street_Light__c  = \'12m\' ';
+                        qString += ' AND (Number_of_Street_Lights_Lower_Band__c = null OR Number_of_Street_Lights_Lower_Band__c <= '+scheme.X12m__c+') and (Number_of_Plots_Higher_Band__c = null OR Number_of_Plots_Higher_Band__c >= '+scheme.X12m__c+')) ';
+                        if(first == true) first = false;
+                    }
+                    
+                    qString += ' ) '; 
                 }
-                if(scheme.No_of_Commercial_Non_Essential__c  != null) 
-                {
-                    if(first == false) qString += ' OR ';
-                    qString += ' ( Units_Type__c = \'Commercial Non Essential\' ';
-                    qString += ' AND (Number_of_Plots_Lower_Band__c = null OR Number_of_Plots_Lower_Band__c <= '+scheme.No_of_Commercial_Non_Essential__c +') and (Number_of_Plots_Higher_Band__c = null OR Number_of_Plots_Higher_Band__c >= '+scheme.No_of_Commercial_Non_Essential__c +')) ';
-                    if(first == true) first = false;
-                }
-                if(scheme.No_of_Landlord__c != null) 
-                {
-                    if(first == false) qString += ' OR ';
-                    qString += ' ( Units_Type__c = \'Landlord\' ';
-                    qString += ' AND (Number_of_Plots_Lower_Band__c = null OR Number_of_Plots_Lower_Band__c <= '+scheme.No_of_Landlord__c+') and (Number_of_Plots_Higher_Band__c = null OR Number_of_Plots_Higher_Band__c >= '+scheme.No_of_Landlord__c+')) ';
-                    if(first == true) first = false;
-                }
-                if(scheme.No_of_Detached__c != null) 
-                {
-                    if(first == false) qString += ' OR ';
-                    qString += ' ( Units_Type__c = \'Detached\' ';
-                    qString += ' AND (Number_of_Plots_Lower_Band__c = null OR Number_of_Plots_Lower_Band__c <= '+scheme.No_of_Detached__c +') and (Number_of_Plots_Higher_Band__c = null OR Number_of_Plots_Higher_Band__c >= '+scheme.No_of_Detached__c +')) ';
-                    if(first == true) first = false;
-                }
-                if(scheme.No_of_Flats__c  != null) 
-                {
-                    if(first == false) qString += ' OR ';
-                    qString += ' ( Units_Type__c = \'Flats\' ';
-                    qString += ' AND (Number_of_Plots_Lower_Band__c = null OR Number_of_Plots_Lower_Band__c <= '+scheme.No_of_Flats__c+') and (Number_of_Plots_Higher_Band__c = null OR Number_of_Plots_Higher_Band__c >= '+scheme.No_of_Flats__c+')) ';
-                    if(first == true) first = false;
-                }
-                if(scheme.No_of_Semi__c  != null) 
-                {
-                    if(first == false) qString += ' OR ';
-                    qString += ' ( Units_Type__c = \'Semi\' ';
-                    qString += ' AND (Number_of_Plots_Lower_Band__c = null OR Number_of_Plots_Lower_Band__c <= '+scheme.No_of_Semi__c+') and (Number_of_Plots_Higher_Band__c = null OR Number_of_Plots_Higher_Band__c >= '+scheme.No_of_Semi__c+')) ';
-                    if(first == true) first = false;
-                }
-                if(scheme.No_of_Pump_Station__c  != null)
-                {
-                    if(first == false) qString += ' OR ';
-                    qString += ' ( Units_Type__c = \'Pump Station\' ';
-                    qString += ' AND (Number_of_Plots_Lower_Band__c = null OR Number_of_Plots_Lower_Band__c <= '+scheme.No_of_Pump_Station__c+') and (Number_of_Plots_Higher_Band__c = null OR Number_of_Plots_Higher_Band__c >= '+scheme.No_of_Pump_Station__c+')) ';
-                    if(first == true) first = false;
-                }
-                if(scheme.No_of_Houses__c  != null) 
-                {
-                    if(first == false) qString += ' OR ';
-                    qString += ' ( Units_Type__c = \'Houses\' ';
-                    qString += ' AND (Number_of_Plots_Lower_Band__c = null OR Number_of_Plots_Lower_Band__c <= '+scheme.No_of_Houses__c+') and (Number_of_Plots_Higher_Band__c = null OR Number_of_Plots_Higher_Band__c >= '+scheme.No_of_Houses__c+')) ';
-                    if(first == true) first = false;
-                }
-                if(scheme.No_of_TBS__c  != null) 
-                {
-                    if(first == false) qString += ' OR ';
-                    qString += ' ( Units_Type__c = \'TBS\' ';
-                    qString += ' AND (Number_of_Plots_Lower_Band__c = null OR Number_of_Plots_Lower_Band__c <= '+scheme.No_of_TBS__c+') and (Number_of_Plots_Higher_Band__c = null OR Number_of_Plots_Higher_Band__c >= '+scheme.No_of_TBS__c+')) ';
-                    if(first == true) first = false;
-                }
-                
-                qString += ' ) '; 
                 
             }
-        
-        /*if(scheme.Units_Type__c != null && scheme.Units_Type__c != '') 
-qString += ' AND Units_Type__c = \''+scheme.Units_Type__c+'\' ';*/
-        /*if(scheme.No_of_Units__c != null)
-qString += ' AND (Number_of_Plots_Lower_Band__c = null OR Number_of_Plots_Lower_Band__c <= '+scheme.No_of_Units__c+') and (Number_of_Plots_Higher_Band__c = null OR Number_of_Plots_Higher_Band__c >= '+scheme.No_of_Units__c+') ';*/
-        if(scheme.Total_Load_kVA__c != null)
-            qString += ' AND (Total_Load_kVA_Lower_Band__c = null OR Total_Load_kVA_Lower_Band__c <= '+scheme.Total_Load_kVA__c+') and (Total_Load_kVA_Higher_Band__c = null OR Total_Load_kVA_Higher_Band__c >= '+scheme.Total_Load_kVA__c+') ';
-        if(scheme.Metering_Voltage__c != null && scheme.Metering_Voltage__c != '') 
-            qString += ' AND Metering_Voltage__c = \''+scheme.Metering_Voltage__c+'\' ';
-        if(scheme.POC__c != null && scheme.POC__c != '') 
-            qString += ' AND POC__c = \''+scheme.POC__c+'\' ';
-        if(scheme.DNO__c != null && scheme.DNO__c != '') 
-            qString += ' AND DNO__c = \''+scheme.DNO__c+'\' ';
-        if(scheme.IDNO__c != null && scheme.IDNO__c != '') 
-            qString += ' AND IDNO__c = \''+scheme.IDNO__c+'\' ';
-        if(scheme.GT__c != null && scheme.GT__c != '') 
-            qString += ' AND GT__c = \''+scheme.GT__c+'\' '; // Gas
-        if(scheme.IGT__c != null && scheme.IGT__c != '') 
-            qString += ' AND IGT__c  = \''+scheme.IGT__c+'\' '; // Gas
-        if(scheme.Water_Provider__c != null && scheme.Water_Provider__c != '') 
-            qString += ' AND Pipe_type__c  = \''+scheme.Pipe_type__c+'\' '; // Water
-        if(scheme.Pipe_type__c != null && scheme.Pipe_type__c != '') 
-            qString += ' AND Water_Provider__c  = \''+scheme.Water_Provider__c+'\' '; // Water
-        if(scheme.DNO_Reference__c != null && scheme.DNO_Reference__c != '') 
-            qString += ' AND DNO_Reference__c = \''+scheme.DNO_Reference__c+'\' ';
-        if(scheme.IDNO_Reference__c != null && scheme.IDNO_Reference__c != '') 
-            qString += ' AND IDNO_Reference__c = \''+scheme.IDNO_Reference__c+'\' ';
-        if(scheme.Number_of_Substations__c != null)
-            qString += ' AND (Number_of_Substations_Lower_Band__c = null OR Number_of_Substations_Lower_Band__c <= '+scheme.Number_of_Substations__c+') and (Number_of_Substations_Higher_Band__c = null OR Number_of_Substations_Higher_Band__c >= '+scheme.Number_of_Substations__c+') ';
-        if(scheme.Substation_Enclosure_Type__c != null && scheme.Substation_Enclosure_Type__c != '') 
-            qString += ' AND Substation_Enclosure_Type__c = \''+scheme.Substation_Enclosure_Type__c+'\' ';
-        if(scheme.Work_Zone__c != null && scheme.Work_Zone__c != '') 
-            qString += ' AND Work_Zone__c = \''+scheme.Work_Zone__c+'\' ';
-        if(scheme.Substation_Size__c != null && scheme.Substation_Size__c != '') 
-            qString += ' AND Substation_Size__c = \''+scheme.Substation_Size__c+'\' ';
-        
-        if(scheme.To_Boundary__c != null)
-            qString += ' AND (Boundary_Lower_Band__c = null OR Boundary_Lower_Band__c  <= '+scheme.To_Boundary__c +') and (Boundary_Higher_Band__c  = null OR Boundary_Higher_Band__c  >= '+scheme.To_Boundary__c +') ';
-        if(scheme.Onsite_Excavation__c  != null)
-            qString += ' AND (Onsite_Excavation_Lower_Band__c = null OR Onsite_Excavation_Lower_Band__c   <= '+scheme.Onsite_Excavation__c  +') and (Onsite_Excavation_Higher_Band__c = null OR Onsite_Excavation_Higher_Band__c >= '+scheme.Onsite_Excavation__c  +') ';
-        if(scheme.No_of_Joint_Bays__c  != null)
-            qString += ' AND (Number_of_Joint_Bays_Lower_Band__c = null OR Number_of_Joint_Bays_Lower_Band__c   <= '+scheme.No_of_Joint_Bays__c  +') and (Number_of_Joint_Bays_Higher_Band__c = null OR Number_of_Joint_Bays_Higher_Band__c >= '+scheme.No_of_Joint_Bays__c  +') ';
-        
-        
+            
+            if(scheme.Total_Load_kVA__c != null)
+                qString += ' AND (Total_Load_kVA_Lower_Band__c = null OR Total_Load_kVA_Lower_Band__c <= '+scheme.Total_Load_kVA__c+') and (Total_Load_kVA_Higher_Band__c = null OR Total_Load_kVA_Higher_Band__c >= '+scheme.Total_Load_kVA__c+') ';
+            if(scheme.Metering_Voltage__c != null && scheme.Metering_Voltage__c != '') 
+                qString += ' AND Metering_Voltage__c = \''+scheme.Metering_Voltage__c+'\' ';
+            if(scheme.POC__c != null && scheme.POC__c != '') 
+                qString += ' AND POC__c = \''+scheme.POC__c+'\' ';
+            if(scheme.DNO__c != null && scheme.DNO__c != '') 
+                qString += ' AND DNO__c = \''+scheme.DNO__c+'\' ';
+            if(scheme.IDNO__c != null && scheme.IDNO__c != '') 
+                qString += ' AND IDNO__c = \''+scheme.IDNO__c+'\' ';
+            if(scheme.GT__c != null && scheme.GT__c != '') 
+                qString += ' AND GT__c = \''+scheme.GT__c+'\' '; // Gas
+            if(scheme.IGT__c != null && scheme.IGT__c != '') 
+                qString += ' AND IGT__c  = \''+scheme.IGT__c+'\' '; // Gas
+            if(scheme.Water_Provider__c != null && scheme.Water_Provider__c != '') 
+                qString += ' AND Pipe_type__c  = \''+scheme.Pipe_type__c+'\' '; // Water
+            if(scheme.Pipe_type__c != null && scheme.Pipe_type__c != '') 
+                qString += ' AND Water_Provider__c  = \''+scheme.Water_Provider__c+'\' '; // Water
+            if(scheme.DNO_Reference__c != null && scheme.DNO_Reference__c != '') 
+                qString += ' AND DNO_Reference__c = \''+scheme.DNO_Reference__c+'\' ';
+            if(scheme.IDNO_Reference__c != null && scheme.IDNO_Reference__c != '') 
+                qString += ' AND IDNO_Reference__c = \''+scheme.IDNO_Reference__c+'\' ';
+            if(scheme.Number_of_Substations__c != null)
+                qString += ' AND (Number_of_Substations_Lower_Band__c = null OR Number_of_Substations_Lower_Band__c <= '+scheme.Number_of_Substations__c+') and (Number_of_Substations_Higher_Band__c = null OR Number_of_Substations_Higher_Band__c >= '+scheme.Number_of_Substations__c+') ';
+            if(scheme.Substation_Enclosure_Type__c != null && scheme.Substation_Enclosure_Type__c != '') 
+                qString += ' AND Substation_Enclosure_Type__c = \''+scheme.Substation_Enclosure_Type__c+'\' ';
+            if(scheme.Work_Zone__c != null && scheme.Work_Zone__c != '') 
+                qString += ' AND Work_Zone__c = \''+scheme.Work_Zone__c+'\' ';
+            if(scheme.Substation_Size__c != null && scheme.Substation_Size__c != '') 
+                qString += ' AND Substation_Size__c = \''+scheme.Substation_Size__c+'\' ';
+            
+            if(scheme.To_Boundary__c != null)
+                qString += ' AND (Boundary_Lower_Band__c = null OR Boundary_Lower_Band__c  <= '+scheme.To_Boundary__c +') and (Boundary_Higher_Band__c  = null OR Boundary_Higher_Band__c  >= '+scheme.To_Boundary__c +') ';
+            if(scheme.Onsite_Excavation__c  != null)
+                qString += ' AND (Onsite_Excavation_Lower_Band__c = null OR Onsite_Excavation_Lower_Band__c   <= '+scheme.Onsite_Excavation__c  +') and (Onsite_Excavation_Higher_Band__c = null OR Onsite_Excavation_Higher_Band__c >= '+scheme.Onsite_Excavation__c  +') ';
+            if(scheme.No_of_Joint_Bays__c  != null)
+                qString += ' AND (Number_of_Joint_Bays_Lower_Band__c = null OR Number_of_Joint_Bays_Lower_Band__c   <= '+scheme.No_of_Joint_Bays__c  +') and (Number_of_Joint_Bays_Higher_Band__c = null OR Number_of_Joint_Bays_Higher_Band__c >= '+scheme.No_of_Joint_Bays__c  +') ';
+            
+            
             system.debug(qString);
             rules = database.query(qString);
             system.debug('rules size '+rules.size());
-
-            /*UtilityAvailableRules uar = new UtilityAvailableRules();
-            uar.utilityType = utility;
-            uar.rules = rules;
-            uars.add(uar);*/
-
-        
-        /*List<Rule__c> rules = [SELECT Id, Name, Active__c, Description__c  FROM Rule__c 
-                               where Active__c = true AND
-                               Utility_Type__c = : utilityType AND
-                               Product_Family__c = : ElectricSiteSchemes[0].Product_Family__c AND
-                               Units_Type__c =: ElectricSiteSchemes[0].Units_Type__c AND
-                               Number_of_Plots_Lower_Band__c <=: ElectricSiteSchemes[0].No_of_Units__c and Number_of_Plots_Higher_Band__c >=: ElectricSiteSchemes[0].No_of_Units__c AND
-                               Total_Load_kVA_Lower_Band__c <=: ElectricSiteSchemes[0].Total_Load_kVA__c and Total_Load_kVA_Higher_Band__c >=: ElectricSiteSchemes[0].Total_Load_kVA__c AND
-                               Metering_Voltage__c =: ElectricSiteSchemes[0].Metering_Voltage__c AND 
-                               POC__c =: ElectricSiteSchemes[0].POC__c AND
-                               DNO__c =: ElectricSiteSchemes[0].DNO__c AND
-                               IDNO__c =: ElectricSiteSchemes[0].IDNO__c AND
-                               DNO_Reference__c =: ElectricSiteSchemes[0].DNO_Reference__c AND
-                               IDNO_Reference__c =: ElectricSiteSchemes[0].IDNO_Reference__c AND
-                               Number_of_Substations_Lower_Band__c <=: ElectricSiteSchemes[0].Number_of_Substations__c and Number_of_Substations_Higher_Band__c >=: ElectricSiteSchemes[0].Number_of_Substations__c AND
-                               Substation_Enclosure_Type__c =: ElectricSiteSchemes[0].Substation_Enclosure_Type__c AND
-                               Substation_Size__c =: ElectricSiteSchemes[0].Substation_Size__c AND
-                               Work_Zone__c =: ElectricSiteSchemes[0].Work_Zone__c 
-                              ];*/
-        
+        }
         
         return rules;
     }
@@ -1132,131 +1147,5 @@ qString += ' AND (Number_of_Plots_Lower_Band__c = null OR Number_of_Plots_Lower_
         @AuraEnabled
         public List<Rule__c> rules { get; set; }
     }
-    
-    /* @AuraEnabled //Backup
-    public static saveReturnValue saveUtilityProducts(Id oppId, List<UtilityItem> utilityProducts, List<OpportunityLineItem__c> labourSellItems, 
-                                                      List<OpportunityLineItem__c> plantSellItems, String pdfBase64Data)
-    {
-        
-        try
-        {
-            System.debug('pdfBase64Data '+pdfBase64Data);
-            System.debug('labourSellItems size '+labourSellItems.size());
-            System.debug('plantSellItems size '+plantSellItems.size());
-            
-            Map<String,Id> pbEntryMap = new Map<String,Id>();
-            Set<Id> product2Ids = new Set<Id>();
-            Set<Id> successQLineItemsId = new Set<Id>();
-            //Opp Line Items
-            List<OpportunityLineItem__c> oppLineItems = new List<OpportunityLineItem__c>(); 
-            
-            List<OpportunityLineItem__c> oppLineItemsToDelete = [SELECT Id FROM OpportunityLineItem__c WHERE OpportunityId__c =: oppId];
-            
-            for (UtilityItem uItem : utilityProducts)
-            {
-                for (OpportunityProduct oppProduct : uItem.oppProducts)
-                {                
-                    oppLineItems.add(oppProduct.oppLineItem);
-                    product2Ids.add(oppProduct.oppLineItem.Product2Id__c);                
-                }
-                
-                system.debug('oppLineItems '+oppLineItems);
-            }
-            
-            for (OpportunityLineItem__c item : labourSellItems)
-            {
-                oppLineItems.add(item);
-                product2Ids.add(item.Product2Id__c);    
-            }
-            
-            for (OpportunityLineItem__c item : plantSellItems)
-            {
-                oppLineItems.add(item);
-                product2Ids.add(item.Product2Id__c);
-            }
-            
-            delete oppLineItemsToDelete;
-            
-            insert oppLineItems;
-            
-            
-            Opportunity opp = [SELECT Id, Name FROM Opportunity WHERE Id =: oppId];
-            for(PricebookEntry pbEntry : [SELECT Id, Name, Pricebook2Id, Product2Id
-                                          FROM PricebookEntry WHERE IsActive = true AND Product2Id IN: product2Ids])
-            {
-                pbEntryMap.put(pbEntry.Product2Id, pbEntry.id);
-
-            }
-            
-            Quote q = new Quote();
-            q.Name = 'Estimate for '+opp.Name;
-            q.OpportunityId = oppId;
-            insert q;
-            
-            List<QuoteLineItem> quoteLineItems = new List<QuoteLineItem>();
-            for(OpportunityLineItem__c oppItem :oppLineItems)
-            {
-                QuoteLineItem qItem = new QuoteLineItem();
-                qItem.QuoteId = q.Id;
-                if(pbEntryMap.containsKey(oppItem.Product2Id__c)) qItem.PricebookEntryId = pbEntryMap.get(oppItem.Product2Id__c);
-				qItem.OpportunityLineItem__c  = oppItem.Id;
-                qItem.Product2Id = oppItem.Product2Id__c;
-                qItem.Quantity = oppItem.Quantity__c;
-                qItem.UnitPrice  = oppItem.UnitPrice__c;
-                qItem.Implementor__c = oppItem.Implementor__c;
-                qItem.Kit_Sell__c = oppItem.Kit_Sell__c;
-                //qItem.Material_Sell__c = oppItem.Material_Sell__c;
-                //qItem.Plant_Sell__c = oppItem.Plant_Sell__c;
-                qItem.Material_Cost__c = oppItem.Material_Cost__c;
-                qItem.Plant_Cost__c = oppItem.Plant_Cost__c;
-                //System.debug('qItem: ' + qItem);
-                quoteLineItems.add(qItem);
-            }
-            
-            insert quoteLineItems;
-            
-            opp.SyncedQuoteId  = q.Id;
-            update opp;
-            
-            Blob myBlob = EncodingUtil.base64Decode(pdfBase64Data);
-            //String cvRTId = Schema.SObjectType.Account.getRecordTypeInfosByName().get('Estimator').getRecordTypeId();
-            
-            ContentVersion cv = new ContentVersion();
-            cv.versionData = myBlob;
-            cv.title = 'Estimate' + '_' + String.valueof(DateTime.now().getTime()) + '.pdf';
-            cv.pathOnClient = 'Estimate' + '_' + String.valueof(DateTime.now().getTime()) + '.pdf';
-            cv.Type__c = 'BT';
-            cv.Group__c = 'Estimate';
-            cv.RecordTypeId = '0124J000000hNK3QAM';
-            cv.IsMajorVersion = true;
-            system.debug(cv);
-            insert cv;
-            
-            String ContentDocumentId = [SELECT Id, ContentDocumentId FROM ContentVersion WHERE Id =: cv.Id].ContentDocumentId;
-            
-            ContentDocumentLink cdl = new ContentDocumentLink();
-            cdl.ContentDocumentId = ContentDocumentId;
-            cdl.ShareType = 'V';
-            cdl.Visibility = 'AllUsers';
-            cdl.LinkedEntityId = q.Id;
-            insert cdl;
-            
-            saveReturnValue returnVal = new saveReturnValue();
-            returnVal.quoteId = q.Id;
-            returnVal.contentVersionId = cv.Id;
-            returnVal.ContentDocumentId = ContentDocumentId;
-            
-            return returnVal;
-            
-            
-        }
-        catch (Exception e) 
-        {
-            System.debug(e.getMessage());
-            throw new AuraHandledException(e.getMessage());
-        }
-        
-        
-    }*/
     
 }
