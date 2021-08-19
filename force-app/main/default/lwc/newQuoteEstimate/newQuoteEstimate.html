@@ -10,7 +10,6 @@
                 <span class="slds-assistive-text">Close</span>
                 <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Estimation Wizard</h2>
                 <div class="slds-p-around_none slds-m-top_x-small slds-m-horizontal_none">
-                    <!--<div class="slds-p-around_small slds-text-align_left" style="padding-bottom: 5px;">Financial Details</div>-->
                     <lightning-layout>
                         <lightning-layout-item flexibility="auto" padding="around-small">
                             <div class="custom-box slds-box slds-p-around_small slds-text-align_center"
@@ -238,7 +237,8 @@
 
                                                 <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="Product_Family__c"
-                                                        class="electric-scheme" data-utilitytype="electric-scheme">
+                                                        class="electric-scheme" data-utilitytype="electric-scheme" 
+                                                        value="Electricity">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
@@ -406,13 +406,8 @@
                 
                                                 <lightning-layout-item size="3">
                                                     <lightning-input-field field-name="Product_Family__c"
-                                                        class="gas-scheme" data-utilitytype="gas-scheme">
-                                                    </lightning-input-field>
-                                                </lightning-layout-item>
-
-                                                <lightning-layout-item size="3">
-                                                    <lightning-input-field field-name="CSEP__c" class="gas-scheme"
-                                                        data-utilitytype="gas-scheme">
+                                                        class="gas-scheme" data-utilitytype="gas-scheme"
+                                                        value="Gas">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
@@ -425,6 +420,12 @@
                                                 <lightning-layout-item size="3">
                                                     <lightning-input-field field-name="Non_Contestable_Cost__c"
                                                         class="gas-scheme" data-utilitytype="gas-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="3">
+                                                    <lightning-input-field field-name="CSEP__c" class="gas-scheme"
+                                                        data-utilitytype="gas-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
@@ -569,42 +570,39 @@
 
                                             <lightning-layout multiple-rows>
 
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="Product_Family__c"
-                                                        class="water-scheme" data-utilitytype="water-scheme">
+                                                        class="water-scheme" data-utilitytype="water-scheme"
+                                                        value="Water">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
-                                                <lightning-layout-item size="3">
-                                                    <lightning-input-field field-name="Water_Provider__c"
-                                                        class="water-scheme" data-utilitytype="water-scheme"
-                                                        required="true"></lightning-input-field>
-                                                </lightning-layout-item>
-                                                <lightning-layout-item size="3">
-                                                    <lightning-input-field field-name="Pipe_Type__c"
-                                                        class="water-scheme" data-utilitytype="water-scheme"
-                                                        required="true">
-                                                    </lightning-input-field>
-                                                </lightning-layout-item>
-
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="Asset_Value__c"
                                                         class="water-scheme" data-utilitytype="water-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="Non_Contestable_Cost__c"
                                                         class="water-scheme" data-utilitytype="water-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
-                                                <lightning-layout-item size="3">
-                                                    <lightning-input-field field-name="Infrastructure_Charges__c"
-                                                        class="water-scheme" data-utilitytype="water-scheme">
-                                                    </lightning-input-field>
+                                                
+
+                                                <lightning-layout-item size="4">
+                                                    <lightning-input-field field-name="Host_Water_Adopter__c"
+                                                        class="water-scheme" data-utilitytype="water-scheme"
+                                                        ></lightning-input-field>
                                                 </lightning-layout-item>
 
-                                                <lightning-layout-item size="3" class="slds-form-element_stacked">
+                                                <lightning-layout-item size="4">
+                                                    <lightning-input-field field-name="Water_Provider__c"
+                                                        class="water-scheme" data-utilitytype="water-scheme"
+                                                    ></lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="4" class="slds-form-element_stacked">
                                                     <label class='slds-form-element__label'
                                                         for={scheme.utilityType}>Source
                                                         of Water to Boundary (m)</label>
@@ -613,18 +611,34 @@
                                                         data-utilitytype="water-scheme" variant="label-hidden">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="No_of_Joint_Bays__c"
                                                         class="water-scheme" data-utilitytype="water-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
-                                                <lightning-layout-item size="3">
+                                                <lightning-layout-item size="4">
+                                                    <lightning-input-field field-name="Infrastructure_Charges__c"
+                                                        class="water-scheme" data-utilitytype="water-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="Traffic_Management__c"
                                                         class="water-scheme" data-utilitytype="water-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
-                                                <lightning-layout-item size="3">
+
+
+                                                <lightning-layout-item size="4">
+                                                    <lightning-input-field field-name="Pipe_Type__c"
+                                                        class="water-scheme" data-utilitytype="water-scheme"
+                                                        required="true">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                
+                                                <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="Onsite_Excavation__c"
                                                         class="water-scheme" data-utilitytype="water-scheme">
                                                     </lightning-input-field>
@@ -669,15 +683,12 @@
 
                                                 <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="Product_Family__c"
-                                                        class="charger-scheme" data-utilitytype="charger-scheme">
+                                                        class="charger-scheme" data-utilitytype="charger-scheme"
+                                                        value="Charge Point">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
-                                                <lightning-layout-item size="4">
-                                                    <lightning-input-field field-name="Charger_Provider__c"
-                                                        class="charger-scheme" data-utilitytype="charger-scheme">
-                                                    </lightning-input-field>
-                                                </lightning-layout-item>
+                                                
 
                                                 <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="Asset_Value__c"
@@ -713,6 +724,12 @@
                                                 </lightning-layout-item>
                                                 <lightning-layout-item size="4">
                                                     <lightning-input-field field-name="No_of_Joint_Bays__c"
+                                                        class="charger-scheme" data-utilitytype="charger-scheme">
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size="4">
+                                                    <lightning-input-field field-name="Charger_Provider__c"
                                                         class="charger-scheme" data-utilitytype="charger-scheme">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
@@ -868,7 +885,8 @@
 
                                                 <lightning-layout-item size="3">
                                                     <lightning-input-field field-name="Product_Family__c"
-                                                        class="street-scheme" data-utilitytype="street-scheme">
+                                                        class="street-scheme" data-utilitytype="street-scheme"
+                                                        value="Street Lighting">
                                                     </lightning-input-field>
                                                 </lightning-layout-item>
 
@@ -1134,7 +1152,7 @@
                                             </th>-->
 
                                             <th class="" scope="col">
-                                                <div class="slds-truncate" title="PRODUCT TYPE">Product Type</div>
+                                                <div class="slds-truncate" title="Load Source">Load Source</div>
                                             </th>
                                         </tr>
                                     </thead>

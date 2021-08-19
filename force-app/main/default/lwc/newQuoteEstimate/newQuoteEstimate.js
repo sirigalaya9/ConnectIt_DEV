@@ -19,6 +19,8 @@ import PROPERTYTYPE from "@salesforce/schema/Opportunity.Property_Type__c";
 import UTILITIES from "@salesforce/schema/Opportunity.Utilities__c";
 import CONTACTNAME from "@salesforce/schema/Opportunity.Contact_Name__c";
 import CREATEDDATE from "@salesforce/schema/Opportunity.CreatedDate";
+import MATERIALUPLIFT from "@salesforce/schema/Opportunity.Materials_Uplift__c";
+
 import userId from "@salesforce/user/Id";
 
 import searchProduct from "@salesforce/apex/NewQuoteEstimateController.searchProduct";
@@ -27,7 +29,7 @@ import query from '@salesforce/apex/NewQuoteEstimateController.query';
 import saveUtilityProducts from '@salesforce/apex/NewQuoteEstimateController.saveUtilityProducts';
 import createEstimate from '@salesforce/apex/NewQuoteEstimateController.createEstimate';
 import getrelatedRules from "@salesforce/apex/NewQuoteEstimateController.getrelatedRules";
-import addCoreToUtilityProducts from "@salesforce/apex/NewQuoteEstimateController.addCoreToUtilityProducts";
+//import addCoreToUtilityProducts from "@salesforce/apex/NewQuoteEstimateController.addCoreToUtilityProducts";
 import getCoreProductsByRules from "@salesforce/apex/NewQuoteEstimateController.getCoreProductsByRules";
 import getExistingScheme from "@salesforce/apex/NewQuoteEstimateController.getExistingScheme";
 
@@ -45,7 +47,7 @@ import PRICEBOOK2ID from '@salesforce/schema/Opportunity.Pricebook2Id';
 const _FIELDS = [
     RECORDTYPEID, RECORDTYPENAME, SITE, PROJECT, ClOSEDATE, TYPE, PROPERTYTYPE, UTILITIES,
     TOTALKITSELL, TOTALLABOURSELL, TOTALMATERIALSELL, TOTALPLANTSELL, TOTALCLIENTCONTRIBUTION,
-    PRICEBOOK2ID, SITE_NAME, CONTACTNAME, CREATEDDATE
+    PRICEBOOK2ID, SITE_NAME, CONTACTNAME, CREATEDDATE, MATERIALUPLIFT
 ];
 
 const columns = [
@@ -178,6 +180,10 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
             this.contact_name = this.opportunity.data.fields.Contact_Name__c.value;
             this.createddate = this.opportunity.data.fields.CreatedDate.value;
             this.closedate = this.opportunity.data.fields.CloseDate.value;
+            this.materialUpLift = this.opportunity.data.fields.Materials_Uplift__c.value;
+            console.log('this.materialUpLift ' + this.materialUpLift);
+            if (typeof this.materialUpLift == 'undefined' || this.materialUpLift == '' || this.materialUpLift == null)
+                this.materialUpLift = 0;
 
             selectedUtility = this.opportunity.data.fields.Utilities__c.value;
             console.log(selectedUtility);
@@ -404,6 +410,7 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                         utilityItem.noOfSeletcedRules = 0;
                         let index = 0;
                         utilityItem.oppProducts.forEach(oppProduct => {
+                            let calMaterialSell = 0;
                             let item = oppProduct.oppLineItem;
                             oppProduct.productUrl = '/' + item.Product2Id__r.Id;
                             oppProduct.index = index++;
@@ -419,7 +426,14 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                             oppProduct.isRemoveable = true;
                             oppProduct.oppLineItem.Quantity__c = item.Quantity__c;
                             oppProduct.oppLineItem.Implementor__c = item.Implementor__c;
-                            oppProduct.oppLineItem.Kit_Sell__c = item.Kit_Sell__c;
+                            if (typeof item.Product2Id__r.Material_Cost__c == 'undefined') item.Product2Id__r.Material_Cost__c = 0;
+                            if (this.materialUpLift > 0)
+                                calMaterialSell = item.Product2Id__r.Material_Cost__c + (item.Product2Id__r.Material_Cost__c * this.materialUpLift / 100);
+                            else
+                                calMaterialSell = item.Product2Id__r.Material_Cost__c;
+
+                            oppProduct.oppLineItem.Kit_Sell__c = parseFloat(calMaterialSell).toFixed(2);
+                            //oppProduct.oppLineItem.Kit_Sell__c = item.Kit_Sell__c;
                             oppProduct.oppLineItem.Labour_Sell__c = item.Product2Id__r.Labour_Sell__c;
                             oppProduct.oppLineItem.Plant_Sell__c = item.Product2Id__r.Plant_Sell__c;
                             oppProduct.oppLineItem.Material_Cost__c = item.Material_Cost__c;
@@ -451,7 +465,7 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
 
     saveUtilityProducts() {
         let utilityProducts = [];
-
+        this.showSpinner = true;
         this._utilityItems.forEach(utilityItem => {
             console.log(utilityItem);
             let utilityProduct = {};
@@ -506,7 +520,7 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                 if (result && result.length !== 0) {
                     console.log(result);
                     this.showSpinner = false;
-
+                    this.template.querySelector('c-quote-payment-schedule').resetItems();
                     this.dispatchEvent(
                         new ShowToastEvent({
                             title: 'Success',
@@ -1044,6 +1058,7 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                     console.log(utilityItem.oppProducts);
 
                     results.forEach(result => {
+                        let calMaterialSell = 0;
                         let oppProduct = {};
                         oppProduct.oppLineItem = {};
                         let item = result.oppLineItem;
@@ -1062,18 +1077,32 @@ export default class NewQuoteEstimate extends NavigationMixin(LightningElement) 
                         }
 
                         oppProduct.isRemoveable = true;
-                        //oppProduct.oppLineItem.Implementor__c = item.Implementor__c;
+                        oppProduct.oppLineItem.Implementor__c = item.Implementor__c;
                         //oppProduct.oppLineItem.Material_Cost__c = item.Material_Cost__c;
-                        oppProduct.ProductType = 'Core Product';
+                        oppProduct.ProductType = 'Rule';
                         oppProduct.oppLineItem = item;
                         oppProduct.oppLineItem.Quantity__c = item.Quantity__c;
+
+                        if (typeof item.Product2Id__r.Material_Cost__c == 'undefined') item.Product2Id__r.Material_Cost__c = 0;
+                        if (this.materialUpLift > 0)
+                            calMaterialSell = item.Product2Id__r.Material_Cost__c + (item.Product2Id__r.Material_Cost__c * this.materialUpLift / 100);
+                        else
+                            calMaterialSell = item.Product2Id__r.Material_Cost__c;
+                        oppProduct.oppLineItem.Kit_Sell__c = parseFloat(calMaterialSell).toFixed(2);
+
+                        if (typeof item.Product2Id__r.Plant_Sell__c == 'undefined') oppProduct.oppLineItem.Plant_Sell__c = 0;
+                        else oppProduct.oppLineItem.Plant_Sell__c = item.Product2Id__r.Plant_Sell__c;
+
+                        if (typeof item.Product2Id__r.Labour_Sell__c == 'undefined') oppProduct.oppLineItem.Labour_Sell__c= 0;
+                        else oppProduct.oppLineItem.Labour_Sell__c = item.Product2Id__r.Labour_Sell__c;
+
+
                         console.log(oppProduct);
                         utilityItem.oppProducts.push(oppProduct);
-                        //return utilityItem;
                         this.showSpinner = false;
                     });
 
-                    //this.calculateTotalSell(utilityItem.index);
+                    this.calculateTotalSell(parentindex);
 
 
                 }

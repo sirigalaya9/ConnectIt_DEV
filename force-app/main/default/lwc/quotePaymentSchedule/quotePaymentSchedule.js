@@ -9,7 +9,8 @@ import saveItems from '@salesforce/apex/QuotePaymentScheduleController.saveItems
 export default class QuotePaymentSchedule extends LightningElement {
 
     parentId;
-    _total;
+    totalAmount = 0;
+    totalPercentage = 100;
 
     @api 
     get recordId()
@@ -30,19 +31,59 @@ export default class QuotePaymentSchedule extends LightningElement {
         
     showSpinner = false;
     idsToDelete = [];
+    next = false;
 
-    get total() {
+    get totalAmountAllocated() {
         if (this.items)
         {            
-            let total = this._total;
+            let total = 0;
             this.items.forEach(item => {
                 if (item.Payment__c)
-                    total -= parseFloat(item.Payment__c);
+                    total += parseFloat(item.Payment__c);
             });     
             return total;       
         }
         else
-            return this._total;
+            return 0;
+    }
+
+    get totalPercentageAllocated() {
+        if (this.totalAmountAllocated)
+        {
+            let percentage = this.totalAmountAllocated / this.totalAmount * 100;
+            return percentage;
+        }
+        else
+            return 0;
+    }    
+
+    get totalAmountRemaining() {
+        if (this.totalAmountAllocated)
+        {
+            let total = this.totalAmount - this.totalAmountAllocated;
+            return total;
+        }
+        else
+            return this.totalAmount;
+    }
+
+    get totalPercentageRemaining() {
+        if (this.totalPercentageAllocated)
+        {
+            let percentage = this.totalPercentage - this.totalPercentageAllocated;
+            return percentage;
+        }
+        else
+            return this.totalPercentage;
+    }    
+
+    get amountRemainingStyle() {
+        if (this.totalAmountRemaining < 0)
+        {
+            return 'redFont';
+        }
+        else
+            return '';
     }
 
     connectedCallback() {
@@ -50,12 +91,18 @@ export default class QuotePaymentSchedule extends LightningElement {
     }  
 
     renderItems(result) {
+        console.log('renderItems');
         this.items = result.items;
-        this._total = result.total;
+        this.totalAmount = result.total;
+        this.items.forEach(item => {
+            if (item.Payment__c)
+                item.percentage = (item.Payment__c / this.totalAmount * 100).toFixed(2);
+        });                        
         publish(this.messageContext, ESTIMATE_CLIENT_PAYMENT_SCHEDULE_CHANNEL, this.items);      
     }    
 
     getItems() {
+        console.log('getItems');
         getItems({recordId: this.parentId}).then(result => {
             console.log(result);                
             this.renderItems(result);
@@ -106,7 +153,19 @@ export default class QuotePaymentSchedule extends LightningElement {
         console.log(id);        
         let item = this.items.find(i => i.Id === id);         
         item.Payment__c = value;
+        item.percentage = (value / this.totalAmount * 100).toFixed(2);
     }
+
+    handlePercentageChanged(event) {
+        console.log('handlePercentageChanged');
+        let value = event.target.value;
+        console.log(value);        
+        let id = event.target.dataset.id;
+        console.log(id);        
+        let item = this.items.find(i => i.Id === id);         
+        item.percentage = value;
+        item.Payment__c = (value / 100 * this.totalAmount).toFixed(2);
+    }    
 
     @api
     resetItems() {
@@ -114,11 +173,17 @@ export default class QuotePaymentSchedule extends LightningElement {
         this.getItems();
         this.idsToDelete = [];
     }
+
+    @api
+    saveItemsAndNext() {
+        this.next = true;
+        this.saveItems();
+    }    
     
     @api
     saveItems() {
         console.log('saveItems');    
-        if (this.total < 0)
+        if (this.totalAmountRemaining < 0)
         {
             this.dispatchEvent(
                 new ShowToastEvent({
@@ -132,12 +197,12 @@ export default class QuotePaymentSchedule extends LightningElement {
         this.showSpinner = true;        
         saveItems({recordId: this.parentId, items: this.items, idsToDelete: this.idsToDelete}).then(result => {
             console.log(result);
-            this.renderItems(result);
-            this.showSpinner = false;
+            this.renderItems(result);     
+            if (this.next)       
+                this.dispatchEvent(new CustomEvent('save'));
+            this.next = false;
         }).catch(error => {
-            console.log(error);
-            this.idsToDelete = [];
-            this.showSpinner = false;
+            console.log(error);            
             this.dispatchEvent(
                 new ShowToastEvent({
                     title: 'Error',
@@ -145,6 +210,9 @@ export default class QuotePaymentSchedule extends LightningElement {
                     variant: 'error'
                 })
             );            
-        });
+        }).finally(() => { 
+            this.idsToDelete = [];
+            this.showSpinner = false;
+        });;
     }
 }

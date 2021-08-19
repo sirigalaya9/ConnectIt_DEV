@@ -52,6 +52,7 @@ export default class CommercialBreakdown extends LightningElement {
     rtis;
     existingBreakdown = [];
     typeColName;
+    showSpinner = false;
 
     connectedCallback() {
         console.log('connectedCallback');

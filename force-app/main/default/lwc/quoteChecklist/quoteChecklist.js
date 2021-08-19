@@ -26,6 +26,8 @@ export default class QuoteChecklist extends LightningElement {
     @track
     items;    
 
+    next = false;
+
     @api 
     get recordId()
     {
@@ -196,6 +198,12 @@ export default class QuoteChecklist extends LightningElement {
         this.getItems();
         this.idsToDelete = [];
     }
+
+    @api
+    saveItemsAndNext() {
+        this.next = true;
+        this.saveItems();
+    }     
     
     @api
     saveItems() {
@@ -212,7 +220,9 @@ export default class QuoteChecklist extends LightningElement {
             console.log(result);
             this.items = result;
             this.renderItems();   
-            this.dispatchEvent(new CustomEvent('save'));
+            if (this.next)       
+                this.dispatchEvent(new CustomEvent('save'));
+            this.next = false;
         }).catch(error => {
             console.log(error);                        
             this.dispatchEvent(

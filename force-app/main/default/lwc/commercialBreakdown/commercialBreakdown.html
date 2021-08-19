@@ -75,5 +75,10 @@
                 </tr>
             </tbody>
         </table>
+
+        <template if:true={showSpinner}>
+            <lightning-spinner variant="brand" size="large">
+            </lightning-spinner>
+        </template>
     </div>
 </template>
