@@ -325,7 +325,7 @@ public class NewQuoteEstimateController {
         
     }
     
-    @AuraEnabled
+    /*@AuraEnabled
     public static List<UtilityItem> addCoreToUtilityProducts(String oppId,String utilityType, List<UtilityItem> utilityProducts, List<String> selectedRuleIds)
     {
         List<UtilityItem> ui = new List<UtilityItem>();
@@ -405,94 +405,143 @@ public class NewQuoteEstimateController {
         
  
         return utilityProducts;
-    }
+    }*/
     
     @AuraEnabled
     public static List<OpportunityProduct> getCoreProductsByRules(String oppId,String utilityType, List<String> selectedRuleIds)
     {
         List<UtilityItem> ui = new List<UtilityItem>();
-        if(utilityType == 'Electric') utilityType = 'Electricity';
-        Decimal noOf_Commercial = 1 ;
+        if(utilityType == 'Charge Points') utilityType = 'Charger';
+        else if(utilityType == 'Street Lighting') utilityType = 'StreetLighting';
+        
+        system.debug('utilityType '+utilityType);
+        system.debug('selectedRuleIds '+selectedRuleIds);
+        List<OpportunityLineItem> oppLineItems = new List<OpportunityLineItem>();
+        List<Product2> defaultProducts = new List<Product2>();
+        List<OpportunityProduct> oppProducts = new List<OpportunityProduct>();
+        
+        Decimal noOf_LinkBoxes = 1 ;
+        Decimal onsiteExcavation = 1 ;
+        Decimal noOf_JointBays = 1 ;
+        
+        /*Decimal noOf_Commercial = 1 ;
         Decimal noOf_Flats = 1 ;
         Decimal noOf_Landlord = 1 ;
         Decimal noOf_House = 1 ;
         Decimal noOf_TBS = 1 ;
         Decimal total = 1 ;
+
+        Decimal var_5m = 1 ;
+        Decimal var_6m = 1 ;
+        Decimal var_6m_hinged = 1 ;
+        Decimal var_8m = 1 ;
+        Decimal var_10m = 1 ;
+        Decimal var_12m = 1 ;*/
         
-        List<site_scheme__c> scheme = [SELECT Id, No_of_Units__c,Total_Number_of_plots__c,
-                                       No_of_Commercial__c, No_of_Houses__c, No_of_Landlord__c, No_of_Flats__c, No_of_TBS__c 
-                                       FROM site_scheme__c WHERE Estimate__c = :oppId AND Product_Family__c =: utilityType order by createddate desc];
+        List<site_scheme__c> scheme = [SELECT Id, RecordType.Name, No_of_Units__c,Total_Number_of_plots__c,
+                                       No_of_Commercial__c, No_of_Houses__c, No_of_Landlord__c, No_of_Flats__c, No_of_TBS__c,
+                                       To_Boundary__c, Onsite_Excavation__c, No_of_Joint_Bays__c, Number_of_Link_Boxes__c,
+                                       X5m__c,X6m__c,X6m_Hinged__c,X8m__c,X10m__c,X12m__c
+                                       FROM site_scheme__c WHERE Estimate__c = :oppId AND RecordType.Name =: utilityType order by createddate desc];
         if(!scheme.isEmpty()) 
         {
-            noOf_Commercial = scheme[0].No_of_Commercial__c;
-            noOf_Flats = scheme[0].No_of_Flats__c;
-            noOf_Landlord = scheme[0].No_of_Landlord__c;
-            noOf_House = scheme[0].No_of_Houses__c;
-            total = scheme[0].Total_Number_of_plots__c;
+            if(scheme[0].Number_of_Link_Boxes__c != null) noOf_LinkBoxes = scheme[0].Number_of_Link_Boxes__c;
+            if(scheme[0].Onsite_Excavation__c != null) onsiteExcavation = scheme[0].Onsite_Excavation__c;
+            if(scheme[0].No_of_Joint_Bays__c != null) noOf_JointBays = scheme[0].No_of_Joint_Bays__c;
             
-
-        }
-        system.debug('utilityType '+utilityType);
-        system.debug('selectedRuleIds '+selectedRuleIds);
-        List<OpportunityLineItem> oppLineItems = new List<OpportunityLineItem>();
-        
-        List<Product2> defaultProducts = new List<Product2>();
-
-        List<Core_Product_Rule__c> coreProducts = [SELECT Id, Rule__c, Rule__r.Utility_Type__c, Rule__r.Units_Type__c,Product__c,
-                                                   Product__r.Name, Product__r.Family, Product__r.Kit_Sell__c,
-                                                   Product__r.Labour_Sell__c, Product__r.Plant_Sell__c, Product__r.Implementor__c,Product__r.Material_Cost__c,
-                                                   Quantity__c,To_Multiply__c, Qty_Multiplier_formula__c
-                                                   FROM Core_Product_Rule__c WHERE Rule__c IN : selectedRuleIds order by createdDate];
-        
-        List<OpportunityProduct> oppProducts = new List<OpportunityProduct>();
-        for(Core_Product_Rule__c corePro : coreProducts)
-        {
-
-            Product2 pro = new Product2(Id = corePro.Product__c, 
-                                        Name = corePro.Product__r.Name,
-                                        Family = corePro.Product__r.Family,
-                                        Implementor__c = corePro.Product__r.Implementor__c,
-                                        Material_Cost__c = corePro.Product__r.Material_Cost__c,
-                                        Kit_Sell__c = corePro.Product__r.Kit_Sell__c,
-                                        Labour_Sell__c = corePro.Product__r.Labour_Sell__c,
-                                        Plant_Sell__c = corePro.Product__r.Plant_Sell__c);
-            system.debug('add Core '+pro);
-  
-            OpportunityProduct oppProduct = new OpportunityProduct();
-            OpportunityLineItem__c oppLineItem = new OpportunityLineItem__c();
-            oppLineItem.OpportunityId__c = oppId;
-            oppLineItem.Product2Id__r = pro;
-            oppLineItem.Implementor__c = pro.Implementor__c;
-            oppLineItem.Material_Cost__c = pro.Material_Cost__c;
-            if(pro.Kit_Sell__c == null) oppLineItem.Kit_Sell__c = 0; else oppLineItem.Kit_Sell__c = pro.Kit_Sell__c;
-            if(corePro.Qty_Multiplier_formula__c == 'To Multiply') 
+            /*if(scheme[0].No_of_Commercial__c != null) noOf_Commercial = scheme[0].No_of_Commercial__c;
+            if(scheme[0].No_of_Flats__c != null) noOf_Flats = scheme[0].No_of_Flats__c;
+            if(scheme[0].No_of_Landlord__c != null) noOf_Landlord = scheme[0].No_of_Landlord__c;
+            if(scheme[0].No_of_Houses__c != null) noOf_House = scheme[0].No_of_Houses__c;
+            if(scheme[0].Total_Number_of_plots__c != null) total = scheme[0].Total_Number_of_plots__c;
+            
+            if(scheme[0].X5m__c != null) var_5m = scheme[0].X5m__c;
+            if(scheme[0].X6m__c != null) var_6m = scheme[0].X6m__c;
+            if(scheme[0].X6m_Hinged__c != null) var_6m_hinged = scheme[0].X6m_Hinged__c;
+            if(scheme[0].X8m__c != null) var_8m = scheme[0].X8m__c;
+if(scheme[0].X10m__c != null) var_10m = scheme[0].X10m__c;
+if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
+            
+            system.debug('noOf_LinkBoxes '+noOf_LinkBoxes);
+            system.debug('onsiteExcavation '+onsiteExcavation);
+            system.debug('noOf_JointBays '+noOf_JointBays);
+            
+            List<Core_Product_Rule__c> coreProducts = [SELECT Id, Rule__c, Rule__r.Utility_Type__c, Rule__r.Units_Type__c,Product__c,
+                                                       Product__r.Name, Product__r.Family, Product__r.Kit_Sell__c,
+                                                       Product__r.Labour_Sell__c, Product__r.Plant_Sell__c, Product__r.Implementor__c,Product__r.Material_Cost__c,
+                                                       Quantity__c,To_Multiply__c, Qty_Multiplier_formula__c,Multiplier_Field__c, Plots_Per_Quantity__c 
+                                                       FROM Core_Product_Rule__c WHERE Rule__c IN : selectedRuleIds order by createdDate];
+            
+            for(Core_Product_Rule__c corePro : coreProducts)
             {
-                system.debug('To Multiply');
-                if(corePro.Rule__r.Units_Type__c == 'Commercial') oppLineItem.Quantity__c = corePro.Quantity__c * noOf_Commercial;
-                if(corePro.Rule__r.Units_Type__c == 'Flats') oppLineItem.Quantity__c = corePro.Quantity__c * noOf_Flats ;
-                if(corePro.Rule__r.Units_Type__c == 'Landlord') oppLineItem.Quantity__c = corePro.Quantity__c * noOf_Landlord ;
-                if(corePro.Rule__r.Units_Type__c == 'Houses') oppLineItem.Quantity__c = corePro.Quantity__c * noOf_House ;
-                if(corePro.Rule__r.Units_Type__c == 'TBS') oppLineItem.Quantity__c = corePro.Quantity__c * noOf_TBS ;
-                if(corePro.Rule__r.Units_Type__c == 'Applicable for all') oppLineItem.Quantity__c = corePro.Quantity__c * total ;
-                system.debug('oppLineItem.Quantity '+oppLineItem.Quantity__c);
-                system.debug('corePro.Quantity__c '+corePro.Quantity__c);
+                system.debug('Multiplier_Field__c '+corePro.Multiplier_Field__c);
+                system.debug('Plots_Per_Quantity__c '+corePro.Plots_Per_Quantity__c);
+                Product2 pro = new Product2(Id = corePro.Product__c, 
+                                            Name = corePro.Product__r.Name,
+                                            Family = corePro.Product__r.Family,
+                                            Implementor__c = corePro.Product__r.Implementor__c,
+                                            Material_Cost__c = corePro.Product__r.Material_Cost__c,
+                                            Kit_Sell__c = corePro.Product__r.Kit_Sell__c,
+                                            Labour_Sell__c = corePro.Product__r.Labour_Sell__c,
+                                            Plant_Sell__c = corePro.Product__r.Plant_Sell__c);
+                system.debug('add Core '+pro);
+                
+                OpportunityProduct oppProduct = new OpportunityProduct();
+                OpportunityLineItem__c oppLineItem = new OpportunityLineItem__c();
+                oppLineItem.OpportunityId__c = oppId;
+                oppLineItem.Product2Id__r = pro;
+                oppLineItem.Implementor__c = pro.Implementor__c;
+                oppLineItem.Material_Cost__c = pro.Material_Cost__c;
+                if(pro.Kit_Sell__c == null) oppLineItem.Kit_Sell__c = 0; else oppLineItem.Kit_Sell__c = pro.Kit_Sell__c;
+                
+                Decimal value = 1;
+                if(corePro.Qty_Multiplier_formula__c == 'To Multiply') 
+                {
+                    system.debug('To Multiply');
+                    if(corePro.Multiplier_Field__c == 'Total Number of Plots')
+                    {   
+                        value = getNoOfPlots(corePro, utilityType, scheme);
+                    }
+                    else if(corePro.Multiplier_Field__c == 'No of Joint Bays')
+                    {
+                        value = noOf_JointBays ;
+                    }
+                    else if(corePro.Multiplier_Field__c == 'Number of Link Boxes')
+                    {
+                        value = noOf_LinkBoxes ;
+                    }
+                    else if(corePro.Multiplier_Field__c == 'Onsite Excavation')
+                    {
+                        value = onsiteExcavation ;
+                    }
+                    
+                    oppLineItem.Quantity__c = corePro.Quantity__c * value ;
+                    
+                    system.debug('corePro.Quantity__c '+corePro.Quantity__c);
+                    system.debug('value '+value);
+                    
+                    system.debug('oppLineItem.Quantity--Multiply--- '+oppLineItem.Quantity__c);
+                    
+                }
+                else if(corePro.Qty_Multiplier_formula__c == 'To Divide')
+                {
+                    system.debug('To Divide');
+                    
+                    value = getNoOfPlots(corePro, utilityType, scheme);
+                    
+                    oppLineItem.Quantity__c = value * corePro.Quantity__c / corePro.Plots_Per_Quantity__c ;
+                    
+                     system.debug('corePro.Quantity__c '+corePro.Quantity__c);
+                    system.debug('value '+value);
+                    
+                    system.debug('oppLineItem.Quantity--Divide--- '+oppLineItem.Quantity__c);
+                }
+                else oppLineItem.Quantity__c  =  corePro.Quantity__c;
+                
+                oppProduct.oppLineItem = oppLineItem;  
+                oppProducts.add(oppProduct);
                 
             }
-            else if(corePro.Qty_Multiplier_formula__c == 'To Divide')
-            {
-                system.debug('To Divide');
-                if(corePro.Rule__r.Units_Type__c == 'Commercial') oppLineItem.Quantity__c = corePro.Quantity__c / noOf_Commercial;
-                if(corePro.Rule__r.Units_Type__c == 'Flats') oppLineItem.Quantity__c = corePro.Quantity__c / noOf_Flats ;
-                if(corePro.Rule__r.Units_Type__c == 'Landlord') oppLineItem.Quantity__c = corePro.Quantity__c / noOf_Landlord ;
-                if(corePro.Rule__r.Units_Type__c == 'Houses') oppLineItem.Quantity__c = corePro.Quantity__c / noOf_House ;
-                if(corePro.Rule__r.Units_Type__c == 'TBS') oppLineItem.Quantity__c = corePro.Quantity__c / noOf_TBS ;
-                system.debug('oppLineItem.Quantity '+oppLineItem.Quantity__c);
-                system.debug('corePro.Quantity__c '+corePro.Quantity__c);
-            }
-            else oppLineItem.Quantity__c  =  corePro.Quantity__c;
-            
-            oppProduct.oppLineItem = oppLineItem;  
-            oppProducts.add(oppProduct);
             
         }
         
@@ -501,8 +550,38 @@ public class NewQuoteEstimateController {
         return oppProducts;
     }
     
+    private static Decimal getNoOfPlots(Core_Product_Rule__c corePro, String utilityType, List<site_scheme__c> scheme)
+    {
+        Decimal value = 1;
+        
+        system.debug('scheme '+scheme);
+        
+        if(utilityType == 'Electric' || utilityType == 'Water' || utilityType == 'Gas')
+        {
+            if(corePro.Rule__r.Units_Type__c == 'Commercial' && scheme[0].No_of_Commercial__c != null) value = scheme[0].No_of_Commercial__c;
+            if(corePro.Rule__r.Units_Type__c == 'Flats' && scheme[0].No_of_Flats__c != null) value = scheme[0].No_of_Flats__c ;
+            if(corePro.Rule__r.Units_Type__c == 'Landlord' && scheme[0].No_of_Landlord__c != null) value = scheme[0].No_of_Landlord__c ;
+            if(corePro.Rule__r.Units_Type__c == 'Houses' && scheme[0].No_of_Houses__c != null) value = scheme[0].No_of_Houses__c ;
+            if(corePro.Rule__r.Units_Type__c == 'TBS' && scheme[0].No_of_TBS__c != null) value = scheme[0].No_of_TBS__c ;
+            if(corePro.Rule__r.Units_Type__c == 'Applicable for all' && scheme[0].Total_Number_of_plots__c != null) value = scheme[0].Total_Number_of_plots__c ;
+            
+        }
+        else if(utilityType == 'Street Lightning')
+        {
+            if(corePro.Rule__r.Type_of_Street_Light__c == '5m' && scheme[0].X5m__c != null) value = scheme[0].X5m__c;
+            if(corePro.Rule__r.Type_of_Street_Light__c == '6m' && scheme[0].X6m__c != null) value = scheme[0].X6m__c ;
+            if(corePro.Rule__r.Type_of_Street_Light__c == '6m Hinged' && scheme[0].X6m_Hinged__c != null) value = scheme[0].X6m_Hinged__c ;
+            if(corePro.Rule__r.Type_of_Street_Light__c == '8m' && scheme[0].X8m__c != null) value = scheme[0].X8m__c ;
+            if(corePro.Rule__r.Type_of_Street_Light__c == '10m' && scheme[0].X10m__c != null) value = scheme[0].X10m__c ;
+            if(corePro.Rule__r.Type_of_Street_Light__c == '12m' && scheme[0].X12m__c != null) value = scheme[0].X12m__c ;
+            if(corePro.Rule__r.Type_of_Street_Light__c == 'Applicable for all' && scheme[0].Total_Number_of_plots__c != null) value = scheme[0].Total_Number_of_plots__c ;
+        }
+        
+        return value;
+    }
+    
        
-    private static List<Product2> addCoreProducts(List<String> selectedRuleIds, List<Product2> defaultProducts)
+    /*private static List<Product2> addCoreProducts(List<String> selectedRuleIds, List<Product2> defaultProducts)
     {
         //List<Product2> defaultProducts;
         List<Core_Product_Rule__c> coreProducts = [SELECT Id, Rule__c, Rule__r.Utility_Type__c, Product__c,Product__r.Name,Product__r.Family, 
@@ -532,17 +611,13 @@ public class NewQuoteEstimateController {
             }
             
             coreProductQuantityMap.put(corePro.Product__c, corePro.Quantity__c);
-            /*if(corePro.To_Multiply__c == true)
-                coreProductQuantityMap.put(corePro.Product__c, corePro.Quantity__c * ElectricSiteSchemes[0].No_of_Units__c);
-            else
-                coreProductQuantityMap.put(corePro.Product__c, corePro.Quantity__c);*/
         }
         
         system.debug('coreProductQuantityMap '+coreProductQuantityMap);
         
         return defaultProducts;
         
-    }
+    }*/
     
     @AuraEnabled
     public static List<Scheme_Type_Breakdown__c> saveSchemeBreakdown(String parentId, List<Scheme_Type_Breakdown__c> schemeBreakdown, String recordTypeName, String utilityType, Integer numberOfPlot)
@@ -1069,9 +1144,11 @@ public class NewQuoteEstimateController {
             if(scheme.IGT__c != null && scheme.IGT__c != '') 
                 qString += ' AND IGT__c  = \''+scheme.IGT__c+'\' '; // Gas
             if(scheme.Water_Provider__c != null && scheme.Water_Provider__c != '') 
-                qString += ' AND Pipe_type__c  = \''+scheme.Pipe_type__c+'\' '; // Water
-            if(scheme.Pipe_type__c != null && scheme.Pipe_type__c != '') 
                 qString += ' AND Water_Provider__c  = \''+scheme.Water_Provider__c+'\' '; // Water
+            if(scheme.Pipe_type__c != null && scheme.Pipe_type__c != '') 
+                qString += ' AND Pipe_type__c  = \''+scheme.Pipe_type__c+'\' '; // Water
+            if(scheme.Host_Water_Adopter__c != null && scheme.Host_Water_Adopter__c != '') 
+                qString += ' AND Host_Water_Adopter__c  = \''+scheme.Host_Water_Adopter__c+'\' '; // Water    
             if(scheme.DNO_Reference__c != null && scheme.DNO_Reference__c != '') 
                 qString += ' AND DNO_Reference__c = \''+scheme.DNO_Reference__c+'\' ';
             if(scheme.IDNO_Reference__c != null && scheme.IDNO_Reference__c != '') 
