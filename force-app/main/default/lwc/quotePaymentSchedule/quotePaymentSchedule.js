@@ -25,6 +25,8 @@ export default class QuotePaymentSchedule extends LightningElement {
 
     @track
     items = [];
+    @track
+    breakdowns = [];    
 
     @wire(MessageContext)
     messageContext;    
@@ -92,8 +94,9 @@ export default class QuotePaymentSchedule extends LightningElement {
 
     renderItems(result) {
         console.log('renderItems');
-        this.items = result.items;
+        this.items = result.items;        
         this.totalAmount = result.total;
+        this.breakdowns = result.breakdowns;
         this.items.forEach(item => {
             if (item.Payment__c)
                 item.percentage = (item.Payment__c / this.totalAmount * 100).toFixed(2);

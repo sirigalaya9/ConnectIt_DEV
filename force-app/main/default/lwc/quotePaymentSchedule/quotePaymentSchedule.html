@@ -1,5 +1,65 @@
 <template>
     <div>
+        <div class="slds-p-top_medium slds-p-bottom_medium ">
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                <thead>
+                    <tr class="slds-line-height_reset">
+                        <th class="" scope="col">
+                            <div class="slds-truncate">Utility</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate">Material</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate">Labour</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate">Plant</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate">Asset</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate">Balance</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={breakdowns} for:item="item">
+                        <tr key={item}>
+                            <td>
+                                {item.utility}
+                            </td>
+                            <td>
+                                <lightning-formatted-number value={item.material} format-style="currency"
+                                    currency-code="GBP" currency-display-as="symbol" minimum-fraction-digits="2"
+                                    maximum-fraction-digits="2"></lightning-formatted-number>
+                            </td>
+                            <td>
+                                <lightning-formatted-number value={item.labour} format-style="currency"
+                                    currency-code="GBP" currency-display-as="symbol" minimum-fraction-digits="2"
+                                    maximum-fraction-digits="2"></lightning-formatted-number>
+                            </td>
+                            <td>
+                                <lightning-formatted-number value={item.plant} format-style="currency"
+                                    currency-code="GBP" currency-display-as="symbol" minimum-fraction-digits="2"
+                                    maximum-fraction-digits="2"></lightning-formatted-number>
+                            </td>
+                            <td>
+                                <lightning-formatted-number value={item.asset} format-style="currency"
+                                    currency-code="GBP" currency-display-as="symbol" minimum-fraction-digits="2"
+                                    maximum-fraction-digits="2"></lightning-formatted-number>
+                            </td>
+                            <td>
+                                <lightning-formatted-number value={item.balance} format-style="currency"
+                                    currency-code="GBP" currency-display-as="symbol" minimum-fraction-digits="2"
+                                    maximum-fraction-digits="2"></lightning-formatted-number>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
 
         <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
             <thead>
@@ -11,17 +71,18 @@
                         <div class="slds-truncate" title="Payment Terms">Payment Trigger</div>
                     </th>
                     <th class="col-2" scope="col">
-                        <div class="slds-truncate" title="Amount to Allocate">Amount to Allocate 
-                            (<lightning-formatted-number value={totalAmount} format-style="currency"
-                            currency-code="GBP" currency-display-as="symbol" minimum-fraction-digits="2"
-                            maximum-fraction-digits="2"></lightning-formatted-number>)
+                        <div class="slds-truncate" title="Amount to Allocate">Amount to Allocate
+                            (<lightning-formatted-number value={totalAmount} format-style="currency" currency-code="GBP"
+                                currency-display-as="symbol" minimum-fraction-digits="2" maximum-fraction-digits="2">
+                            </lightning-formatted-number>)
                         </div>
                     </th>
                     <th class="col-2" scope="col">
-                        <div class="slds-truncate" title="Percentage to Allocate">Percentage to Allocate 
-                            (<lightning-formatted-number value={totalPercentage} format-style="percent-fixed"></lightning-formatted-number>)
+                        <div class="slds-truncate" title="Percentage to Allocate">Percentage to Allocate
+                            (<lightning-formatted-number value={totalPercentage} format-style="percent-fixed">
+                            </lightning-formatted-number>)
                         </div>
-                    </th>                    
+                    </th>
                 </tr>
             </thead>
 
@@ -34,20 +95,20 @@
                             </lightning-icon>
                         </td>
                         <td>
-                            <lightning-input variant="label-hidden" type="text" value={item.Trigger__c} data-id={item.Id}
-                                onchange={handleTriggerChanged}>
+                            <lightning-input variant="label-hidden" type="text" value={item.Trigger__c}
+                                data-id={item.Id} onchange={handleTriggerChanged}>
                             </lightning-input>
                         </td>
                         <td>
-                            <lightning-input variant="label-hidden" type="number" formatter="currency" step="0.01" value={item.Payment__c} data-id={item.Id}
-                                onchange={handlePaymentChanged}>
+                            <lightning-input variant="label-hidden" type="number" formatter="currency" step="0.01"
+                                value={item.Payment__c} data-id={item.Id} onchange={handlePaymentChanged}>
                             </lightning-input>
                         </td>
                         <td>
-                            <lightning-input variant="label-hidden" type="number" formatter="percent-fixed" step="0.01" value={item.percentage} data-id={item.Id}
-                                onchange={handlePercentageChanged}>
+                            <lightning-input variant="label-hidden" type="number" formatter="percent-fixed" step="0.01"
+                                value={item.percentage} data-id={item.Id} onchange={handlePercentageChanged}>
                             </lightning-input>
-                        </td>                        
+                        </td>
                     </tr>
                 </template>
                 <tr>
@@ -68,17 +129,18 @@
                     <th class="col-2" scope="col">
                         <div class="slds-truncate" title="Amount Allocated">
                             <lightning-formatted-number value={totalAmountAllocated} format-style="currency"
-                            currency-code="GBP" currency-display-as="symbol" minimum-fraction-digits="2"
-                            maximum-fraction-digits="2"></lightning-formatted-number>
+                                currency-code="GBP" currency-display-as="symbol" minimum-fraction-digits="2"
+                                maximum-fraction-digits="2"></lightning-formatted-number>
                         </div>
                     </th>
                     <th class="col-2" scope="col">
                         <div class="slds-truncate" title="Percentage Allocated">
-                            <lightning-formatted-number value={totalPercentageAllocated} format-style="percent-fixed"></lightning-formatted-number>
+                            <lightning-formatted-number value={totalPercentageAllocated} format-style="percent-fixed">
+                            </lightning-formatted-number>
                         </div>
-                    </th>                    
+                    </th>
                 </tr>
-            </thead>            
+            </thead>
             <thead>
                 <tr class="slds-line-height_reset">
                     <th class="col-0" scope="col">
@@ -90,21 +152,22 @@
                     <th class="col-2" scope="col">
                         <div class={amountRemainingStyle} title="Amount Remaining">
                             <lightning-formatted-number value={totalAmountRemaining} format-style="currency"
-                            currency-code="GBP" currency-display-as="symbol" minimum-fraction-digits="2"
-                            maximum-fraction-digits="2"></lightning-formatted-number>
+                                currency-code="GBP" currency-display-as="symbol" minimum-fraction-digits="2"
+                                maximum-fraction-digits="2"></lightning-formatted-number>
                         </div>
                     </th>
                     <th class="col-2" scope="col">
                         <div class="slds-truncate" title="Percentage Remaining">
-                            <lightning-formatted-number value={totalPercentageRemaining} format-style="percent-fixed"></lightning-formatted-number>
+                            <lightning-formatted-number value={totalPercentageRemaining} format-style="percent-fixed">
+                            </lightning-formatted-number>
                         </div>
-                    </th>                    
+                    </th>
                 </tr>
-            </thead>              
+            </thead>
         </table>
 
         <div class="slds-align_absolute-center slds-p-around_small">
-            <lightning-button label="Reset" onclick={resetItems}>
+            <lightning-button label="Clear Recent Edits" onclick={resetItems}>
             </lightning-button>
             &nbsp;
             <lightning-button label="Save" onclick={saveItems} variant="brand">

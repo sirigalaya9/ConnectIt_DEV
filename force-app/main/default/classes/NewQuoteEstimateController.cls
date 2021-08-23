@@ -5,7 +5,6 @@ public class NewQuoteEstimateController {
     public static List<Site_Scheme__c> ChargerPointSiteSchemes {get; set;}
     public static List<Site_Scheme__c> StreetLightningSiteSchemes {get; set;}
     public static List<Site_Scheme__c> siteSchemes {get; set;}
-    public static Map<Id,Decimal> coreProductQuantityMap = new Map<Id,Decimal>();
     public static Map<Id,Decimal> defaultProductQuantityMap = new Map<Id,Decimal>();
     
     @AuraEnabled
@@ -17,42 +16,8 @@ public class NewQuoteEstimateController {
     
     
     @AuraEnabled
-    public static List<LookupSearchResult> searchRule(String searchKeyWord, String utilityType, Integer numberOfPlot)
-    {
-        system.debug('searchKeyWord '+searchKeyWord);
-        system.debug('utilityType '+utilityType);
-        system.debug('numberOfPlot '+numberOfPlot);
-        List<LookupSearchResult> searchResults = new List<LookupSearchResult>();
-        if (searchKeyWord == null) searchKeyWord ='';
-        String searchKey = '%'+ searchKeyword + '%';
-        if(utilityType == 'Electric') utilityType = 'Electricity';
-        List<Rule__c> rules = [SELECT Id, Name, Utility_Type__c, Active__c, Number_of_Plots_Lower_Band__c, Number_of_Plots_Higher_Band__c, Product_Family__c FROM Rule__c 
-                               where Active__c = true and Product_Family__c = : utilityType
-                               and Number_of_Plots_Lower_Band__c <=:numberOfPlot and Number_of_Plots_Higher_Band__c >=: numberOfPlot];
-        
-        if(!rules.isEmpty()){
-            for (Rule__c rule : rules) 
-            {
-                searchResults.add(
-                    new LookupSearchResult(
-                        rule.Id,
-                        'Rule__c',
-                        'standard:product',
-                        rule.Name,
-                        rule.Utility_Type__c
-                    )
-                );
-            }
-        }
-        
-        return searchResults;
-        
-    }
-    
-    @AuraEnabled
     public static List<LookupSearchResult> searchProduct(String searchKeyWord, String utilityType)
     {
-        //AND IS_KIT__C = true 
         List<LookupSearchResult> searchResults = new List<LookupSearchResult>();
         if (searchKeyWord == null) searchKeyWord ='';
         String searchKey = '%'+ searchKeyword + '%';
@@ -83,21 +48,7 @@ public class NewQuoteEstimateController {
         
     }
     
-    /*@AuraEnabled
-    public static List<UtilityAvailableRules> getNumberOfAvailableRules(Id oppId, List<String> selectedUtilityList)
-    {
-        List<UtilityAvailableRules> uars = new List<UtilityAvailableRules> ();
-        
-        UtilityAvailableRules uar = new UtilityAvailableRules();
-        
-        
-        uar.NoOfAvailableRules = 0;
-        uar.utilityType = '';
-        
-        return uar;
-    }*/
-    
-    
+
     @AuraEnabled
     public static void queryAllSchemes(Id oppId)
     {
@@ -139,11 +90,8 @@ public class NewQuoteEstimateController {
         
         // All Site Schemes
         /*query = 'SELECT ' + string.join(sitSchemeFields, ',') + ' FROM ' + objectName + ' WHERE  Estimate__c = \'' + oppId +'\'';
-        siteSchemes = database.query(query);*/
+siteSchemes = database.query(query);*/
     }
-    
-    
-    
     
     @AuraEnabled
     public static Map<String,Site_Scheme__c> getExistingScheme(Id oppId, List<String> selectedUtilityList)
@@ -182,107 +130,117 @@ public class NewQuoteEstimateController {
         String query;
         List<String> sitSchemeFields = new List<String>(Site_Scheme__c.SObjectType.getDescribe().fields.getMap().keySet());
         sitSchemeFields.add('recordType.Developername');
-        List<OpportunityLineItem> oppLineItems = [Select Id,Quantity,Kit_Sell__c,Material_Sell__c,Plant_Sell__c,Material_Cost__c,Plant_Cost__c,OpportunityId,Implementor__c,
-                                                  //Labour_Sell__c, Labour_Cost__c,
-                                                  Product2.Id, Product2.ProductCode, Product2.Name, Product2.Family
-                                                  FROM OpportunityLineItem WHERE OpportunityId =: oppId];
         
-        List<opportunityLineItem__c> customOppLineItems = [Select id, OpportunityId__c, Product_Text__c, BORIS_Code__c ,BORIS_Voltage__c, 
-                                                           Unit_Of_Measure_ref__c, Quantity__c,Implementor__c
-                                                           ,Kit_Sell__c ,UnitPrice__c ,Labour_Cost__c ,Plant_Cost__c ,Material_Cost__c,
-                                                           Product2Id__c, Product2Id__r.ProductCode, Product2Id__r.Name, Product2Id__r.Family
-                                                           FROM opportunityLineItem__c WHERE OpportunityId__c =: oppId];
+        Integer number_of_existing_Items = [Select count() FROM opportunityLineItem__c WHERE OpportunityId__c =: oppId];
+        system.debug('number_of_existing_Items '+number_of_existing_Items);
         
-        queryAllSchemes(oppId);
-
         Map<String, String> fieldMap = new Map<String, String>();
         List<UtilityItem> UtilityItems = new List<UtilityItem>();
         List<Product2> defaultProducts = new List<Product2>();
         String schemeRTId;
+        List<opportunityLineItem__c> customOppLineItems;
+        Set<Id> selectedRuleIds ;
         system.debug('selectedUtilityList '+selectedUtilityList);
+        
         for(String utility : selectedUtilityList)
         {
             system.debug('utility '+utility);
-            String DNO = '';
-            String ruleId = '';
-            defaultProducts = new List<Product2>();
-            if(utility == 'Electric') {
-                schemeRTId = SiteSchemeRecordTypeInfo.get('Electric').getRecordTypeId();
-                if(ElectricSiteSchemes.size() > 0)
-                {
-                    defaultProducts = getDefaultProducts(ElectricSiteSchemes, utility); // get Baseline Products from all Electric Schemes
-                }
-            }
-            else if(utility == 'Gas') {
-                schemeRTId = SiteSchemeRecordTypeInfo.get('Gas').getRecordTypeId();
-                if(GasSiteSchemes.size() > 0)
-                {
-                    defaultProducts = getDefaultProducts(GasSiteSchemes, utility);  // get Baseline Products from all Gas Schemes
-                }
-            }
-            else if(utility == 'Water') {
-                schemeRTId = SiteSchemeRecordTypeInfo.get('Water').getRecordTypeId();
-                if(WaterSiteSchemes.size() > 0)
-                {
-                    defaultProducts = getDefaultProducts(WaterSiteSchemes, utility);  // get Baseline Products from all Water Schemes
-                }
-            }
-            else if(utility == 'Charge Points') 
-            {
-                schemeRTId = SiteSchemeRecordTypeInfo.get('Charger').getRecordTypeId();
-                if(ChargerPointSiteSchemes.size() > 0)
-                {
-                    defaultProducts = getDefaultProducts(ChargerPointSiteSchemes, utility);  // get Baseline Products from all Charge Points Schemes
-                }
-                
-            }
-            else if(utility == 'Street Lighting')
-            {
-                schemeRTId = SiteSchemeRecordTypeInfo.get('StreetLighting').getRecordTypeId();
-                if(StreetLightningSiteSchemes.size() > 0)
-                {
-                    defaultProducts = getDefaultProducts(StreetLightningSiteSchemes, utility);  // get Baseline Products from all Water Schemes
-                }
-            }
-            
+            selectedRuleIds = new Set<Id>();
             UtilityItem uItem = new UtilityItem();
             uItem.utilityType = utility;
             uItem.schemeRTId = schemeRTId;
             uItem.oppProducts = new List<OpportunityProduct>();
             
-            
-            system.debug('customOppLineItems size ' +customOppLineItems.size());
-            if(isNew == False && !customOppLineItems.isEmpty())
+            if(number_of_existing_Items > 0)
             {
-                system.debug('isNew FALSE');
-                for (OpportunityLineItem__c item : customOppLineItems)
+                customOppLineItems = [Select id, OpportunityId__c, Product_Text__c, BORIS_Code__c ,BORIS_Voltage__c, 
+                                      Unit_Of_Measure_ref__c, Quantity__c,Implementor__c,
+                                      Kit_Sell__c ,UnitPrice__c ,Labour_Cost__c ,Plant_Cost__c ,Material_Cost__c,Plant_Sell__c,
+                                      Product2Id__c, Product2Id__r.ProductCode, Product2Id__r.Name, Product2Id__r.Family,
+                                      Product2Id__r.Labour_Sell__c,Product2Id__r.Plant_Sell__c, Load_Source__c, Rule_Id__c, Rule_Name__c
+                                      FROM opportunityLineItem__c WHERE OpportunityId__c =: oppId AND Utility_Type__c = : utility ORDER BY CreatedDate];
+                
+                if(!customOppLineItems.isEmpty())
                 {
-                    OpportunityProduct oppProduct = new OpportunityProduct();
-                    OpportunityLineItem__c oppLineItem = new OpportunityLineItem__c();
-                    oppLineItem.OpportunityId__c = item.OpportunityId__c;
+                    system.debug('isNew FALSE');
+                    for (OpportunityLineItem__c item : customOppLineItems)
+                    {
+                        OpportunityProduct oppProduct = new OpportunityProduct();
+                        OpportunityLineItem__c oppLineItem = new OpportunityLineItem__c();
+                        oppLineItem.OpportunityId__c = item.OpportunityId__c;
+                        
+                        Product2 pro = new Product2();
+                        pro.Id = item.Product2Id__c;
+                        pro.Name = item.Product2Id__r.Name;
+                        pro.ProductCode = item.Product2Id__r.ProductCode;
+                        pro.Family = item.Product2Id__r.Family;
+                        pro.Labour_Sell__c = item.UnitPrice__c;
+                        pro.Plant_Sell__c = item.Plant_Sell__c;
+                        
+                        oppLineItem.Product2Id__r = pro;
+                        oppLineItem.Id = item.Id;
+                        oppLineItem.Quantity__c = item.Quantity__c;
+                        oppLineItem.Implementor__c = item.Implementor__c;
+                        oppLineItem.Kit_Sell__c = item.Kit_Sell__c;
+                        //oppLineItem.Material_Sell__c = item.Material_Sell__c;
+                        //oppLineItem.Labour_Sell__c = item.Labour_Sell__c;
+                        //oppLineItem.Plant_Sell__c = item.Plant_Sell__c;
+                        oppLineItem.Material_Cost__c = item.Material_Cost__c;
+                        oppLineItem.Plant_Cost__c = item.Plant_Cost__c;
+                        oppLineItem.Load_Source__c = item.Load_Source__c;
+                        oppLineItem.Rule_Id__c = item.Rule_Id__c;
+                        oppLineItem.Rule_Name__c = item.Rule_Name__c;
+                        if(item.Rule_Id__c != null) selectedRuleIds.add(item.Rule_Id__c);                    
+                        oppProduct.oppLineItem = oppLineItem; 
+                        uItem.oppProducts.add(oppProduct);
+                    }
                     
-                    Product2 pro = new Product2();
-                    pro.Id = item.Product2Id__c;
-                    pro.Name = item.Product2Id__r.Name;
-                    pro.ProductCode = item.Product2Id__r.ProductCode;
-                    pro.Family = item.Product2Id__r.Family;
-                    oppLineItem.Product2Id__r = pro;
-                    oppLineItem.Id = item.Id;
-                    oppLineItem.Quantity__c = item.Quantity__c;
-                    oppLineItem.Implementor__c = item.Implementor__c;
-                    oppLineItem.Kit_Sell__c = item.Kit_Sell__c;
-                    //oppLineItem.Material_Sell__c = item.Material_Sell__c;
-                    //oppLineItem.Plant_Sell__c = item.Plant_Sell__c;
-                    oppLineItem.Material_Cost__c = item.Material_Cost__c;
-                    oppLineItem.Plant_Cost__c = item.Plant_Cost__c;
-                    
-                    oppProduct.oppLineItem = oppLineItem;  
-                    uItem.oppProducts.add(oppProduct);
+                    uItem.selectedRuleIds = selectedRuleIds;
                 }
             }
             else
             {
                 system.debug('isNew TRUE');
+                queryAllSchemes(oppId);
+                defaultProducts = new List<Product2>();
+                if(utility == 'Electric') {
+                    schemeRTId = SiteSchemeRecordTypeInfo.get('Electric').getRecordTypeId();
+                    if(ElectricSiteSchemes.size() > 0)
+                    {
+                        defaultProducts = getDefaultProducts(ElectricSiteSchemes, utility); // get Baseline Products from all Electric Schemes
+                    }
+                }
+                else if(utility == 'Gas') {
+                    schemeRTId = SiteSchemeRecordTypeInfo.get('Gas').getRecordTypeId();
+                    if(GasSiteSchemes.size() > 0)
+                    {
+                        defaultProducts = getDefaultProducts(GasSiteSchemes, utility);  // get Baseline Products from all Gas Schemes
+                    }
+                }
+                else if(utility == 'Water') {
+                    schemeRTId = SiteSchemeRecordTypeInfo.get('Water').getRecordTypeId();
+                    if(WaterSiteSchemes.size() > 0)
+                    {
+                        defaultProducts = getDefaultProducts(WaterSiteSchemes, utility);  // get Baseline Products from all Water Schemes
+                    }
+                }
+                else if(utility == 'Charge Points') 
+                {
+                    schemeRTId = SiteSchemeRecordTypeInfo.get('Charger').getRecordTypeId();
+                    if(ChargerPointSiteSchemes.size() > 0)
+                    {
+                        defaultProducts = getDefaultProducts(ChargerPointSiteSchemes, utility);  // get Baseline Products from all Charge Points Schemes
+                    }           
+                }
+                else if(utility == 'Street Lighting')
+                {
+                    schemeRTId = SiteSchemeRecordTypeInfo.get('StreetLighting').getRecordTypeId();
+                    if(StreetLightningSiteSchemes.size() > 0)
+                    {
+                        defaultProducts = getDefaultProducts(StreetLightningSiteSchemes, utility);  // get Baseline Products from all Water Schemes
+                    }
+                }
+                
                 for (Product2 pro : defaultProducts)
                 {
                     OpportunityProduct oppProduct = new OpportunityProduct();
@@ -296,9 +254,6 @@ public class NewQuoteEstimateController {
                     oppLineItem.Material_Cost__c = pro.Material_Cost__c;
                     oppLineItem.Plant_Cost__c = pro.Plant_Cost__c;
                     oppLineItem.Quantity__c = 1;
-                    if(coreProductQuantityMap.containsKey(pro.Id))
-                        oppLineItem.Quantity__c = coreProductQuantityMap.get(pro.Id);
-                    
                     oppProduct.oppLineItem = oppLineItem;  
                     uItem.oppProducts.add(oppProduct);
                 }
@@ -306,106 +261,11 @@ public class NewQuoteEstimateController {
             
             system.debug('defaultProducts '+defaultProducts.size());
             uItem.rules = getrelatedRules(utility, oppId);
-            system.debug('uItem.rules '+uItem.rules.size());
-            /*uItem.siteSchemes = new List<SiteScheme>();            
-            for (Site_Scheme__c scheme : siteSchemes)
-            {
-                SiteScheme siteScheme = new SiteScheme();
-                siteScheme.schemeItem = scheme; 
-                if(utility == 'Electric' && scheme.RecordType.Developername == 'Electric') uItem.siteSchemes.add(siteScheme);
-                else if(utility == 'Gas' && scheme.RecordType.Developername == 'Gas') uItem.siteSchemes.add(siteScheme);
-                else if(utility == 'Water' && scheme.RecordType.Developername == 'Water') uItem.siteSchemes.add(siteScheme);
-                else if(utility == 'Charge Points' && scheme.RecordType.Developername == 'Charge Points') uItem.siteSchemes.add(siteScheme);
-                
-            }*/
+
             utilityItems.add(uItem);
         }
         return utilityItems;
-        
-        
     }
-    
-    /*@AuraEnabled
-    public static List<UtilityItem> addCoreToUtilityProducts(String oppId,String utilityType, List<UtilityItem> utilityProducts, List<String> selectedRuleIds)
-    {
-        List<UtilityItem> ui = new List<UtilityItem>();
-        
-        system.debug('utilityType '+utilityType);
-        system.debug('utilityProducts '+utilityProducts);
-        system.debug('selectedRuleIds '+selectedRuleIds);
-        List<OpportunityLineItem__c> oppLineItems = new List<OpportunityLineItem__c>();
-        
-        List<Product2> defaultProducts = new List<Product2>();
-        for (UtilityItem uItem : utilityProducts)
-        {
-            //system.debug('uItem '+uItem);
-            
-            if(utilityType == uItem.utilityType)
-            {
-                for (OpportunityProduct oppProduct : uItem.oppProducts)
-                {                
-                    system.debug('oppProduct '+oppProduct);
-                    oppLineItems.add(oppProduct.oppLineItem);
-                    defaultProducts.add(oppProduct.oppLineItem.Product2Id__r);
-                    defaultProductQuantityMap.put(oppProduct.oppLineItem.Product2Id__c, oppProduct.oppLineItem.Quantity__c);
-                    //product2Ids.add(oppProduct.oppLineItem.Product2Id);                
-                }
-            }
-            
-            system.debug('defaultProductQuantityMap '+defaultProductQuantityMap);
-            system.debug('oppLineItems '+oppLineItems);
-            system.debug('defaultProducts '+defaultProducts);
-        }
-        
-        system.debug('defaultProducts size BEFORE '+defaultProducts.size());
-        defaultProducts = addCoreProducts(selectedRuleIds,defaultProducts);
-        system.debug('defaultProducts size AFTER '+defaultProducts.size());
-        
-        List<OpportunityProduct> oppProducts = new List<OpportunityProduct>();
-        
-        for (Product2 pro : defaultProducts)
-        {
-            OpportunityProduct oppProduct = new OpportunityProduct();
-            OpportunityLineItem__c oppLineItem = new OpportunityLineItem__c();
-            oppLineItem.OpportunityId__c = oppId;
-            oppLineItem.Product2Id__r = pro;
-            oppLineItem.Implementor__c = pro.Implementor__c;
-            if(pro.Kit_Sell__c == null) oppLineItem.Kit_Sell__c = 0; else oppLineItem.Kit_Sell__c = pro.Kit_Sell__c;
-            //if(pro.Material_Sell__c == null) oppLineItem.Material_Sell__c = 0; else oppLineItem.Material_Sell__c = pro.Material_Sell__c;
-            //oppLineItem.Plant_Sell__c = pro.Plant_Sell__c;
-            oppLineItem.Material_Cost__c = pro.Material_Cost__c;
-            oppLineItem.Plant_Cost__c = pro.Plant_Cost__c;
-            oppLineItem.Quantity__c = 0;
-            if(defaultProductQuantityMap.containsKey(pro.Id))
-                oppLineItem.Quantity__c = defaultProductQuantityMap.get(pro.Id);
-            system.debug('defaultProductQuantity  '+oppLineItem.Quantity__c);
-        
-            if(coreProductQuantityMap.containsKey(pro.Id))
-                oppLineItem.Quantity__c += coreProductQuantityMap.get(pro.Id);
-            system.debug('plus coreProductQuantity  '+oppLineItem.Quantity__c);
-            oppProduct.oppLineItem = oppLineItem;
-            oppProducts.add(oppProduct);
-            
-        }
-        
-        system.debug('oppProducts '+oppProducts.size());
-        
-        //system.debug('oppProduct xx '+oppProduct);
-        
-        for (UtilityItem uItem : utilityProducts)
-        {
-            //system.debug('uItem '+uItem);
-            //List<OpportunityLineItem> oppLineItems = new List<OpportunityLineItem>();
-            if(utilityType == uItem.utilityType)
-            {
-                uItem.oppProducts = oppProducts; 
-                system.debug('uItem.oppProducts '+uItem.oppProducts.size());
-            }
-        }
-        
- 
-        return utilityProducts;
-    }*/
     
     @AuraEnabled
     public static List<OpportunityProduct> getCoreProductsByRules(String oppId,String utilityType, List<String> selectedRuleIds)
@@ -424,20 +284,6 @@ public class NewQuoteEstimateController {
         Decimal onsiteExcavation = 1 ;
         Decimal noOf_JointBays = 1 ;
         
-        /*Decimal noOf_Commercial = 1 ;
-        Decimal noOf_Flats = 1 ;
-        Decimal noOf_Landlord = 1 ;
-        Decimal noOf_House = 1 ;
-        Decimal noOf_TBS = 1 ;
-        Decimal total = 1 ;
-
-        Decimal var_5m = 1 ;
-        Decimal var_6m = 1 ;
-        Decimal var_6m_hinged = 1 ;
-        Decimal var_8m = 1 ;
-        Decimal var_10m = 1 ;
-        Decimal var_12m = 1 ;*/
-        
         List<site_scheme__c> scheme = [SELECT Id, RecordType.Name, No_of_Units__c,Total_Number_of_plots__c,
                                        No_of_Commercial__c, No_of_Houses__c, No_of_Landlord__c, No_of_Flats__c, No_of_TBS__c,
                                        To_Boundary__c, Onsite_Excavation__c, No_of_Joint_Bays__c, Number_of_Link_Boxes__c,
@@ -449,24 +295,11 @@ public class NewQuoteEstimateController {
             if(scheme[0].Onsite_Excavation__c != null) onsiteExcavation = scheme[0].Onsite_Excavation__c;
             if(scheme[0].No_of_Joint_Bays__c != null) noOf_JointBays = scheme[0].No_of_Joint_Bays__c;
             
-            /*if(scheme[0].No_of_Commercial__c != null) noOf_Commercial = scheme[0].No_of_Commercial__c;
-            if(scheme[0].No_of_Flats__c != null) noOf_Flats = scheme[0].No_of_Flats__c;
-            if(scheme[0].No_of_Landlord__c != null) noOf_Landlord = scheme[0].No_of_Landlord__c;
-            if(scheme[0].No_of_Houses__c != null) noOf_House = scheme[0].No_of_Houses__c;
-            if(scheme[0].Total_Number_of_plots__c != null) total = scheme[0].Total_Number_of_plots__c;
-            
-            if(scheme[0].X5m__c != null) var_5m = scheme[0].X5m__c;
-            if(scheme[0].X6m__c != null) var_6m = scheme[0].X6m__c;
-            if(scheme[0].X6m_Hinged__c != null) var_6m_hinged = scheme[0].X6m_Hinged__c;
-            if(scheme[0].X8m__c != null) var_8m = scheme[0].X8m__c;
-if(scheme[0].X10m__c != null) var_10m = scheme[0].X10m__c;
-if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
-            
             system.debug('noOf_LinkBoxes '+noOf_LinkBoxes);
             system.debug('onsiteExcavation '+onsiteExcavation);
             system.debug('noOf_JointBays '+noOf_JointBays);
             
-            List<Core_Product_Rule__c> coreProducts = [SELECT Id, Rule__c, Rule__r.Utility_Type__c, Rule__r.Units_Type__c,Product__c,
+            List<Core_Product_Rule__c> coreProducts = [SELECT Id, Rule__c, Rule__r.Name, Rule__r.Utility_Type__c, Rule__r.Units_Type__c,Product__c, Rule__r.Type_of_Street_Light__c,
                                                        Product__r.Name, Product__r.Family, Product__r.Kit_Sell__c,
                                                        Product__r.Labour_Sell__c, Product__r.Plant_Sell__c, Product__r.Implementor__c,Product__r.Material_Cost__c,
                                                        Quantity__c,To_Multiply__c, Qty_Multiplier_formula__c,Multiplier_Field__c, Plots_Per_Quantity__c 
@@ -489,6 +322,8 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
                 OpportunityProduct oppProduct = new OpportunityProduct();
                 OpportunityLineItem__c oppLineItem = new OpportunityLineItem__c();
                 oppLineItem.OpportunityId__c = oppId;
+                oppLineItem.Rule_Id__c = corePro.Rule__c;
+                oppLineItem.Rule_Name__c = corePro.Rule__r.Name;
                 oppLineItem.Product2Id__r = pro;
                 oppLineItem.Implementor__c = pro.Implementor__c;
                 oppLineItem.Material_Cost__c = pro.Material_Cost__c;
@@ -531,7 +366,7 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
                     
                     oppLineItem.Quantity__c = value * corePro.Quantity__c / corePro.Plots_Per_Quantity__c ;
                     
-                     system.debug('corePro.Quantity__c '+corePro.Quantity__c);
+                    system.debug('corePro.Quantity__c '+corePro.Quantity__c);
                     system.debug('value '+value);
                     
                     system.debug('oppLineItem.Quantity--Divide--- '+oppLineItem.Quantity__c);
@@ -546,15 +381,13 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
         }
         
         system.debug('oppProducts '+oppProducts.size());
- 
+        
         return oppProducts;
     }
     
     private static Decimal getNoOfPlots(Core_Product_Rule__c corePro, String utilityType, List<site_scheme__c> scheme)
     {
         Decimal value = 1;
-        
-        system.debug('scheme '+scheme);
         
         if(utilityType == 'Electric' || utilityType == 'Water' || utilityType == 'Gas')
         {
@@ -566,7 +399,7 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
             if(corePro.Rule__r.Units_Type__c == 'Applicable for all' && scheme[0].Total_Number_of_plots__c != null) value = scheme[0].Total_Number_of_plots__c ;
             
         }
-        else if(utilityType == 'Street Lightning')
+        else if(utilityType == 'StreetLighting')
         {
             if(corePro.Rule__r.Type_of_Street_Light__c == '5m' && scheme[0].X5m__c != null) value = scheme[0].X5m__c;
             if(corePro.Rule__r.Type_of_Street_Light__c == '6m' && scheme[0].X6m__c != null) value = scheme[0].X6m__c ;
@@ -575,49 +408,11 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
             if(corePro.Rule__r.Type_of_Street_Light__c == '10m' && scheme[0].X10m__c != null) value = scheme[0].X10m__c ;
             if(corePro.Rule__r.Type_of_Street_Light__c == '12m' && scheme[0].X12m__c != null) value = scheme[0].X12m__c ;
             if(corePro.Rule__r.Type_of_Street_Light__c == 'Applicable for all' && scheme[0].Total_Number_of_plots__c != null) value = scheme[0].Total_Number_of_plots__c ;
+            
         }
         
         return value;
     }
-    
-       
-    /*private static List<Product2> addCoreProducts(List<String> selectedRuleIds, List<Product2> defaultProducts)
-    {
-        //List<Product2> defaultProducts;
-        List<Core_Product_Rule__c> coreProducts = [SELECT Id, Rule__c, Rule__r.Utility_Type__c, Product__c,Product__r.Name,Product__r.Family, 
-                                                   Quantity__c,Product__r.Implementor__c,Product__r.Material_Cost__c,To_Multiply__c
-                                                   FROM Core_Product_Rule__c WHERE Rule__c IN : selectedRuleIds order by createdDate];
-        
-        for(Core_Product_Rule__c corePro : coreProducts)
-        {
-            Boolean found = false;
-            for(Product2 defaultPro : defaultProducts)
-            {
-                if(corePro.Product__c == defaultPro.Id)
-                {
-                    found = true;
-                }
-            }
-            
-            if(found == false)
-            {
-                Product2 pro = new Product2(Id = corePro.Product__c, 
-                                            Name = corePro.Product__r.Name,
-                                            Family = corePro.Product__r.Family,
-                                            Implementor__c = corePro.Product__r.Implementor__c,
-                                            Material_Cost__c = corePro.Product__r.Material_Cost__c);
-                system.debug('add Core '+pro);
-                defaultProducts.add(pro);
-            }
-            
-            coreProductQuantityMap.put(corePro.Product__c, corePro.Quantity__c);
-        }
-        
-        system.debug('coreProductQuantityMap '+coreProductQuantityMap);
-        
-        return defaultProducts;
-        
-    }*/
     
     @AuraEnabled
     public static List<Scheme_Type_Breakdown__c> saveSchemeBreakdown(String parentId, List<Scheme_Type_Breakdown__c> schemeBreakdown, String recordTypeName, String utilityType, Integer numberOfPlot)
@@ -625,7 +420,7 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
         
         try
         {
-			system.debug(schemeBreakdown);
+            system.debug(schemeBreakdown);
             Set<Id> Ids = new Set<Id>();
             for(Scheme_Type_Breakdown__c stb : schemeBreakdown)
             {
@@ -635,9 +430,9 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
             Integer existingCount = [SELECT COUNT() FROM Scheme_Type_Breakdown__c WHERE Site_Scheme__c =: parentId AND RecordType.Name =: recordTypeName AND Utility_Type__c =: utilityType];
             
             List<Scheme_Type_Breakdown__c> schemeBreakdownToDelete = [SELECT Id FROM Scheme_Type_Breakdown__c WHERE Site_Scheme__c =: parentId 
-                                                                       AND RecordType.Name =: recordTypeName
-                                                                       AND Utility_Type__c =: utilityType
-                                                                       AND Id NOT IN: Ids];
+                                                                      AND RecordType.Name =: recordTypeName
+                                                                      AND Utility_Type__c =: utilityType
+                                                                      AND Id NOT IN: Ids];
             
             if(existingCount > schemeBreakdown.size() && recordTypeName != 'Landlords') 
             {
@@ -663,37 +458,31 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
             throw new AuraHandledException(e.getMessage());
         }
     }
-
+    
     
     @AuraEnabled
-    public static List<OpportunityLineItem__c> saveUtilityProducts(Id oppId, List<UtilityItem> utilityProducts)
+    public static List<OpportunityLineItem__c> saveUtilityProducts(Id oppId, List<UtilityItem> utilityProducts, List<sObject> deleteLineItems)
     {
         
         try
         {
-            Map<String,Id> pbEntryMap = new Map<String,Id>();
-            Set<Id> product2Ids = new Set<Id>();
-            Set<Id> successQLineItemsId = new Set<Id>();
-            //Opp Line Items
             List<OpportunityLineItem__c> oppLineItems = new List<OpportunityLineItem__c>(); 
-            
-            List<OpportunityLineItem__c> oppLineItemsToDelete = [SELECT Id FROM OpportunityLineItem__c WHERE OpportunityId__c =: oppId];
             
             for (UtilityItem uItem : utilityProducts)
             {
-                //system.debug('uItem '+uItem);
                 for (OpportunityProduct oppProduct : uItem.oppProducts)
                 {                
-                    oppLineItems.add(oppProduct.oppLineItem);
-                    //product2Ids.add(oppProduct.oppLineItem.Product2Id__c);                
+                    oppLineItems.add(oppProduct.oppLineItem);             
                 }
                 
                 system.debug('oppLineItems '+oppLineItems);
             }
             
+            system.debug('deleteLineItems '+deleteLineItems);
             
-            if(!oppLineItemsToDelete.isEmpty()) delete oppLineItemsToDelete;
-            if(!oppLineItems.isEmpty()) insert oppLineItems;
+            
+            if(!deleteLineItems.isEmpty() && deleteLineItems != null) delete deleteLineItems;
+            if(!oppLineItems.isEmpty()) upsert oppLineItems;
             
             return oppLineItems;
             
@@ -712,55 +501,28 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
     {
         try
         {
-            System.debug('pdfBase64Data '+pdfBase64Data);
+            //System.debug('pdfBase64Data '+pdfBase64Data);
+            String pricebookId;
+            if(!Test.isRunningTest())
+            {
+                pricebookId = [SELECT Id, Name, IsActive FROM PriceBook2 WHERE IsStandard= True LIMIT 1].Id;
+                //pricebookId = pb.id;
+            }
+            else
+                pricebookId = Test.getStandardPricebookId();
             
             Map<String,Id> pbEntryMap = new Map<String,Id>();
             Set<Id> product2Ids = new Set<Id>();
             Set<Id> successQLineItemsId = new Set<Id>();
-            //Opp Line Items
-            //List<OpportunityLineItem__c> oppLineItems = new List<OpportunityLineItem__c>(); 
-            
-            //List<OpportunityLineItem__c> oppLineItemsToDelete = [SELECT Id FROM OpportunityLineItem__c WHERE OpportunityId__c =: oppId];
-            
+
             List<OpportunityLineItem__c> oppLineItemsExisting = [SELECT Id, Name, OpportunityId__c, Material_Cost__c, Labour_Cost__c, Plant_Cost__c, Cost_Price__c, Kit_Sell__c, 
-                                                                 UnitPrice__c, Quantity__c, Implementor__c, Product2Id__c, Total_Sell__c, Total_Cost__c, Sell_Price__c 
+                                                                 UnitPrice__c, Quantity__c, Implementor__c, Product2Id__c, Total_Sell__c, Total_Cost__c, Sell_Price__c, Plant_Sell__c
                                                                  FROM OpportunityLineItem__c WHERE OpportunityId__c =: oppId];
             
             for (OpportunityLineItem__c item : oppLineItemsExisting)
             {
                 product2Ids.add(item.Product2Id__c);
             }
-            
-            /*for (UtilityItem uItem : utilityProducts)
-            {
-                //system.debug('uItem '+uItem);
-                for (OpportunityProduct oppProduct : uItem.oppProducts)
-                {                
-                    //oppProduct.oppLineItem.Parent_Product__c = coupledProduct.parentProduct.Id;    
-                    //system.debug('oppProduct '+oppProduct);
-                    oppLineItems.add(oppProduct.oppLineItem);
-                    product2Ids.add(oppProduct.oppLineItem.Product2Id__c);                
-                }
-                
-                system.debug('oppLineItems '+oppLineItems);
-            }
-            
-            for (OpportunityLineItem__c item : labourSellItems)
-            {
-                oppLineItems.add(item);
-                product2Ids.add(item.Product2Id__c);    
-            }
-            
-            for (OpportunityLineItem__c item : plantSellItems)
-            {
-                oppLineItems.add(item);
-                product2Ids.add(item.Product2Id__c);
-            }
-            
-            delete oppLineItemsToDelete;
-            
-            insert oppLineItems;*/
-            
             
             Opportunity opp = [SELECT Id, Name FROM Opportunity WHERE Id =: oppId];
             for(PricebookEntry pbEntry : [SELECT Id, Name, Pricebook2Id, Product2Id
@@ -772,6 +534,7 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
             Quote q = new Quote();
             q.Name = 'Estimate for '+opp.Name;
             q.OpportunityId = oppId;
+            q.Pricebook2Id = pricebookId;
             insert q;
             
             List<QuoteLineItem> quoteLineItems = new List<QuoteLineItem>();
@@ -780,14 +543,14 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
                 QuoteLineItem qItem = new QuoteLineItem();
                 qItem.QuoteId = q.Id;
                 if(pbEntryMap.containsKey(oppItem.Product2Id__c)) qItem.PricebookEntryId = pbEntryMap.get(oppItem.Product2Id__c);
-				qItem.OpportunityLineItem__c  = oppItem.Id;
+                qItem.OpportunityLineItem__c  = oppItem.Id;
                 qItem.Product2Id = oppItem.Product2Id__c;
                 qItem.Quantity = oppItem.Quantity__c;
                 qItem.UnitPrice  = oppItem.UnitPrice__c;
                 qItem.Implementor__c = oppItem.Implementor__c;
                 qItem.Kit_Sell__c = oppItem.Kit_Sell__c;
-                //qItem.Material_Sell__c = oppItem.Material_Sell__c;
-                //qItem.Plant_Sell__c = oppItem.Plant_Sell__c;
+                //qItem.Labour_Sell__c = oppItem.UnitPrice__c;
+                qItem.Plant_Sell__c = oppItem.Plant_Sell__c;
                 qItem.Material_Cost__c = oppItem.Material_Cost__c;
                 qItem.Plant_Cost__c = oppItem.Plant_Cost__c;
                 //System.debug('qItem: ' + qItem);
@@ -800,7 +563,7 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
             update opp;
             
             Blob myBlob = EncodingUtil.base64Decode(pdfBase64Data);
-            //String cvRTId = Schema.SObjectType.Account.getRecordTypeInfosByName().get('Estimator').getRecordTypeId();
+            String cvRTId = Schema.SObjectType.ContentVersion.getRecordTypeInfosByName().get('Estimator').getRecordTypeId();
             
             ContentVersion cv = new ContentVersion();
             cv.versionData = myBlob;
@@ -808,7 +571,7 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
             cv.pathOnClient = 'Estimate' + '_' + String.valueof(DateTime.now().getTime()) + '.pdf';
             cv.Type__c = 'BT';
             cv.Group__c = 'Estimate';
-            cv.RecordTypeId = '0124J000000hNK3QAM';
+            cv.RecordTypeId = cvRTId;
             cv.IsMajorVersion = true;
             system.debug(cv);
             insert cv;
@@ -839,17 +602,17 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
         
         
     }
-        
+    
     private static List<Product2> getDefaultProducts(List<site_scheme__c> siteSchemes, String utility)
     {
         List<Product2> DefaultProducts = new List<Product2>();
         Set<Id> DefaultProductIds = new Set<Id>();
-
+        
         system.debug('utility : '+utility);
         system.debug('SiteSchemes size : '+siteSchemes.size());
         for(site_scheme__c scheme :siteSchemes)
         {
-			if(utility == 'Electric')
+            if(utility == 'Electric')
             {
                 for(product2 pro : [SELECT Id, IsActive, Name, Sort__c, boris_code__c, boris_voltage__c, Unit_Of_Measure__c, Family, ProductCode, Description, Allow_Multiple_Products__c, Implementor__c,
                                     Kit_Sell__c, Labour_Sell__c, Labour_Cost__c, Material_Cost__c, Plant_Sell__c, Plant_Cost__c, 
@@ -868,48 +631,46 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
                                          (Adopter__c = ''))     
                                     ORDER BY Sort__c ])   
                 {
-                    //system.debug(pro);
-                    //DefaultProducts.add(pro);
                     DefaultProductIds.add(pro.Id);
                 }
             }
             else if(utility == 'Gas')
             {
                 for(product2 pro : [SELECT Id, IsActive, Name, Sort__c, boris_code__c, boris_voltage__c, Unit_Of_Measure__c, Family, ProductCode, Description, Allow_Multiple_Products__c, Implementor__c,
-                                      Kit_Sell__c, Labour_Sell__c, Labour_Cost__c, Material_Cost__c, Plant_Sell__c, Plant_Cost__c, 
-                                      work_zone__c, Adopter__c
-                                      FROM Product2 
-                                      WHERE IsActive = true
-                                      AND IS_KIT__C = true
-                                      AND Core_Product__c = true
-                                      AND Family = 'Gas'
-                                      AND ((Adopter__c = :scheme.IGT__c AND work_zone__c = 'Onsite') OR
-                                           (Adopter__c = :scheme.GT__c  AND work_zone__c = 'Offsite') OR 
-                                           (Adopter__c = :scheme.IGT__c AND work_zone__c = 'Both') OR
-                                           (Adopter__c = :scheme.GT__c  AND work_zone__c = 'Both') OR
-                                           (Adopter__c = :scheme.GT__c  AND work_zone__c = '') OR 
-                                           (Adopter__c = :scheme.IGT__c AND work_zone__c = '') OR 
-                                           (Adopter__c = ''))                                                  
+                                    Kit_Sell__c, Labour_Sell__c, Labour_Cost__c, Material_Cost__c, Plant_Sell__c, Plant_Cost__c, 
+                                    work_zone__c, Adopter__c
+                                    FROM Product2 
+                                    WHERE IsActive = true
+                                    AND IS_KIT__C = true
+                                    AND Core_Product__c = true
+                                    AND Family = 'Gas'
+                                    AND ((Adopter__c = :scheme.IGT__c AND work_zone__c = 'Onsite') OR
+                                         (Adopter__c = :scheme.GT__c  AND work_zone__c = 'Offsite') OR 
+                                         (Adopter__c = :scheme.IGT__c AND work_zone__c = 'Both') OR
+                                         (Adopter__c = :scheme.GT__c  AND work_zone__c = 'Both') OR
+                                         (Adopter__c = :scheme.GT__c  AND work_zone__c = '') OR 
+                                         (Adopter__c = :scheme.IGT__c AND work_zone__c = '') OR 
+                                         (Adopter__c = ''))                                                  
                                     ORDER BY Sort__c ])
                     
                 {
                     DefaultProductIds.add(pro.Id);
                 }
             }
-			else if(utility == 'Water')   
+            else if(utility == 'Water')   
             {
                 for(product2 pro : [SELECT Id, IsActive, Name, Sort__c, Family, boris_code__c, boris_voltage__c, Unit_Of_Measure__c, ProductCode, Description, Allow_Multiple_Products__c, Implementor__c,
-                                      Kit_Sell__c, Labour_Sell__c, Labour_Cost__c, Material_Cost__c, Plant_Sell__c, Plant_Cost__c, 
-                                      work_zone__c, Adopter__c
-                                      FROM Product2 
-                                      WHERE IsActive = true
-                                      AND IS_KIT__C = true
-                                      AND Core_Product__c = true
-                                      AND Family = 'Water'
-                                      AND ((Adopter__c = :scheme.Water_Provider__c AND work_zone__c = :scheme.Pipe_type__c) OR
-                                           (Adopter__c = '' AND work_zone__c = :scheme.Pipe_type__c) OR
-                                           (Adopter__c = :scheme.Water_Provider__c AND work_zone__c = '') OR                                         
-                                           (Adopter__c = '' AND work_zone__c = '')) 
+                                    Kit_Sell__c, Labour_Sell__c, Labour_Cost__c, Material_Cost__c, Plant_Sell__c, Plant_Cost__c, 
+                                    work_zone__c, Adopter__c
+                                    FROM Product2 
+                                    WHERE IsActive = true
+                                    AND IS_KIT__C = true
+                                    AND Core_Product__c = true
+                                    AND Family = 'Water'
+                                    AND ((Adopter__c = :scheme.Water_Provider__c AND work_zone__c = :scheme.Pipe_type__c) OR
+                                         (Adopter__c = '' AND work_zone__c = :scheme.Pipe_type__c) OR
+                                         (Adopter__c = :scheme.Water_Provider__c AND work_zone__c = '') OR                                         
+                                         (Adopter__c = '' AND work_zone__c = '')) 
                                     ORDER BY Sort__c ])
                     
                 {
@@ -975,25 +736,7 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
         
         return DefaultProducts;
     }
-    
-    private static String getFieldList(String objectName)
-    {
-        String retStr = '';
-        
-        // get fields for object
-        Map<String, Schema.SObjectField> objectFields = Schema.getGlobalDescribe().get(objectName).getDescribe().fields.getMap();
-        
-        // list them in string
-        for(String s : objectFields.keySet()) 
-            retStr += s + ',';
-        
-        // remove last comma
-        if (retStr.subString(retStr.Length()-1,retStr.Length()) == ',')
-            retStr = retStr.subString(0,retStr.Length()-1);
-        
-        return retStr;
-    }
-    
+
     @AuraEnabled
     public static List<Rule__c> getrelatedRules(String utility, String oppId)
     {
@@ -1003,11 +746,11 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
         List<String> sitSchemeFields = new List<String>(Site_Scheme__c.SObjectType.getDescribe().fields.getMap().keySet());
         String objectName = 'site_scheme__c';
         site_scheme__c scheme;
-        List<UtilityAvailableRules> uars = new List<UtilityAvailableRules> ();
+        //List<UtilityAvailableRules> uars = new List<UtilityAvailableRules> ();
         
         // get site scheme...
         queryAllSchemes(oppId);
-	
+        
         system.debug(utility);
         if(utility == 'Electric' && !ElectricSiteSchemes.isEmpty()) scheme = ElectricSiteSchemes[0];
         else if(utility == 'Gas' && !GasSiteSchemes.isEmpty()) scheme = GasSiteSchemes[0];
@@ -1177,7 +920,7 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
         
         return rules;
     }
-
+    
     public class saveReturnValue
     {
         @AuraEnabled
@@ -1186,7 +929,7 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
         public String contentVersionId { get; set; }
         @AuraEnabled
         public String contentDocumentId { get; set; }  
-
+        
     }
     
     public class UtilityItem
@@ -1197,10 +940,10 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
         public String schemeRTId { get; set; }     
         @AuraEnabled
         public List<OpportunityProduct> oppProducts { get; set; }
-        /*@AuraEnabled
-        public List<SiteScheme> siteSchemes { get; set; }*/
         @AuraEnabled
         public List<Rule__c> rules { get; set; }
+        @AuraEnabled
+        public Set<Id> selectedRuleIds { get; set; }
     }
     
     public class OpportunityProduct
@@ -1209,7 +952,7 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
         public OpportunityLineItem__c oppLineItem { get; set; }        
     }
     
-    public class SiteScheme
+    /*public class SiteScheme
     {
         @AuraEnabled
         public Site_Scheme__c schemeItem { get; set; }        
@@ -1219,10 +962,8 @@ if(scheme[0].X12m__c != null) var_12m = scheme[0].X12m__c;*/
     {
         @AuraEnabled
         public String utilityType { get; set; }
-        /*@AuraEnabled
-        public Integer NoOfAvailableRules { get; set; }*/
         @AuraEnabled
         public List<Rule__c> rules { get; set; }
-    }
+    }*/
     
 }

@@ -95,39 +95,47 @@
                     onsuccess={handleSuccessUpdateOpp}>
                     <lightning-messages> </lightning-messages>
                     <div class="stepOne slds-p-left_medium slds-p-top_medium">
-                        <lightning-layout>
+                        <lightning-layout multiple-rows>
                             <lightning-layout-item size="6" class="">
                                 <lightning-input-field field-name="RecordTypeId" disabled="true">
                                 </lightning-input-field>
                             </lightning-layout-item>
-                            <lightning-layout-item size="6" class="slds-p-left_x-large">
+
+                            <lightning-layout-item size="6" class="">
                                 <lightning-input-field field-name="Contact_Name__c"> </lightning-input-field>
                             </lightning-layout-item>
-                        </lightning-layout>
+                     
 
-                        <lightning-layout>
+                        
                             <lightning-layout-item size="6">
                                 <lightning-input-field field-name="Site__c"></lightning-input-field>
                             </lightning-layout-item>
-                            <lightning-layout-item size="6" class="slds-p-left_x-large">
+                            <lightning-layout-item size="6" class="">
                                 <lightning-input-field field-name="Project__c"> </lightning-input-field>
                             </lightning-layout-item>
-                        </lightning-layout>
+                        
 
-                        <lightning-layout>
+                            <lightning-layout-item size="6">
+                                <lightning-input-field field-name="Estimate_Date__c"></lightning-input-field>
+                            </lightning-layout-item>
+                        
+                       
                             <lightning-layout-item size="6">
                                 <lightning-input-field field-name="Estimate_Return_Date__c"></lightning-input-field>
                             </lightning-layout-item>
-                            <lightning-layout-item size="6" class="slds-p-left_x-large">
+                            <lightning-layout-item size="6" class="">
                                 <lightning-input-field field-name="Type"> </lightning-input-field>
                             </lightning-layout-item>
-                        </lightning-layout>
+                            <lightning-layout-item size="6" class="">
+                                
+                            </lightning-layout-item>
+                        
 
-                        <lightning-layout>
+                        
                             <lightning-layout-item size="6">
                                 <lightning-input-field field-name="Property_Type__c"></lightning-input-field>
                             </lightning-layout-item>
-                            <lightning-layout-item size="6" class="slds-p-left_x-large">
+                            <lightning-layout-item size="6" class="">
                                 <lightning-input-field field-name="Utilities__c"> </lightning-input-field>
                             </lightning-layout-item>
                         </lightning-layout>
@@ -1108,7 +1116,7 @@
                                     class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
                                     <thead>
                                         <tr class="slds-line-height_reset">
-                                            <th class="" scope="col">
+                                            <th class="" scope="col" style="width: 25%;">
                                                 <div class="slds-truncate" title="PRODUCT NAME">Product Name</div>
                                             </th>
                                             <th class="" scope="col">
@@ -1159,7 +1167,7 @@
 
                                     <tbody>
                                         <template for:each={utilityItem.oppProducts} for:item="item">
-                                            <tr key={item.Id}>
+                                            <tr key={item.oppLineItem.Id}>
                                                 <template if:false={item.isNew}>
                                                     <th data-label="Product Name" scope="row">
                                                         <lightning-layout>
@@ -1171,7 +1179,7 @@
                                                                         onclick={openDeleteProductModal}
                                                                         data-utilitytype={utilityItem.utilityType}
                                                                         data-parentindex={utilityItem.index}
-                                                                        data-index={item.index} data-id={item.Id}>
+                                                                        data-index={item.index} data-id={item.oppLineItem.Id}>
                                                                     </lightning-icon>
                                                                 </lightning-layout-item>
                                                             </div>
@@ -1334,8 +1342,14 @@
                                                 </td>-->
 
                                                 <td data-label="Product Type">
-                                                    <div class="slds-truncate" title={item.ProductType}>
-                                                        {item.ProductType}
+                                                    <div class="slds-truncate slds-cell-wrap">
+                                                        <template if:true={item.oppLineItem.Rule_Name__c}>
+                                                            {item.oppLineItem.Rule_Name__c}
+                                                        </template>
+                                                        <template if:false={item.oppLineItem.Rule_Name__c}>
+                                                            {item.oppLineItem.Load_Source__c}
+                                                        </template>
+                                                        
                                                     </div>
                                                 </td>
                                             </tr>
@@ -1406,7 +1420,8 @@
                             <div class="selectRule-content slds-modal__content slds-p-around_medium slds-text-align_center"
                                 id="modal-content-id-3">
                                 <lightning-datatable key-field="Id" data={data} columns={columns}
-                                    onrowselection={handleSelectedRule} column-widths-mode='auto'>
+                                    onrowselection={handleSelectedRule} column-widths-mode='auto'
+                                    selected-rows={selectedRows}>
                                 </lightning-datatable>
                             </div>
 
